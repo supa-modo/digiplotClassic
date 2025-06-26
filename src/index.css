@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@100;200;300;400;500;600;700;800;900&family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Lexend", sans-serif;
+  overflow-x: hidden;
+}
+
+@theme {
+  --color-primary-plot: #01818d; /* Blue */
+  --color-secondary-plot: #64748b; /* Slate */
+  --color-success-plot: #16a34a; /* Green */
+  --color-warning-plot: #eab308; /* Yellow */
+  --color-danger-plot: #dc2626; /* Red */
+  --color-info-plot: #4f46e5; /* Indigo */
+  --color-background-plot: #f9fafb; /* Gray-50 */
+
+  --color-primary-100: #e6f3f4;
+  --color-primary-200: #bfe0e3;
+  --color-primary-300: #8ccbd0;
+  --color-primary-400: #59b5bd;
+  --color-primary-500: #01818d;
+  --color-primary-600: #016a74;
+  --color-primary-700: #01535c;
+  --color-primary-800: #003c43;
+  --color-primary-900: #00262b;
+
+  /* Font families */
+  --font-lexend: "Lexend", sans-serif;
+  --font-outfit: "Outfit", sans-serif;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-secondary-plot/10;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary-plot/80 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-plot;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
