@@ -1,6 +1,7 @@
 import { useState } from "react";
 import TenantLayout from "../../components/tenant/TenantLayout";
 import MaintenanceModal from "../../components/tenant/MaintenanceModal";
+import ConfirmationModal from "../../components/common/ConfirmationModal";
 import { useAuth } from "../../contexts/AuthContext";
 import {
   getMaintenanceRequestsForTenant,
@@ -31,15 +32,54 @@ const TenantMaintenance = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
+  // Modal states
+  const [confirmationModal, setConfirmationModal] = useState({
+    isOpen: false,
+    type: "confirm",
+    title: "",
+    message: "",
+    itemName: "",
+    onConfirm: null,
+    isLoading: false,
+  });
+
   // Get maintenance requests and related data
   const requests = getMaintenanceRequestsForTenant(user?.id) || [];
   const unit = user?.unit_id ? getUnitById(user.unit_id) : null;
   const property = unit ? getPropertyById(unit.property_id) : null;
 
-  const handleRequestSuccess = (requestData) => {
-    // In real app, this would update the backend and refresh data
-    console.log("Maintenance request submitted:", requestData);
-    // Refresh requests data here
+  const handleRequestSuccess = async (requestData) => {
+    setConfirmationModal((prev) => ({ ...prev, isLoading: true }));
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      console.log("Maintenance request submitted:", requestData);
+
+      setShowModal(false);
+      setConfirmationModal({
+        isOpen: true,
+        type: "success",
+        title: "Request Submitted",
+        message: `Your maintenance request "${requestData.title}" has been submitted successfully. You will receive updates on its progress.`,
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        autoClose: true,
+        isLoading: false,
+      });
+
+      // Refresh requests data here
+    } catch (error) {
+      setConfirmationModal({
+        isOpen: true,
+        type: "error",
+        title: "Submission Failed",
+        message: "Failed to submit your maintenance request. Please try again.",
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        isLoading: false,
+      });
+    }
   };
 
   const handleViewDetails = (request) => {
@@ -505,6 +545,21 @@ const TenantMaintenance = () => {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        onClose={() =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false }))
+        }
+        onConfirm={confirmationModal.onConfirm}
+        type={confirmationModal.type}
+        title={confirmationModal.title}
+        message={confirmationModal.message}
+        itemName={confirmationModal.itemName}
+        isLoading={confirmationModal.isLoading}
+        autoClose={confirmationModal.autoClose}
+      />
     </TenantLayout>
   );
 };

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   TbBuilding,
   TbMapPin,
@@ -14,6 +15,7 @@ import {
   TbBed,
   TbBath,
   TbRuler,
+  TbTrash,
 } from "react-icons/tb";
 
 const PropertyCard = ({
@@ -22,8 +24,10 @@ const PropertyCard = ({
   onEdit,
   onAddUnit,
   onEditUnit,
+  onDelete,
 }) => {
   const [showUnits, setShowUnits] = useState(false);
+  const navigate = useNavigate();
 
   const getUnitStats = () => {
     const total = property.units?.length || 0;
@@ -42,10 +46,15 @@ const PropertyCard = ({
 
   const stats = getUnitStats();
 
+  const handleViewUnits = () => {
+    navigate(`/landlord/properties/${property.id}/units`);
+  };
+
   const getStatusBadge = (status) => {
     const statusConfig = {
       available: { label: "Available", class: "bg-green-100 text-green-800" },
       occupied: { label: "Occupied", class: "bg-blue-100 text-blue-800" },
+      vacant: { label: "Vacant", class: "bg-green-100 text-green-800" },
       maintenance: {
         label: "Maintenance",
         class: "bg-yellow-100 text-yellow-800",
@@ -116,6 +125,14 @@ const PropertyCard = ({
 
             <div className="flex items-center space-x-2 ml-4">
               <button
+                onClick={handleViewUnits}
+                className="px-3 py-2 bg-primary-plot text-white rounded-lg hover:bg-primary-plot/90 transition-colors text-sm font-medium"
+                title="View All Units"
+              >
+                <TbEye size={16} className="mr-1 inline" />
+                View Units
+              </button>
+              <button
                 onClick={onEdit}
                 className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Edit Property"
@@ -129,6 +146,15 @@ const PropertyCard = ({
               >
                 <TbPlus size={18} />
               </button>
+              {onDelete && (
+                <button
+                  onClick={onDelete}
+                  className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
+                  title="Delete Property"
+                >
+                  <TbTrash size={18} />
+                </button>
+              )}
               <button
                 onClick={() => setShowUnits(!showUnits)}
                 className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
@@ -159,12 +185,10 @@ const PropertyCard = ({
                   <div className="flex-1">
                     <div className="flex items-center space-x-3">
                       <span className="font-medium text-gray-900">
-                        {unit.unit_number}
+                        {unit.name}
                       </span>
                       {getStatusBadge(unit.status)}
-                      <span className="text-sm text-gray-600">
-                        {unit.unit_type}
-                      </span>
+                      <span className="text-sm text-gray-600">{unit.type}</span>
                     </div>
                     <div className="flex items-center space-x-4 mt-1 text-xs text-gray-500">
                       <span className="flex items-center">
@@ -177,7 +201,7 @@ const PropertyCard = ({
                       </span>
                       <span className="flex items-center">
                         <TbRuler className="h-3 w-3 mr-1" />
-                        {unit.size_sqft} sqft
+                        {unit.area} sqft
                       </span>
                     </div>
                   </div>
@@ -221,12 +245,24 @@ const PropertyCard = ({
               <span className="text-sm truncate">{property.address}</span>
             </div>
           </div>
-          <button
-            onClick={onEdit}
-            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <TbEdit size={16} />
-          </button>
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={onEdit}
+              className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+              title="Edit Property"
+            >
+              <TbEdit size={16} />
+            </button>
+            {onDelete && (
+              <button
+                onClick={onDelete}
+                className="p-1 text-red-400 hover:text-red-600 transition-colors"
+                title="Delete Property"
+              >
+                <TbTrash size={16} />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Stats */}
@@ -265,20 +301,30 @@ const PropertyCard = ({
         </div>
 
         {/* Actions */}
-        <div className="flex space-x-2">
+        <div className="space-y-2">
           <button
-            onClick={onAddUnit}
-            className="flex-1 bg-primary-plot text-white px-3 py-2 rounded-lg hover:bg-primary-plot/90 transition-colors text-sm font-medium"
+            onClick={handleViewUnits}
+            className="w-full bg-primary-plot text-white px-3 py-2 rounded-lg hover:bg-primary-plot/90 transition-colors text-sm font-medium"
           >
-            <TbPlus className="h-4 w-4 mr-1 inline" />
-            Add Unit
+            <TbEye className="h-4 w-4 mr-1 inline" />
+            View Units ({stats.total})
           </button>
-          <button
-            onClick={() => setShowUnits(!showUnits)}
-            className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
-          >
-            <TbEye className="h-4 w-4" />
-          </button>
+          <div className="flex space-x-2">
+            <button
+              onClick={onAddUnit}
+              className="flex-1 border border-primary-plot text-primary-plot px-3 py-2 rounded-lg hover:bg-primary-plot/10 transition-colors text-sm font-medium"
+            >
+              <TbPlus className="h-4 w-4 mr-1 inline" />
+              Add Unit
+            </button>
+            <button
+              onClick={() => setShowUnits(!showUnits)}
+              className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+              title="Preview Units"
+            >
+              <TbEye className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         {/* Units Preview */}
@@ -293,7 +339,7 @@ const PropertyCard = ({
                 >
                   <div className="flex items-center space-x-2">
                     <span className="font-medium text-gray-900">
-                      {unit.unit_number}
+                      {unit.name}
                     </span>
                     {getStatusBadge(unit.status)}
                   </div>

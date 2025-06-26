@@ -1,11 +1,17 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { authenticateUser } from "../utils/demoData";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
+    console.error("useAuth called outside AuthProvider context");
+    console.trace("Call stack:");
+    // In development, provide more helpful error info
+    if (process.env.NODE_ENV === "development") {
+      console.error("Make sure your component is wrapped with <AuthProvider>");
+    }
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
@@ -18,25 +24,44 @@ export const AuthProvider = ({ children }) => {
 
   // Check for existing auth on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem("digiplot_user");
-    const savedRole = localStorage.getItem("digiplot_role");
-
-    if (savedUser && savedRole) {
+    const checkAuth = () => {
       try {
-        setUser(JSON.parse(savedUser));
-        setUserRole(savedRole);
-      } catch (error) {
-        console.error("Error parsing saved user data:", error);
-        localStorage.removeItem("digiplot_user");
-        localStorage.removeItem("digiplot_role");
+        const savedUser = localStorage.getItem("digiplot_user");
+        const savedRole = localStorage.getItem("digiplot_role");
+
+        if (savedUser && savedRole) {
+          try {
+            const parsedUser = JSON.parse(savedUser);
+            console.log("AuthProvider: Restoring user session", {
+              userId: parsedUser.id,
+              role: savedRole,
+            });
+            setUser(parsedUser);
+            setUserRole(savedRole);
+          } catch (parseError) {
+            console.error("Error parsing saved user data:", parseError);
+            localStorage.removeItem("digiplot_user");
+            localStorage.removeItem("digiplot_role");
+          }
+        }
+      } catch (storageError) {
+        console.error("Error accessing localStorage:", storageError);
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    };
+
+    checkAuth();
   }, []);
 
   const login = async (email, password, userType) => {
     try {
       const userData = authenticateUser(email, password, userType);
+
+      console.log("AuthProvider: Login successful", {
+        userId: userData.id,
+        role: userType,
+      });
 
       setUser(userData);
       setUserRole(userType);
@@ -47,6 +72,7 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true, user: userData, role: userType };
     } catch (error) {
+      console.error("AuthProvider: Login failed", error);
       throw error;
     }
   };
@@ -59,7 +85,41 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAuthenticated = () => {
-    return user !== null && userRole !== null;
+    const authenticated = user !== null && userRole !== null;
+    // Only log on first load or when authentication status changes
+    if (!authenticated && localStorage.getItem("digiplot_user")) {
+      console.log(
+        "AuthProvider: Auth mismatch - localStorage has data but user state is empty",
+        {
+          authenticated,
+          user: !!user,
+          userRole,
+          hasLocalStorage: !!localStorage.getItem("digiplot_user"),
+        }
+      );
+    }
+    return authenticated;
+  };
+
+  // Add a function to manually refresh auth state
+  const refreshAuthState = () => {
+    console.log("AuthProvider: Manually refreshing auth state");
+    const savedUser = localStorage.getItem("digiplot_user");
+    const savedRole = localStorage.getItem("digiplot_role");
+
+    if (savedUser && savedRole && (!user || !userRole)) {
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        console.log("AuthProvider: Refreshing missing auth state", {
+          userId: parsedUser.id,
+          role: savedRole,
+        });
+        setUser(parsedUser);
+        setUserRole(savedRole);
+      } catch (error) {
+        console.error("Error refreshing auth state:", error);
+      }
+    }
   };
 
   const isTenant = () => {
@@ -84,6 +144,7 @@ export const AuthProvider = ({ children }) => {
     isLandlord,
     isAdmin,
     loading,
+    refreshAuthState,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

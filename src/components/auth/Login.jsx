@@ -22,6 +22,7 @@ import {
   TbMailFilled,
 } from "react-icons/tb";
 import { LuLogIn } from "react-icons/lu";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const { login } = useAuth();
@@ -38,7 +39,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [timeOfDay, setTimeOfDay] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
   // Set time of day greeting
   useState(() => {
     const hours = new Date().getHours();
@@ -134,8 +135,8 @@ const Login = () => {
 
               {/* Main headline */}
               <h2 className="text-5xl font-light text-white leading-tight mb-6">
-                <span className="font-medium">Elevate</span> your Property &
-                Rental <span className="text-amber-500">experience</span>
+                <span className="">Elevate</span> your Property & Rental{" "}
+                <span className="text-amber-500">experience</span>
               </h2>
 
               <p className="text-white/70 max-w-xl mb-12 leading-relaxed">
@@ -310,6 +311,7 @@ const Login = () => {
                 </div>
               </div>
 
+              {/* Password field with FaEye/FaEyeSlash button to hide or show entered password */}
               <div>
                 <label
                   htmlFor="password"
@@ -324,7 +326,7 @@ const Login = () => {
                   <input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
                     required
                     value={formData.password}
@@ -336,6 +338,17 @@ const Login = () => {
                     }  bg-white text-gray-700`}
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <FaEyeSlash size={18} />
+                    ) : (
+                      <FaEye size={18} />
+                    )}
+                  </button>
                 </div>
               </div>
             </div>

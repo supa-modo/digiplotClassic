@@ -171,31 +171,31 @@ const LandlordDashboard = () => {
 
   return (
     <LandlordLayout>
-      <div className="p-6">
+      <div className="space-y-6">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">
+        <div>
+          <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
             Dashboard Overview
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 mt-1 text-sm lg:text-base">
             Monitor your properties, tenants, and revenue performance
           </p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
           {/* Total Properties */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Total Properties
+                <p className="text-xs lg:text-sm font-medium text-gray-600">
+                  Properties
                 </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-lg lg:text-2xl font-bold text-gray-900 mt-1">
                   {dashboardData.stats.totalProperties || 0}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {dashboardData.stats.totalUnits || 0} total units
+                  {dashboardData.stats.totalUnits || 0} units
                 </p>
               </div>
               <div className="p-3 bg-blue-100 rounded-lg">
@@ -205,13 +205,13 @@ const LandlordDashboard = () => {
           </div>
 
           {/* Total Tenants */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Active Tenants
+                <p className="text-xs lg:text-sm font-medium text-gray-600">
+                  Tenants
                 </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-lg lg:text-2xl font-bold text-gray-900 mt-1">
                   {dashboardData.stats.totalTenants || 0}
                 </p>
                 <p className="text-xs text-green-600 mt-1">
@@ -219,79 +219,77 @@ const LandlordDashboard = () => {
                   occupancy
                 </p>
               </div>
-              <div className="p-3 bg-green-100 rounded-lg">
-                <TbUsers className="h-6 w-6 text-green-600" />
+              <div className="p-2 lg:p-3 bg-green-100 rounded-lg">
+                <TbUsers className="h-4 w-4 lg:h-6 lg:w-6 text-green-600" />
               </div>
             </div>
           </div>
 
           {/* Monthly Revenue */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Monthly Revenue
+                <p className="text-xs lg:text-sm font-medium text-gray-600">
+                  Revenue
                 </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-lg lg:text-2xl font-bold text-gray-900 mt-1">
                   {formatCurrency(dashboardData.stats.monthlyRevenue || 0)}
                 </p>
                 <p className="text-xs text-gray-500 mt-1 flex items-center">
                   <TbArrowUp className="h-3 w-3 text-green-500 mr-1" />
-                  +12% from last month
+                  +12%
                 </p>
               </div>
-              <div className="p-3 bg-yellow-100 rounded-lg">
-                <TbCreditCard className="h-6 w-6 text-yellow-600" />
+              <div className="p-2 lg:p-3 bg-yellow-100 rounded-lg">
+                <TbCreditCard className="h-4 w-4 lg:h-6 lg:w-6 text-yellow-600" />
               </div>
             </div>
           </div>
 
           {/* Pending Maintenance */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Pending Requests
+                <p className="text-xs lg:text-sm font-medium text-gray-600">
+                  Pending
                 </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-lg lg:text-2xl font-bold text-gray-900 mt-1">
                   {dashboardData.stats.pendingMaintenance || 0}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  Maintenance requests
-                </p>
+                <p className="text-xs text-gray-500 mt-1">Maintenance</p>
               </div>
-              <div className="p-3 bg-red-100 rounded-lg">
-                <TbTool className="h-6 w-6 text-red-600" />
+              <div className="p-2 lg:p-3 bg-red-100 rounded-lg">
+                <TbTool className="h-4 w-4 lg:h-6 lg:w-6 text-red-600" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
           {/* Quick Actions */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
+            <h2 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">
               Quick Actions
             </h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 lg:gap-4">
               {quickActions.map((action, index) => {
                 const IconComponent = action.icon;
                 return (
                   <a
                     key={index}
                     href={action.href}
-                    className="group p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200"
+                    className="group p-3 lg:p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200"
                   >
                     <div
-                      className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}
+                      className={`w-8 h-8 lg:w-12 lg:h-12 ${action.color} rounded-lg flex items-center justify-center mb-2 lg:mb-3 group-hover:scale-110 transition-transform`}
                     >
-                      <IconComponent className="h-6 w-6 text-white" />
+                      <IconComponent className="h-4 w-4 lg:h-6 lg:w-6 text-white" />
                     </div>
-                    <h3 className="font-medium text-gray-900 text-sm">
+                    <h3 className="font-medium text-gray-900 text-xs lg:text-sm">
                       {action.title}
                     </h3>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">
                       {action.description}
                     </p>
                   </a>
@@ -301,16 +299,16 @@ const LandlordDashboard = () => {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
+            <h2 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">
               Recent Activity
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3 lg:space-y-4">
               {getRecentActivity().length > 0 ? (
                 getRecentActivity().map((activity, index) => (
                   <div key={index} className="flex items-start space-x-3">
                     <div
-                      className={`w-2 h-2 rounded-full mt-2 ${
+                      className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
                         activity.color === "success"
                           ? "bg-green-500"
                           : activity.color === "warning"
@@ -319,11 +317,11 @@ const LandlordDashboard = () => {
                       }`}
                     ></div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900">
+                      <p className="text-xs lg:text-sm text-gray-900">
                         {activity.message}
                       </p>
                       {activity.amount && (
-                        <p className="text-sm font-medium text-green-600">
+                        <p className="text-xs lg:text-sm font-medium text-green-600">
                           {formatCurrency(activity.amount)}
                         </p>
                       )}
@@ -334,9 +332,9 @@ const LandlordDashboard = () => {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8">
-                  <TbCalendar className="mx-auto h-12 w-12 text-gray-300" />
-                  <p className="mt-2 text-sm text-gray-500">
+                <div className="text-center py-6 lg:py-8">
+                  <TbCalendar className="mx-auto h-8 w-8 lg:h-12 lg:w-12 text-gray-300" />
+                  <p className="mt-2 text-xs lg:text-sm text-gray-500">
                     No recent activity
                   </p>
                 </div>
@@ -347,32 +345,32 @@ const LandlordDashboard = () => {
 
         {/* Properties Overview */}
         {dashboardData.properties.length > 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">
+          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
+            <div className="flex items-center justify-between mb-4 lg:mb-6">
+              <h2 className="text-base lg:text-lg font-semibold text-gray-900">
                 Properties Overview
               </h2>
               <a
                 href="/landlord/properties"
-                className="text-primary-plot hover:text-primary-plot/80 text-sm font-medium"
+                className="text-primary-plot hover:text-primary-plot/80 text-xs lg:text-sm font-medium"
               >
                 View all →
               </a>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4">
               {dashboardData.properties.slice(0, 3).map((property) => (
                 <div
                   key={property.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+                  className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:border-gray-300 transition-colors"
                 >
-                  <h3 className="font-medium text-gray-900 mb-2">
+                  <h3 className="font-medium text-gray-900 mb-2 text-sm lg:text-base">
                     {property.name}
                   </h3>
-                  <div className="flex items-center text-sm text-gray-500 mb-2">
-                    <TbMapPin className="h-4 w-4 mr-1" />
+                  <div className="flex items-center text-xs lg:text-sm text-gray-500 mb-2">
+                    <TbMapPin className="h-3 w-3 lg:h-4 lg:w-4 mr-1 flex-shrink-0" />
                     <span className="truncate">{property.address}</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-xs lg:text-sm">
                     <span className="text-gray-600">
                       {property.units?.length || 0} units
                     </span>

@@ -1,3 +1,4 @@
+import React from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { Navigate, useLocation } from "react-router-dom";
 
@@ -6,8 +7,36 @@ const ProtectedRoute = ({
   requiredRole = null,
   redirectTo = "/login",
 }) => {
-  const { isAuthenticated, userRole, loading } = useAuth();
+  const { isAuthenticated, userRole, loading, user, refreshAuthState } =
+    useAuth();
   const location = useLocation();
+
+  // Only log when there's an issue or on important events
+  const isAuth = isAuthenticated();
+  if (!isAuth && localStorage.getItem("digiplot_user")) {
+    console.log("ProtectedRoute: Auth issue detected", {
+      path: location.pathname,
+      loading,
+      authenticated: isAuth,
+      userRole,
+      requiredRole,
+      userId: user?.id,
+      hasLocalStorage: !!localStorage.getItem("digiplot_user"),
+    });
+  }
+
+  // If we have localStorage data but no user state, try to refresh
+  React.useEffect(() => {
+    const savedUser = localStorage.getItem("digiplot_user");
+    const savedRole = localStorage.getItem("digiplot_role");
+
+    if (savedUser && savedRole && !loading && (!user || !userRole)) {
+      console.log(
+        "ProtectedRoute: Found localStorage but missing auth state, refreshing"
+      );
+      refreshAuthState();
+    }
+  }, [location.pathname, user, userRole, loading, refreshAuthState]);
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -22,7 +51,11 @@ const ProtectedRoute = ({
   }
 
   // If not authenticated, redirect to login with the current location
-  if (!isAuthenticated()) {
+  if (!isAuth) {
+    console.log("ProtectedRoute: Not authenticated, redirecting to login", {
+      path: location.pathname,
+      hasLocalStorage: !!localStorage.getItem("digiplot_user"),
+    });
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
   }
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import TenantLayout from "../../components/tenant/TenantLayout";
 import PaymentModal from "../../components/tenant/PaymentModal";
 import PaymentReceipt from "../../components/tenant/PaymentReceipt";
+import ConfirmationModal from "../../components/common/ConfirmationModal";
 import { useAuth } from "../../contexts/AuthContext";
 import {
   getTenantPayments,
@@ -29,15 +30,57 @@ const TenantPayments = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
 
+  // Modal states
+  const [confirmationModal, setConfirmationModal] = useState({
+    isOpen: false,
+    type: "confirm",
+    title: "",
+    message: "",
+    itemName: "",
+    onConfirm: null,
+    isLoading: false,
+  });
+
   // Get payments and related data
   const payments = getTenantPayments(user?.id) || [];
   const unit = payments.length > 0 ? getUnitById(payments[0].unit_id) : null;
   const property = unit ? getPropertyById(unit.property_id) : null;
 
-  const handlePaymentSuccess = (paymentData) => {
-    // In real app, this would update the backend and refresh data
-    console.log("Payment successful:", paymentData);
-    // Refresh payments data here
+  const handlePaymentSuccess = async (paymentData) => {
+    setConfirmationModal((prev) => ({ ...prev, isLoading: true }));
+
+    try {
+      // Simulate payment processing
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      console.log("Payment successful:", paymentData);
+
+      setShowPaymentModal(false);
+      setConfirmationModal({
+        isOpen: true,
+        type: "success",
+        title: "Payment Successful",
+        message: `Your payment of KSh ${paymentData.amount?.toLocaleString()} has been processed successfully. Transaction ID: ${
+          paymentData.transactionId || "PMT" + Date.now()
+        }`,
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        autoClose: true,
+        isLoading: false,
+      });
+
+      // Refresh payments data here
+    } catch (error) {
+      setConfirmationModal({
+        isOpen: true,
+        type: "error",
+        title: "Payment Failed",
+        message:
+          "Your payment could not be processed. Please check your payment details and try again.",
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        isLoading: false,
+      });
+    }
   };
 
   const handleViewReceipt = (payment) => {
@@ -395,6 +438,21 @@ const TenantPayments = () => {
           }}
         />
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        onClose={() =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false }))
+        }
+        onConfirm={confirmationModal.onConfirm}
+        type={confirmationModal.type}
+        title={confirmationModal.title}
+        message={confirmationModal.message}
+        itemName={confirmationModal.itemName}
+        isLoading={confirmationModal.isLoading}
+        autoClose={confirmationModal.autoClose}
+      />
     </TenantLayout>
   );
 };

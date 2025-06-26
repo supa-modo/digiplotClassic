@@ -3,6 +3,7 @@ import LandlordLayout from "../../components/landlord/LandlordLayout";
 import PropertyCard from "../../components/landlord/PropertyCard";
 import PropertyModal from "../../components/landlord/PropertyModal";
 import UnitModal from "../../components/landlord/UnitModal";
+import ConfirmationModal from "../../components/common/ConfirmationModal";
 import { useAuth } from "../../contexts/AuthContext";
 import {
   getPropertiesForLandlord,
@@ -33,6 +34,17 @@ const LandlordProperties = () => {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [viewMode, setViewMode] = useState("grid"); // grid or list
+
+  // Modal states
+  const [confirmationModal, setConfirmationModal] = useState({
+    isOpen: false,
+    type: "confirm",
+    title: "",
+    message: "",
+    itemName: "",
+    onConfirm: null,
+    isLoading: false,
+  });
 
   useEffect(() => {
     if (user?.id) {
@@ -105,18 +117,121 @@ const LandlordProperties = () => {
     setShowUnitModal(true);
   };
 
-  const handlePropertySave = (propertyData) => {
-    console.log("Property saved:", propertyData);
-    // In real app, this would update the backend
-    setShowPropertyModal(false);
-    // Refresh properties list
+  const handlePropertySave = async (propertyData) => {
+    setConfirmationModal((prev) => ({ ...prev, isLoading: true }));
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("Property saved:", propertyData);
+
+      setShowPropertyModal(false);
+      setConfirmationModal({
+        isOpen: true,
+        type: "success",
+        title: "Property Saved",
+        message: `Property "${propertyData.name}" has been ${
+          selectedProperty ? "updated" : "created"
+        } successfully!`,
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        autoClose: true,
+        isLoading: false,
+      });
+
+      // Refresh properties list in real app
+    } catch (error) {
+      setConfirmationModal({
+        isOpen: true,
+        type: "error",
+        title: "Error",
+        message: "Failed to save property. Please try again.",
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        isLoading: false,
+      });
+    }
   };
 
-  const handleUnitSave = (unitData) => {
-    console.log("Unit saved:", unitData);
-    // In real app, this would update the backend
-    setShowUnitModal(false);
-    // Refresh properties list
+  const handleUnitSave = async (unitData) => {
+    setConfirmationModal((prev) => ({ ...prev, isLoading: true }));
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("Unit saved:", unitData);
+
+      setShowUnitModal(false);
+      setConfirmationModal({
+        isOpen: true,
+        type: "success",
+        title: "Unit Saved",
+        message: `Unit "${unitData.name}" has been ${
+          selectedUnit ? "updated" : "created"
+        } successfully!`,
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        autoClose: true,
+        isLoading: false,
+      });
+
+      // Refresh properties list in real app
+    } catch (error) {
+      setConfirmationModal({
+        isOpen: true,
+        type: "error",
+        title: "Error",
+        message: "Failed to save unit. Please try again.",
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        isLoading: false,
+      });
+    }
+  };
+
+  const handleDeleteProperty = (property) => {
+    setConfirmationModal({
+      isOpen: true,
+      type: "delete",
+      title: "Delete Property",
+      itemName: property.name,
+      message: `Are you sure you want to delete "${property.name}"? This will also delete all units and associated data.`,
+      onConfirm: () => confirmDeleteProperty(property),
+      isLoading: false,
+    });
+  };
+
+  const confirmDeleteProperty = async (property) => {
+    setConfirmationModal((prev) => ({ ...prev, isLoading: true }));
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      console.log("Property deleted:", property);
+
+      setConfirmationModal({
+        isOpen: true,
+        type: "success",
+        title: "Property Deleted",
+        message: `Property "${property.name}" has been deleted successfully.`,
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        autoClose: true,
+        isLoading: false,
+      });
+
+      // Refresh properties list in real app
+    } catch (error) {
+      setConfirmationModal({
+        isOpen: true,
+        type: "error",
+        title: "Error",
+        message: "Failed to delete property. Please try again.",
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        isLoading: false,
+      });
+    }
   };
 
   const getPropertyStats = () => {
@@ -346,6 +461,7 @@ const LandlordProperties = () => {
                 onEdit={() => handleEditProperty(property)}
                 onAddUnit={() => handleAddUnit(property)}
                 onEditUnit={(unit) => handleEditUnit(property, unit)}
+                onDelete={() => handleDeleteProperty(property)}
               />
             ))}
           </div>
@@ -372,6 +488,21 @@ const LandlordProperties = () => {
           unit={selectedUnit}
         />
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        onClose={() =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false }))
+        }
+        onConfirm={confirmationModal.onConfirm}
+        type={confirmationModal.type}
+        title={confirmationModal.title}
+        message={confirmationModal.message}
+        itemName={confirmationModal.itemName}
+        isLoading={confirmationModal.isLoading}
+        autoClose={confirmationModal.autoClose}
+      />
     </LandlordLayout>
   );
 };
