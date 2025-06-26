@@ -776,7 +776,7 @@ const LandlordSettings = () => {
           <div className="flex">
             <input
               type="text"
-              value="pk_demo_abcd1234efgh5678ijkl9012mnop3456"
+              value="pk_test_1234567890abcdef"
               readOnly
               className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg bg-gray-50 text-gray-600"
             />
@@ -793,7 +793,7 @@ const LandlordSettings = () => {
           <div className="flex">
             <input
               type="password"
-              value="sk_demo_xyz7890abc1234def5678ghi9012jkl345"
+              value="sk_test_abcdef1234567890"
               readOnly
               className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg bg-gray-50 text-gray-600"
             />
