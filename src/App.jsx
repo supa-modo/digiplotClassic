@@ -149,7 +149,7 @@ function App() {
                 }
               />
 
-              <Route
+              {/* <Route
                 path="/admin"
                 element={
                   <ProtectedRoute requiredRole="admin">
@@ -174,7 +174,7 @@ function App() {
                     <AdminProperties />
                   </ProtectedRoute>
                 }
-              />
+              /> */}
 
               {/* Default redirect */}
               <Route path="/" element={<Navigate to="/login" replace />} />
