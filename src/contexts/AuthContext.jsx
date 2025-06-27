@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { authenticateUser } from "../utils/demoData";
+import authService from "../services/authService";
+import { ENABLE_DEBUG_LOGGING } from "../config/apiConfig";
 
 const AuthContext = createContext(null);
 
@@ -26,26 +27,22 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = () => {
       try {
-        const savedUser = localStorage.getItem("digiplot_user");
-        const savedRole = localStorage.getItem("digiplot_role");
+        const authData = authService.getStoredAuthData();
 
-        if (savedUser && savedRole) {
-          try {
-            const parsedUser = JSON.parse(savedUser);
+        if (authData && authData.user && authData.role) {
+          if (ENABLE_DEBUG_LOGGING) {
             console.log("AuthProvider: Restoring user session", {
-              userId: parsedUser.id,
-              role: savedRole,
+              userId: authData.user.id,
+              role: authData.role,
             });
-            setUser(parsedUser);
-            setUserRole(savedRole);
-          } catch (parseError) {
-            console.error("Error parsing saved user data:", parseError);
-            localStorage.removeItem("digiplot_user");
-            localStorage.removeItem("digiplot_role");
           }
+          setUser(authData.user);
+          setUserRole(authData.role);
         }
       } catch (storageError) {
-        console.error("Error accessing localStorage:", storageError);
+        console.error("Error accessing stored auth data:", storageError);
+        // Clear potentially corrupted data
+        authService.logout();
       } finally {
         setLoading(false);
       }
@@ -54,23 +51,37 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = async (email, password, userType) => {
+  const login = async (email, password, userType, twoFactorToken = null) => {
     try {
-      const userData = authenticateUser(email, password, userType);
+      if (ENABLE_DEBUG_LOGGING) {
+        console.log("AuthProvider: Attempting login", {
+          email,
+          userType,
+          has2FA: !!twoFactorToken,
+        });
+      }
 
-      console.log("AuthProvider: Login successful", {
-        userId: userData.id,
-        role: userType,
-      });
+      const result = await authService.login(
+        email,
+        password,
+        userType,
+        twoFactorToken
+      );
 
-      setUser(userData);
-      setUserRole(userType);
+      if (result.success) {
+        console.log("AuthProvider: Login successful", {
+          userId: result.user.id,
+          role: result.role,
+        });
 
-      // Save to localStorage
-      localStorage.setItem("digiplot_user", JSON.stringify(userData));
-      localStorage.setItem("digiplot_role", userType);
+        setUser(result.user);
+        setUserRole(result.role);
 
-      return { success: true, user: userData, role: userType };
+        return { success: true, user: result.user, role: result.role };
+      } else {
+        // Handle 2FA requirement or other non-success cases
+        return result;
+      }
     } catch (error) {
       console.error("AuthProvider: Login failed", error);
       throw error;
@@ -78,46 +89,60 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    if (ENABLE_DEBUG_LOGGING) {
+      console.log("AuthProvider: Logging out user");
+    }
+
     setUser(null);
     setUserRole(null);
-    localStorage.removeItem("digiplot_user");
-    localStorage.removeItem("digiplot_role");
+    authService.logout();
   };
 
   const isAuthenticated = () => {
     const authenticated = user !== null && userRole !== null;
-    // Only log on first load or when authentication status changes
-    if (!authenticated && localStorage.getItem("digiplot_user")) {
-      console.log(
-        "AuthProvider: Auth mismatch - localStorage has data but user state is empty",
-        {
-          authenticated,
+    const serviceAuthenticated = authService.isAuthenticated();
+
+    // Check for auth mismatch
+    if (authenticated !== serviceAuthenticated) {
+      if (ENABLE_DEBUG_LOGGING) {
+        console.log("AuthProvider: Auth mismatch detected", {
+          contextAuthenticated: authenticated,
+          serviceAuthenticated,
           user: !!user,
           userRole,
-          hasLocalStorage: !!localStorage.getItem("digiplot_user"),
-        }
-      );
+        });
+      }
+
+      // If service has auth but context doesn't, refresh context
+      if (serviceAuthenticated && !authenticated) {
+        refreshAuthState();
+      }
     }
+
     return authenticated;
   };
 
   // Add a function to manually refresh auth state
   const refreshAuthState = () => {
-    console.log("AuthProvider: Manually refreshing auth state");
-    const savedUser = localStorage.getItem("digiplot_user");
-    const savedRole = localStorage.getItem("digiplot_role");
+    if (ENABLE_DEBUG_LOGGING) {
+      console.log("AuthProvider: Manually refreshing auth state");
+    }
 
-    if (savedUser && savedRole && (!user || !userRole)) {
+    const authData = authService.getStoredAuthData();
+
+    if (authData && authData.user && authData.role && (!user || !userRole)) {
       try {
-        const parsedUser = JSON.parse(savedUser);
-        console.log("AuthProvider: Refreshing missing auth state", {
-          userId: parsedUser.id,
-          role: savedRole,
-        });
-        setUser(parsedUser);
-        setUserRole(savedRole);
+        if (ENABLE_DEBUG_LOGGING) {
+          console.log("AuthProvider: Refreshing missing auth state", {
+            userId: authData.user.id,
+            role: authData.role,
+          });
+        }
+        setUser(authData.user);
+        setUserRole(authData.role);
       } catch (error) {
         console.error("Error refreshing auth state:", error);
+        authService.logout();
       }
     }
   };
@@ -145,6 +170,8 @@ export const AuthProvider = ({ children }) => {
     isAdmin,
     loading,
     refreshAuthState,
+    // Expose auth service methods
+    authService,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

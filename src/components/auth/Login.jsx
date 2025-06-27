@@ -34,12 +34,14 @@ const Login = () => {
     email: "",
     password: "",
     userType: "tenant", // Default to tenant login
+    twoFactorToken: "", // For 2FA
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [timeOfDay, setTimeOfDay] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [requires2FA, setRequires2FA] = useState(false);
   // Set time of day greeting
   useState(() => {
     const hours = new Date().getHours();
@@ -62,18 +64,36 @@ const Login = () => {
     setError("");
 
     try {
-      // Use the auth context login function instead
-      await login(formData.email, formData.password, formData.userType);
+      // Use the auth context login function
+      const result = await login(
+        formData.email,
+        formData.password,
+        formData.userType,
+        formData.twoFactorToken || null
+      );
 
-      // Navigate based on user type
-      if (formData.userType === "tenant") {
-        navigate("/tenant");
-      } else if (formData.userType === "landlord") {
-        navigate("/landlord");
+      if (result.success) {
+        // Navigate based on user type
+        if (result.role === "tenant") {
+          navigate("/tenant");
+        } else if (result.role === "landlord") {
+          navigate("/landlord");
+        } else if (result.role === "admin") {
+          navigate("/admin");
+        }
+      } else if (result.requires2FA) {
+        // Show 2FA form
+        setRequires2FA(true);
+        setError("Please enter your two-factor authentication code.");
+      } else {
+        setError(result.message || "Login failed. Please try again.");
       }
     } catch (error) {
       console.error("Login error:", error);
       setError(error.message || "Failed to login. Please try again.");
+      // Reset 2FA if there was an error
+      setRequires2FA(false);
+      setFormData((prev) => ({ ...prev, twoFactorToken: "" }));
     } finally {
       setLoading(false);
     }
@@ -351,6 +371,43 @@ const Login = () => {
                   </button>
                 </div>
               </div>
+
+              {/* 2FA Token field - only show when 2FA is required */}
+              {requires2FA && (
+                <div>
+                  <label
+                    htmlFor="twoFactorToken"
+                    className="block text-[0.8rem] md:text-sm font-medium text-secondary-plot mb-1"
+                  >
+                    Two-Factor Authentication Code
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <TbLock className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      id="twoFactorToken"
+                      name="twoFactorToken"
+                      type="text"
+                      autoComplete="one-time-code"
+                      required={requires2FA}
+                      value={formData.twoFactorToken}
+                      onChange={handleInputChange}
+                      className={`appearance-none block w-full pl-12 pr-3 py-3 text-sm md:text-base font-medium border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none ${
+                        formData.userType === "tenant"
+                          ? "focus:ring-primary-plot focus:border-primary-plot"
+                          : "focus:ring-amber-600/80 focus:border-amber-600/80 "
+                      }  bg-white text-gray-700`}
+                      placeholder="Enter 6-digit code"
+                      maxLength="6"
+                      pattern="[0-9]{6}"
+                    />
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Enter the 6-digit code from your authenticator app
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center justify-between">

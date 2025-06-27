@@ -149,6 +149,33 @@ function App() {
                 }
               />
 
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/admin/users"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminUsers />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/admin/properties"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminProperties />
+                  </ProtectedRoute>
+                }
+              />
+
               {/* Default redirect */}
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="*" element={<Navigate to="/login" replace />} />
