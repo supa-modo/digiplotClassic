@@ -309,7 +309,13 @@ const Login = () => {
           <div className="mb-6 md:mb-8">
             {/* logo */}
             <div className="hidden lg:flex text-center justify-center items-center space-x-3 mb-6 md:mb-8">
-              <div className="w-20 h-20 bg-secondary-plot rounded-[0.35rem] flex items-center justify-center">
+              <div
+                className={`w-20 h-20  ${
+                  formData.userType === "tenant"
+                    ? "bg-gradient-to-br from-secondary-plot to-primary-700"
+                    : "bg-gradient-to-br from-amber-700/60 via-amber-700 to-amber-800/90"
+                } rounded-[0.35rem] flex items-center justify-center`}
+              >
                 <PiBuildingsBold size={50} className="text-white" />
               </div>
             </div>
