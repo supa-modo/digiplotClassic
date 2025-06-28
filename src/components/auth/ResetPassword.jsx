@@ -12,6 +12,7 @@ import {
   TbCalendarEvent,
 } from "react-icons/tb";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FiCheckCircle } from "react-icons/fi";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -82,10 +83,10 @@ const ResetPassword = () => {
 
       if (result.success) {
         setSuccess(true);
-        // Redirect to login after 3 seconds
-        setTimeout(() => {
-          navigate("/login");
-        }, 3000);
+        // Redirect to login after 5 seconds
+        // setTimeout(() => {
+        // navigate("/login");
+        // }, 5000);
       } else {
         setError(
           result.message || "Failed to reset password. Please try again."
@@ -108,7 +109,7 @@ const ResetPassword = () => {
               <TbAlertTriangle className="h-8 w-8 text-red-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Invalid Reset Link
+              Invalid Password Reset Link
             </h2>
             <p className="text-gray-600 mb-6">
               This password reset link is invalid or has expired. Please request
@@ -245,32 +246,38 @@ const ResetPassword = () => {
         </div>
 
         <div className="max-w-md w-full z-10 mx-auto">
+          {/* logo */}
+
+          <div className="hidden lg:flex text-center justify-center items-center space-x-3 mb-6 md:mb-8">
+            <div className="w-20 h-20 bg-secondary-plot rounded-md flex items-center justify-center">
+              <PiBuildingsBold size={50} className="text-white" />
+            </div>
+          </div>
+
+          <div className="flex items-center mb-3">
+            <div className="flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-secondary-plot/20 to-primary-plot/20 text-secondary-plot text-[0.8rem] md:text-sm font-medium">
+              <TbSun className="h-4 w-4 mr-1.5 text-primary-plot" />
+              <span>Good {timeOfDay}</span>
+            </div>
+
+            <div className="flex items-center ml-4 text-[0.8rem] md:text-sm font-medium text-gray-600">
+              <TbCalendarEvent className="h-4 w-4 mr-1.5 text-secondary-plot" />
+              <span>
+                {new Date().toLocaleDateString("en-US", {
+                  weekday: "long",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+            </div>
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-secondary-plot mb-4 md:mb-6">
+            Reset Your Password
+          </h2>
           {!success ? (
             <>
               {/* Welcome section with time of day greeting */}
               <div className="mb-6 md:mb-8">
-                <div className="flex items-center mb-3">
-                  <div className="flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-secondary-plot/20 to-primary-plot/20 text-secondary-plot text-[0.8rem] md:text-sm font-medium">
-                    <TbSun className="h-4 w-4 mr-1.5 text-primary-plot" />
-                    <span>Good {timeOfDay}</span>
-                  </div>
-
-                  <div className="flex items-center ml-4 text-[0.8rem] md:text-sm font-medium text-gray-600">
-                    <TbCalendarEvent className="h-4 w-4 mr-1.5 text-secondary-plot" />
-                    <span>
-                      {new Date().toLocaleDateString("en-US", {
-                        weekday: "long",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </span>
-                  </div>
-                </div>
-
-                <h2 className="text-2xl md:text-3xl font-bold text-secondary-plot mb-2">
-                  Reset Password
-                  <span className="ml-1 text-primary-plot">!</span>
-                </h2>
                 <p className="text-gray-500 text-[0.9rem] md:text-base">
                   Enter your new password below to reset your account password.
                 </p>
@@ -382,8 +389,10 @@ const ResetPassword = () => {
                       </>
                     ) : (
                       <>
-                        <span>Reset Password</span>
-                        <TbLock className="ml-2 h-5 w-5" />
+                        <TbLock className="mr-2 h-5 w-5" />
+                        <span className="text-sm md:text-[0.9rem]">
+                          Reset Password
+                        </span>
                       </>
                     )}
                   </span>
@@ -404,20 +413,19 @@ const ResetPassword = () => {
           ) : (
             /* Success message */
             <div className="text-center">
-              <div className="mb-6">
-                <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                  <TbCheck className="h-8 w-8 text-green-600" />
-                </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-secondary-plot mb-2">
-                  Password Reset Successfully!
-                </h2>
-                <p className="text-gray-500 text-[0.9rem] md:text-base">
-                  Your password has been reset successfully. You can now sign in
-                  with your new password.
-                </p>
-              </div>
+              <div className="bg-green-50 border border-green-300 rounded-xl p-4 md:p-6 mb-6">
+                <div className="mb-6">
+                  <FiCheckCircle className="h-10 w-10 text-primary-plot mx-auto mb-4" />
 
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                  <h2 className="text-lg md:text-xl font-bold text-primary-plot mb-2">
+                    Password Reset Successfully!
+                  </h2>
+                  <p className="text-gray-500 text-[0.85rem] md:text-[0.95rem] ">
+                    Your password has been reset successfully. You can now sign
+                    in with your new password.
+                  </p>
+                </div>
+
                 <p className="text-xs md:text-sm text-green-800">
                   Redirecting you to the login page in a few seconds...
                 </p>
@@ -432,6 +440,26 @@ const ResetPassword = () => {
               </Link>
             </div>
           )}
+        </div>
+
+        {/* Contact support link */}
+        <div className="mt-8 text-center">
+          <p className="text-[0.8rem] md:text-sm font-medium text-secondary-plot">
+            Experiencing issues?{" "}
+            <Link
+              to="/contact"
+              className={`underline underline-offset-4 ${"text-primary-plot hover:text-primary-plot/80"} `}
+            >
+              Contact Support
+            </Link>
+          </p>
+        </div>
+
+        {/* Copyright - should be aligned at the very bottom and center of page always */}
+        <div className="mt-auto text-center absolute bottom-0 left-0 right-0">
+          <p className="text-[0.8rem] md:text-sm font-medium text-secondary-plot">
+            &copy; {new Date().getFullYear()} DIGIPLOT. All rights reserved.
+          </p>
         </div>
       </div>
     </div>
