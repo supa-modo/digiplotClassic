@@ -8,6 +8,8 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import Login from "./components/auth/Login";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import ResetPassword from "./components/auth/ResetPassword";
 import TenantDashboard from "./pages/tenant/TenantDashboard";
 import TenantUnitInfo from "./pages/tenant/TenantUnitInfo";
 import TenantPayments from "./pages/tenant/TenantPayments";
@@ -23,6 +25,7 @@ import LandlordMaintenance from "./pages/landlord/LandlordMaintenance";
 import LandlordReports from "./pages/landlord/LandlordReports";
 import LandlordSettings from "./pages/landlord/LandlordSettings";
 import "./index.css";
+import Register from "./components/auth/Register";
 
 function App() {
   return (
@@ -33,6 +36,11 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route
+                path="/reset-password/:token"
+                element={<ResetPassword />}
+              />
 
               {/* Protected Routes */}
               <Route
@@ -148,6 +156,8 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
+              {/* <Route path="/register" element={<Register />} /> */}
 
               {/* <Route
                 path="/admin"
