@@ -138,7 +138,10 @@ const Login = () => {
           setRequires2FA(true);
           setError("");
         } else {
-          setError(result.message || "Login failed. Please try again.");
+          setError(
+            result.message ||
+              "Login failed. Please check your credentials and try again."
+          );
         }
       } else if (step === 2) {
         // Second step: 2FA verification
@@ -168,7 +171,8 @@ const Login = () => {
           }
         } else {
           setError(
-            result.message || "Invalid authentication code. Please try again."
+            result.message ||
+              "Invalid authentication code. Please check your authenticator app and try again."
           );
           // Clear the 2FA code on error
           setTwoFactorCode(["", "", "", "", "", ""]);

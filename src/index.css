@@ -58,3 +58,23 @@ body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
+
+/* Responsive scrollbar utilities */
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.scrollbar-default {
+  scrollbar-width: auto; /* Firefox */
+  -ms-overflow-style: auto; /* Internet Explorer 10+ */
+}
+
+.scrollbar-default::-webkit-scrollbar {
+  display: block; /* Safari and Chrome */
+  width: 8px;
+}

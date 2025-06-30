@@ -11,6 +11,9 @@ import {
   TbLoader2,
   TbTrash,
   TbPhoto,
+  TbTool,
+  TbSparkles,
+  TbHomeDot,
 } from "react-icons/tb";
 
 const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
@@ -48,25 +51,29 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
       value: "low",
       label: "Low Priority",
       description: "Non-urgent, can wait a few days",
-      color: "text-green-600 bg-green-50 border-green-200",
+      color:
+        "text-green-700 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200",
     },
     {
       value: "medium",
       label: "Medium Priority",
       description: "Should be addressed within 2-3 days",
-      color: "text-yellow-600 bg-yellow-50 border-yellow-200",
+      color:
+        "text-yellow-700 bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200",
     },
     {
       value: "high",
       label: "High Priority",
       description: "Urgent, affects daily living",
-      color: "text-orange-600 bg-orange-50 border-orange-200",
+      color:
+        "text-orange-700 bg-gradient-to-br from-orange-50 to-red-50 border-orange-200",
     },
     {
       value: "emergency",
       label: "Emergency",
       description: "Immediate attention required",
-      color: "text-red-600 bg-red-50 border-red-200",
+      color:
+        "text-red-700 bg-gradient-to-br from-red-50 to-pink-50 border-red-200",
     },
   ];
 
@@ -245,44 +252,68 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative border border-gray-100">
+        {/* Decorative elements */}
+        <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary-plot/5 blur-xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 h-32 w-32 rounded-full bg-secondary-plot/5 blur-xl pointer-events-none"></div>
+
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-secondary-plot">
-            New Maintenance Request
-          </h2>
+        <div className="relative z-10 flex items-center justify-between p-6 border-b border-gray-100 bg-gradient-to-r from-primary-plot/5 to-secondary-plot/5">
+          <div className="flex items-center space-x-3">
+            <div className="p-3 bg-gradient-to-br from-primary-plot/20 to-secondary-plot/20 rounded-xl backdrop-blur-sm">
+              <TbTool className="h-6 w-6 text-primary-plot" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-secondary-plot">
+                New Maintenance Request
+              </h2>
+              <p className="text-sm text-gray-500">
+                Report an issue that needs attention
+              </p>
+            </div>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition-all duration-200"
           >
             <TbX size={24} />
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* Property Info */}
+        <div className="relative z-10 p-6 space-y-6">
+          {/* Property Info - Enhanced */}
           {property && unit && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-medium text-blue-800 mb-2">Request for:</h3>
-              <div className="text-sm text-blue-700">
-                <p>
-                  <span className="font-medium">Property:</span> {property.name}
-                </p>
-                <p>
-                  <span className="font-medium">Unit:</span> {unit.name}
-                </p>
-                <p>
-                  <span className="font-medium">Address:</span>{" "}
-                  {property.address}
-                </p>
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full -mr-5 -mt-5 blur-lg"></div>
+
+              <div className="relative z-10 flex items-center space-x-3 mb-4">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <TbHomeDot className="h-5 w-5 text-blue-600" />
+                </div>
+                <h3 className="font-bold text-blue-800">Request Details</h3>
+              </div>
+
+              <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="font-semibold text-blue-700">Property:</span>
+                  <p className="text-blue-600 mt-1">{property.name}</p>
+                </div>
+                <div>
+                  <span className="font-semibold text-blue-700">Unit:</span>
+                  <p className="text-blue-600 mt-1">{unit.name}</p>
+                </div>
+                <div>
+                  <span className="font-semibold text-blue-700">Address:</span>
+                  <p className="text-blue-600 mt-1">{property.address}</p>
+                </div>
               </div>
             </div>
           )}
 
-          {/* Title */}
+          {/* Title - Enhanced */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-700 mb-3">
               Issue Title *
             </label>
             <input
@@ -290,17 +321,18 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
               value={formData.title}
               onChange={(e) => handleInputChange("title", e.target.value)}
               placeholder="Brief description of the issue (e.g., Leaking kitchen faucet)"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-gray-50 font-semibold placeholder-gray-400 transition-all duration-200"
               maxLength={100}
             />
-            <p className="text-xs text-gray-500 mt-1">
-              {formData.title.length}/100 characters
+            <p className="text-xs text-gray-500 mt-2 flex justify-between">
+              <span>Keep it short and descriptive</span>
+              <span>{formData.title.length}/100 characters</span>
             </p>
           </div>
 
-          {/* Category */}
+          {/* Category - Enhanced */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-700 mb-3">
               Category *
             </label>
             <div className="grid grid-cols-3 gap-3">
@@ -310,36 +342,36 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
                   type="button"
                   onClick={() => handleInputChange("category", category.value)}
                   className={`
-                    p-3 border rounded-lg text-sm font-medium transition-all text-center
+                    p-4 border-2 rounded-xl text-sm font-semibold transition-all text-center hover:scale-105 transform
                     ${
                       formData.category === category.value
-                        ? "border-primary-plot bg-primary-plot/5 text-primary-plot"
+                        ? "border-primary-plot bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 text-primary-plot shadow-lg"
                         : "border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50"
                     }
                   `}
                 >
-                  <div className="text-lg mb-1">{category.icon}</div>
+                  <div className="text-2xl mb-2">{category.icon}</div>
                   <div>{category.label}</div>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Priority */}
+          {/* Priority - Enhanced */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-700 mb-3">
               Priority Level *
             </label>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {priorities.map((priority) => (
                 <label
                   key={priority.value}
                   className={`
-                    flex items-start p-3 border rounded-lg cursor-pointer transition-all
+                    flex items-start p-4 border-2 rounded-xl cursor-pointer transition-all hover:scale-105 transform
                     ${
                       formData.priority === priority.value
-                        ? `border-primary-plot bg-primary-plot/5`
-                        : "border-gray-200 hover:border-gray-300"
+                        ? `border-primary-plot bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 shadow-lg`
+                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                     }
                   `}
                 >
@@ -355,17 +387,17 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
                   />
                   <div
                     className={`
-                    px-2 py-1 rounded-full text-xs font-medium border mr-3 mt-0.5
+                    px-3 py-2 rounded-full text-xs font-bold border-2 mr-4 mt-0.5
                     ${priority.color}
                   `}
                   >
                     {priority.label}
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900">
+                    <div className="font-bold text-gray-900">
                       {priority.label}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500 mt-1">
                       {priority.description}
                     </div>
                   </div>
@@ -374,17 +406,19 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
             </div>
           </div>
 
-          {/* Location */}
+          {/* Location - Enhanced */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-700 mb-3">
               Location *
             </label>
             <select
               value={formData.location}
               onChange={(e) => handleInputChange("location", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-gray-50 font-semibold"
             >
-              <option value="">Select location</option>
+              <option value="">
+                Select location where the issue is occurring
+              </option>
               {locations.map((location) => (
                 <option key={location} value={location}>
                   {location}
@@ -393,9 +427,9 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
             </select>
           </div>
 
-          {/* Description */}
+          {/* Description - Enhanced */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-700 mb-3">
               Detailed Description *
             </label>
             <textarea
@@ -403,26 +437,29 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
               onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder="Please provide a detailed description of the issue, including when it started, how often it occurs, and any other relevant information..."
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent resize-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-gray-50 font-semibold placeholder-gray-400 resize-none transition-all duration-200"
               maxLength={500}
             />
-            <p className="text-xs text-gray-500 mt-1">
-              {formData.description.length}/500 characters
+            <p className="text-xs text-gray-500 mt-2 flex justify-between">
+              <span>
+                Be as specific as possible to help us understand the issue
+              </span>
+              <span>{formData.description.length}/500 characters</span>
             </p>
           </div>
 
-          {/* Photo Upload */}
+          {/* Photo Upload - Enhanced */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-700 mb-3">
               Photos (Optional)
             </label>
             <div
               className={`
-                border-2 border-dashed rounded-lg p-6 text-center transition-colors
+                border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200
                 ${
                   dragActive
-                    ? "border-primary-plot bg-primary-plot/5"
-                    : "border-gray-300 hover:border-gray-400"
+                    ? "border-primary-plot bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 scale-105"
+                    : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
                 }
               `}
               onDragEnter={handleDragEnter}
@@ -430,10 +467,12 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
-              <TbCamera className="mx-auto text-gray-400 mb-3" size={48} />
-              <p className="text-gray-600 mb-2">
+              <div className="p-4 bg-gray-100 rounded-2xl inline-flex mb-4">
+                <TbCamera className="text-gray-400" size={48} />
+              </div>
+              <p className="text-gray-600 mb-2 font-semibold">
                 Drag and drop photos here, or{" "}
-                <label className="text-primary-plot hover:text-primary-plot/80 cursor-pointer font-medium">
+                <label className="text-primary-plot hover:text-primary-plot/80 cursor-pointer font-bold underline">
                   browse files
                   <input
                     type="file"
@@ -449,28 +488,31 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
               </p>
             </div>
 
-            {/* Uploaded Images */}
+            {/* Uploaded Images - Enhanced */}
             {uploadedImages.length > 0 && (
-              <div className="mt-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-3">
+              <div className="mt-6">
+                <h4 className="text-sm font-bold text-gray-700 mb-4 flex items-center">
+                  <TbPhoto className="mr-2" />
                   Uploaded Images ({uploadedImages.length}/5)
                 </h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {uploadedImages.map((image) => (
                     <div key={image.id} className="relative group">
                       <img
                         src={image.preview}
                         alt={image.name}
-                        className="w-full h-24 object-cover rounded-lg border"
+                        className="w-full h-32 object-cover rounded-xl border-2 border-gray-200 group-hover:border-gray-300 transition-all duration-200"
                       />
                       <button
                         onClick={() => removeImage(image.id)}
-                        className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-600 transform hover:scale-110"
                       >
-                        <TbTrash size={12} />
+                        <TbTrash size={14} />
                       </button>
-                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b-lg truncate">
-                        {image.name}
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white text-xs p-3 rounded-b-xl">
+                        <span className="font-semibold truncate block">
+                          {image.name}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -479,54 +521,77 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
             )}
           </div>
 
-          {/* Submit Status */}
+          {/* Submit Status - Enhanced */}
           {submitStatus && (
             <div
               className={`
-              p-4 rounded-lg border
+              p-6 rounded-xl border-2 relative overflow-hidden
               ${
                 submitStatus.success
-                  ? "bg-green-50 border-green-200 text-green-800"
-                  : "bg-red-50 border-red-200 text-red-800"
+                  ? "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"
+                  : "bg-gradient-to-br from-red-50 to-pink-50 border-red-200"
               }
             `}
             >
-              <div className="flex items-center">
-                {submitStatus.success ? (
-                  <TbCheck className="mr-2" size={20} />
-                ) : (
-                  <TbAlertTriangle className="mr-2" size={20} />
-                )}
-                <span className="font-medium">{submitStatus.message}</span>
+              <div
+                className={`absolute top-0 right-0 w-20 h-20 rounded-full -mr-5 -mt-5 blur-lg ${
+                  submitStatus.success ? "bg-green-500/10" : "bg-red-500/10"
+                }`}
+              ></div>
+
+              <div className="relative z-10 flex items-center space-x-3">
+                <div
+                  className={`p-3 rounded-xl ${
+                    submitStatus.success ? "bg-green-100" : "bg-red-100"
+                  }`}
+                >
+                  {submitStatus.success ? (
+                    <TbCheck className="text-green-600" size={20} />
+                  ) : (
+                    <TbAlertTriangle className="text-red-600" size={20} />
+                  )}
+                </div>
+                <div>
+                  <span
+                    className={`font-bold ${
+                      submitStatus.success ? "text-green-800" : "text-red-800"
+                    }`}
+                  >
+                    {submitStatus.message}
+                  </span>
+                  {submitStatus.success && submitStatus.requestId && (
+                    <p className="text-sm text-green-700 mt-1 font-medium">
+                      Request ID: {submitStatus.requestId}
+                    </p>
+                  )}
+                </div>
               </div>
-              {submitStatus.success && submitStatus.requestId && (
-                <p className="text-sm mt-2">
-                  Request ID: {submitStatus.requestId}
-                </p>
-              )}
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex space-x-3 pt-4">
+          {/* Action Buttons - Enhanced */}
+          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-4">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              className="flex-1 px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-bold shadow-sm hover:shadow-md"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading || submitStatus?.success}
-              className="flex-1 bg-primary-plot text-white px-4 py-2 rounded-lg hover:bg-primary-plot/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center"
+              className="flex-1 bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-4 rounded-xl hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-bold flex items-center justify-center space-x-2 transform hover:scale-105 disabled:transform-none shadow-lg"
             >
               {loading ? (
                 <>
-                  <TbLoader2 className="animate-spin mr-2" size={20} />
-                  Submitting...
+                  <TbLoader2 className="animate-spin" size={20} />
+                  <span>Submitting Request...</span>
                 </>
               ) : (
-                "Submit Request"
+                <>
+                  <TbTool size={20} />
+                  <span>Submit Request</span>
+                </>
               )}
             </button>
           </div>

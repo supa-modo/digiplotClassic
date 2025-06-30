@@ -10,6 +10,8 @@ import {
   TbInfoCircle,
   TbCheck,
   TbLoader2,
+  TbCoins,
+  TbSparkles,
 } from "react-icons/tb";
 
 const PaymentModal = ({ isOpen, onClose, onPaymentSuccess }) => {
@@ -283,40 +285,58 @@ const PaymentModal = ({ isOpen, onClose, onPaymentSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative border border-gray-100">
+        {/* Decorative elements */}
+        <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary-plot/5 blur-xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 h-32 w-32 rounded-full bg-secondary-plot/5 blur-xl pointer-events-none"></div>
+
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-secondary-plot">
-            Make Payment
-          </h2>
+        <div className="relative z-10 flex items-center justify-between p-6 border-b border-gray-100 bg-gradient-to-r from-primary-plot/5 to-secondary-plot/5">
+          <div className="flex items-center space-x-3">
+            <div className="p-3 bg-gradient-to-br from-primary-plot/20 to-secondary-plot/20 rounded-xl backdrop-blur-sm">
+              <TbCoins className="h-6 w-6 text-primary-plot" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-secondary-plot">
+                Make Payment
+              </h2>
+              <p className="text-sm text-gray-500">
+                Pay your rent securely and easily
+              </p>
+            </div>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition-all duration-200"
           >
             <TbX size={24} />
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="relative z-10 p-6 space-y-6">
           {/* Overdue Alert */}
           {overdueMonths.length > 0 && (
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-              <div className="flex items-start space-x-3">
-                <TbAlertTriangle className="text-orange-500 mt-0.5" size={20} />
-                <div>
-                  <h3 className="font-medium text-orange-800">
-                    Overdue Payments
+            <div className="bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200 rounded-xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-orange-500/5 rounded-full -mr-5 -mt-5 blur-lg"></div>
+
+              <div className="relative z-10 flex items-start space-x-4">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <TbAlertTriangle className="text-orange-600" size={20} />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-orange-800 mb-2">
+                    Overdue Payments Detected
                   </h3>
-                  <p className="text-orange-700 text-sm mt-1">
+                  <p className="text-orange-700 text-sm mb-3">
                     You have {overdueMonths.length} overdue payment(s). Please
                     pay to avoid late fees.
                   </p>
-                  <div className="mt-2 text-sm text-orange-600">
+                  <div className="flex flex-wrap gap-2">
                     {overdueMonths.map((month) => (
                       <span
                         key={month.key}
-                        className="inline-block bg-orange-100 px-2 py-1 rounded mr-2 mb-1"
+                        className="inline-flex items-center px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full border border-orange-200"
                       >
                         {month.label}
                       </span>
@@ -328,67 +348,92 @@ const PaymentModal = ({ isOpen, onClose, onPaymentSuccess }) => {
           )}
 
           {/* Month Selection */}
-          <div>
-            <h3 className="font-medium text-secondary-plot mb-3 flex items-center">
-              <TbCalendar className="mr-2" size={20} />
-              Select Months to Pay
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {monthsToShow.map((month) => {
-                const isPaid = isMonthPaid(month.key);
-                const isSelected = selectedMonths.includes(month.key);
-                const isOverdue = overdueMonths.some(
-                  (m) => m.key === month.key
-                );
+          <div className="bg-white rounded-xl border border-gray-100 p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full -mr-5 -mt-5 blur-lg"></div>
 
-                return (
-                  <button
-                    key={month.key}
-                    onClick={() => !isPaid && toggleMonth(month.key)}
-                    disabled={isPaid}
-                    className={`
-                      p-3 rounded-lg border text-sm font-medium transition-all
-                      ${
-                        isPaid
-                          ? "bg-green-50 border-green-200 text-green-600 cursor-not-allowed"
-                          : isSelected
-                          ? "bg-primary-plot text-white border-primary-plot"
-                          : isOverdue
-                          ? "bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
-                          : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
-                      }
-                    `}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span>{month.label}</span>
-                      {isPaid && <TbCheck size={16} />}
-                      {isOverdue && !isPaid && <TbAlertTriangle size={16} />}
-                    </div>
-                    <div className="text-xs mt-1 opacity-75">
-                      KSH {monthlyRent.toLocaleString()}
-                    </div>
-                  </button>
-                );
-              })}
+            <div className="relative z-10">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
+                  <TbCalendar className="text-blue-600" size={20} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-secondary-plot">
+                    Select Months to Pay
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Choose which months you want to pay for
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {monthsToShow.map((month) => {
+                  const isPaid = isMonthPaid(month.key);
+                  const isSelected = selectedMonths.includes(month.key);
+                  const isOverdue = overdueMonths.some(
+                    (m) => m.key === month.key
+                  );
+
+                  return (
+                    <button
+                      key={month.key}
+                      onClick={() => !isPaid && toggleMonth(month.key)}
+                      disabled={isPaid}
+                      className={`
+                        p-4 rounded-xl border-2 text-sm font-semibold transition-all duration-200 hover:scale-105 disabled:hover:scale-100
+                        ${
+                          isPaid
+                            ? "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 text-green-700 cursor-not-allowed"
+                            : isSelected
+                            ? "bg-gradient-to-br from-primary-plot to-secondary-plot text-white border-primary-plot shadow-lg"
+                            : isOverdue
+                            ? "bg-gradient-to-br from-orange-50 to-red-50 border-orange-200 text-orange-700 hover:bg-orange-100"
+                            : "bg-gradient-to-br from-gray-50 to-blue-50/30 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300"
+                        }
+                      `}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold uppercase tracking-wide">
+                          {month.label}
+                        </span>
+                        {isPaid && (
+                          <TbCheck size={16} className="text-green-600" />
+                        )}
+                        {isOverdue && !isPaid && <TbAlertTriangle size={16} />}
+                      </div>
+                      <div className="text-lg font-bold">
+                        KES {monthlyRent.toLocaleString()}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
           {/* Payment Summary */}
           {selectedMonths.length > 0 && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-medium text-blue-800">Payment Summary</h4>
-                  <p className="text-blue-600 text-sm">
-                    {selectedMonths.length} month(s) selected
-                  </p>
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-full -mr-5 -mt-5 blur-lg"></div>
+
+              <div className="relative z-10 flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-blue-100 rounded-xl">
+                    <TbSparkles className="text-blue-600" size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-blue-800">Payment Summary</h4>
+                    <p className="text-blue-600 text-sm">
+                      {selectedMonths.length} month(s) selected
+                    </p>
+                  </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-800">
-                    KSH {calculateTotal().toLocaleString()}
+                  <div className="text-3xl font-bold text-blue-800">
+                    KES {calculateTotal().toLocaleString()}
                   </div>
                   <div className="text-blue-600 text-sm">
-                    {selectedMonths.length} × KSH {monthlyRent.toLocaleString()}
+                    {selectedMonths.length} × KES {monthlyRent.toLocaleString()}
                   </div>
                 </div>
               </div>
@@ -396,87 +441,128 @@ const PaymentModal = ({ isOpen, onClose, onPaymentSuccess }) => {
           )}
 
           {/* Payment Method Selection */}
-          <div>
-            <h3 className="font-medium text-secondary-plot mb-3">
-              Payment Method
-            </h3>
-            <div className="space-y-3">
-              {/* M-Pesa Option */}
-              <label
-                className={`
-                flex items-center p-4 border rounded-lg cursor-pointer transition-all
-                ${
-                  paymentMethod === "mpesa"
-                    ? "border-primary-plot bg-primary-plot/5"
-                    : "border-gray-200 hover:border-gray-300"
-                }
-              `}
-              >
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="mpesa"
-                  checked={paymentMethod === "mpesa"}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="sr-only"
-                />
-                <TbDeviceMobile
-                  className={`mr-3 ${
-                    paymentMethod === "mpesa"
-                      ? "text-primary-plot"
-                      : "text-gray-400"
-                  }`}
-                  size={24}
-                />
-                <div>
-                  <div className="font-medium">M-Pesa Mobile Money</div>
-                  <div className="text-sm text-gray-500">
-                    Pay using your M-Pesa account
-                  </div>
-                </div>
-              </label>
+          <div className="bg-white rounded-xl border border-gray-100 p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-purple-500/5 rounded-full -mr-5 -mt-5 blur-lg"></div>
 
-              {/* Card Option */}
-              <label
-                className={`
-                flex items-center p-4 border rounded-lg cursor-pointer transition-all
-                ${
-                  paymentMethod === "card"
-                    ? "border-primary-plot bg-primary-plot/5"
-                    : "border-gray-200 hover:border-gray-300"
-                }
-              `}
-              >
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="card"
-                  checked={paymentMethod === "card"}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="sr-only"
-                />
-                <TbCreditCard
-                  className={`mr-3 ${
-                    paymentMethod === "card"
-                      ? "text-primary-plot"
-                      : "text-gray-400"
-                  }`}
-                  size={24}
-                />
-                <div>
-                  <div className="font-medium">Credit/Debit Card</div>
-                  <div className="text-sm text-gray-500">
-                    Pay using your bank card
-                  </div>
+            <div className="relative z-10">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl">
+                  <TbCreditCard className="text-purple-600" size={20} />
                 </div>
-              </label>
+                <div>
+                  <h3 className="font-bold text-secondary-plot">
+                    Payment Method
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Choose your preferred payment option
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {/* M-Pesa Option */}
+                <label
+                  className={`
+                  flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-105
+                  ${
+                    paymentMethod === "mpesa"
+                      ? "border-primary-plot bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 shadow-lg"
+                      : "border-gray-200 hover:border-gray-300 bg-gradient-to-br from-gray-50 to-blue-50/30"
+                  }
+                `}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="mpesa"
+                    checked={paymentMethod === "mpesa"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`p-3 rounded-xl mr-4 ${
+                      paymentMethod === "mpesa" ? "bg-green-100" : "bg-gray-100"
+                    }`}
+                  >
+                    <TbDeviceMobile
+                      className={
+                        paymentMethod === "mpesa"
+                          ? "text-green-600"
+                          : "text-gray-400"
+                      }
+                      size={24}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-bold text-gray-900">
+                      M-Pesa Mobile Money
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Pay using your M-Pesa account instantly
+                    </div>
+                  </div>
+                  {paymentMethod === "mpesa" && (
+                    <div className="w-6 h-6 bg-primary-plot rounded-full flex items-center justify-center">
+                      <TbCheck className="text-white" size={14} />
+                    </div>
+                  )}
+                </label>
+
+                {/* Card Option */}
+                <label
+                  className={`
+                  flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-105
+                  ${
+                    paymentMethod === "card"
+                      ? "border-primary-plot bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 shadow-lg"
+                      : "border-gray-200 hover:border-gray-300 bg-gradient-to-br from-gray-50 to-blue-50/30"
+                  }
+                `}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="card"
+                    checked={paymentMethod === "card"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`p-3 rounded-xl mr-4 ${
+                      paymentMethod === "card" ? "bg-blue-100" : "bg-gray-100"
+                    }`}
+                  >
+                    <TbCreditCard
+                      className={
+                        paymentMethod === "card"
+                          ? "text-blue-600"
+                          : "text-gray-400"
+                      }
+                      size={24}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-bold text-gray-900">
+                      Credit/Debit Card
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Pay using your bank card securely
+                    </div>
+                  </div>
+                  {paymentMethod === "card" && (
+                    <div className="w-6 h-6 bg-primary-plot rounded-full flex items-center justify-center">
+                      <TbCheck className="text-white" size={14} />
+                    </div>
+                  )}
+                </label>
+              </div>
             </div>
           </div>
 
           {/* Payment Details */}
           {paymentMethod === "mpesa" && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
+              <label className="block text-sm font-bold text-green-800 mb-3">
                 M-Pesa Phone Number
               </label>
               <input
@@ -484,18 +570,18 @@ const PaymentModal = ({ isOpen, onClose, onPaymentSuccess }) => {
                 value={mpesaPhone}
                 onChange={(e) => setMpesaPhone(e.target.value)}
                 placeholder="0712345678"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm font-semibold"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                You will receive an STK push to complete the payment
+              <p className="text-xs text-green-700 mt-2 font-medium">
+                💚 You will receive an STK push to complete the payment
               </p>
             </div>
           )}
 
           {paymentMethod === "card" && (
-            <div className="space-y-4">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-blue-800 mb-3">
                   Card Holder Name
                 </label>
                 <input
@@ -508,12 +594,12 @@ const PaymentModal = ({ isOpen, onClose, onPaymentSuccess }) => {
                     })
                   }
                   placeholder="John Doe"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm font-semibold"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-blue-800 mb-3">
                   Card Number
                 </label>
                 <input
@@ -527,13 +613,13 @@ const PaymentModal = ({ isOpen, onClose, onPaymentSuccess }) => {
                   }
                   placeholder="1234 5678 9012 3456"
                   maxLength={19}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm font-semibold"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-bold text-blue-800 mb-3">
                     Expiry Date
                   </label>
                   <input
@@ -547,11 +633,11 @@ const PaymentModal = ({ isOpen, onClose, onPaymentSuccess }) => {
                     }
                     placeholder="MM/YY"
                     maxLength={5}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm font-semibold"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-bold text-blue-800 mb-3">
                     CVV
                   </label>
                   <input
@@ -565,7 +651,7 @@ const PaymentModal = ({ isOpen, onClose, onPaymentSuccess }) => {
                     }
                     placeholder="123"
                     maxLength={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm font-semibold"
                   />
                 </div>
               </div>
@@ -576,35 +662,55 @@ const PaymentModal = ({ isOpen, onClose, onPaymentSuccess }) => {
           {paymentStatus && (
             <div
               className={`
-              p-4 rounded-lg border
+              p-6 rounded-xl border-2 relative overflow-hidden
               ${
                 paymentStatus.success
-                  ? "bg-green-50 border-green-200 text-green-800"
-                  : "bg-red-50 border-red-200 text-red-800"
+                  ? "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"
+                  : "bg-gradient-to-br from-red-50 to-pink-50 border-red-200"
               }
             `}
             >
-              <div className="flex items-center">
-                {paymentStatus.success ? (
-                  <TbCheck className="mr-2" size={20} />
-                ) : (
-                  <TbAlertTriangle className="mr-2" size={20} />
-                )}
-                <span className="font-medium">{paymentStatus.message}</span>
+              <div
+                className={`absolute top-0 right-0 w-20 h-20 rounded-full -mr-5 -mt-5 blur-lg ${
+                  paymentStatus.success ? "bg-green-500/10" : "bg-red-500/10"
+                }`}
+              ></div>
+
+              <div className="relative z-10 flex items-center space-x-3">
+                <div
+                  className={`p-3 rounded-xl ${
+                    paymentStatus.success ? "bg-green-100" : "bg-red-100"
+                  }`}
+                >
+                  {paymentStatus.success ? (
+                    <TbCheck className="text-green-600" size={20} />
+                  ) : (
+                    <TbAlertTriangle className="text-red-600" size={20} />
+                  )}
+                </div>
+                <div>
+                  <span
+                    className={`font-bold ${
+                      paymentStatus.success ? "text-green-800" : "text-red-800"
+                    }`}
+                  >
+                    {paymentStatus.message}
+                  </span>
+                  {paymentStatus.success && paymentStatus.transactionId && (
+                    <p className="text-sm text-green-700 mt-1 font-medium">
+                      Transaction ID: {paymentStatus.transactionId}
+                    </p>
+                  )}
+                </div>
               </div>
-              {paymentStatus.success && paymentStatus.transactionId && (
-                <p className="text-sm mt-2">
-                  Transaction ID: {paymentStatus.transactionId}
-                </p>
-              )}
             </div>
           )}
 
           {/* Action Buttons */}
-          <div className="flex space-x-3 pt-4">
+          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-4">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              className="flex-1 px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-bold shadow-sm hover:shadow-md"
             >
               Cancel
             </button>
@@ -613,15 +719,18 @@ const PaymentModal = ({ isOpen, onClose, onPaymentSuccess }) => {
               disabled={
                 loading || selectedMonths.length === 0 || paymentStatus?.success
               }
-              className="flex-1 bg-primary-plot text-white px-4 py-2 rounded-lg hover:bg-primary-plot/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center"
+              className="flex-1 bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-4 rounded-xl hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-bold flex items-center justify-center space-x-2 transform hover:scale-105 disabled:transform-none shadow-lg"
             >
               {loading ? (
                 <>
-                  <TbLoader2 className="animate-spin mr-2" size={20} />
-                  Processing...
+                  <TbLoader2 className="animate-spin" size={20} />
+                  <span>Processing Payment...</span>
                 </>
               ) : (
-                `Pay KSH ${calculateTotal().toLocaleString()}`
+                <>
+                  <TbCoins size={20} />
+                  <span>Pay KES {calculateTotal().toLocaleString()}</span>
+                </>
               )}
             </button>
           </div>

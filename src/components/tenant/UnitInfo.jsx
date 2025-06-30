@@ -14,6 +14,11 @@ import {
   TbBarbell,
   TbGardenCart,
   TbHomeDot,
+  TbPhone,
+  TbUser,
+  TbBuildingSkyscraper,
+  TbSparkles,
+  TbChecks,
 } from "react-icons/tb";
 
 const UnitInfo = () => {
@@ -23,14 +28,20 @@ const UnitInfo = () => {
 
   if (!unit || !property) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-200 text-center">
-        <TbHome className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
-          No Unit Assigned
-        </h3>
-        <p className="text-gray-500">
-          You haven't been assigned to a unit yet. Please contact your landlord.
-        </p>
+      <div className="h-[calc(100vh-5rem)] bg-white border rounded-2xl shadow-lg flex items-center justify-center ">
+        <div className=" p-8  text-center relative overflow-hidden max-w-lg w-full">
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gray-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+
+          <TbHomeDot className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-base lg:text-lg font-semibold text-gray-500 mb-2">
+            No Unit Assigned !
+          </h3>
+          <p className="text-gray-500">
+            You haven't been assigned to a unit yet. Please contact your
+            property landlord.
+          </p>
+        </div>
       </div>
     );
   }
@@ -50,220 +61,399 @@ const UnitInfo = () => {
 
   return (
     <div className="space-y-6">
-      {/* Unit Header */}
-      <div className="bg-gradient-to-r from-primary-plot to-primary-600 rounded-lg p-6 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">{unit.name}</h1>
-            <p className="text-primary-100 flex items-center">
-              <TbMapPin className="h-4 w-4 mr-1" />
-              {property.address}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-primary-100 text-sm">Monthly Rent</p>
-            <p className="text-2xl font-bold">
-              KSH {unit.rent_amount.toLocaleString()}
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Unit Header - Enhanced with premium styling */}
+      <div className="bg-gradient-to-br from-primary-plot via-primary-plot to-secondary-plot rounded-2xl p-8 text-white relative overflow-hidden shadow-xl">
+        {/* Decorative elements */}
+        <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-white/10 blur-xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 h-32 w-32 rounded-full bg-white/5 blur-xl pointer-events-none"></div>
 
-      {/* Unit Details Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Property Information */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Basic Info */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold text-secondary-plot mb-4">
-              Property Information
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Property Name
-                </label>
-                <p className="text-base font-medium text-gray-900">
-                  {property.name}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Unit Name
-                </label>
-                <p className="text-base font-medium text-gray-900">
-                  {unit.name}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Address
-                </label>
-                <p className="text-base text-gray-900">{property.address}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Status
-                </label>
-                <span
-                  className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                    unit.status === "occupied"
-                      ? "bg-success-plot/10 text-success-plot"
-                      : unit.status === "available"
-                      ? "bg-info-plot/10 text-info-plot"
-                      : "bg-warning-plot/10 text-warning-plot"
-                  }`}
-                >
-                  {unit.status.charAt(0).toUpperCase() + unit.status.slice(1)}
-                </span>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Monthly Rent
-                </label>
-                <p className="text-base font-semibold text-gray-900">
-                  KSH {unit.rent_amount.toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Move-in Date
-                </label>
-                <p className="text-base text-gray-900">
-                  {new Date(unit.created_at).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-          </div>
+        {/* Pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        ></div>
 
-          {/* Property Description */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-secondary-plot mb-3">
-              About This Property
-            </h3>
-            <p className="text-gray-600 leading-relaxed">
-              {property.description}
-            </p>
-          </div>
-
-          {/* Amenities */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-secondary-plot mb-4">
-              Amenities
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {amenities.map((amenity, index) => {
-                const IconComponent = amenityIcons[amenity] || TbBulb;
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg"
-                  >
-                    <IconComponent className="h-5 w-5 text-primary-plot" />
-                    <span className="text-sm font-medium text-gray-700">
-                      {amenity}
-                    </span>
+        <div className="relative z-10">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="mb-6 md:mb-0">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm border border-white/30">
+                  <TbBuildingSkyscraper className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold">
+                    {unit.name}
+                  </h1>
+                  <div className="flex items-center mt-1 text-white/90">
+                    <TbMapPin className="h-4 w-4 mr-1" />
+                    <span className="text-sm">{property.address}</span>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+                </div>
+              </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Quick Actions */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-secondary-plot mb-4">
-              Quick Actions
-            </h3>
-            <div className="space-y-3">
-              <Link
-                to="/tenant/payments"
-                className="w-full bg-primary-plot text-white px-4 py-3 rounded-lg hover:bg-primary-plot/90 transition-colors text-center font-medium flex items-center justify-center"
-              >
-                <TbCurrencyDollar className="h-5 w-5 mr-2" />
-                Make Payment
-              </Link>
-              <Link
-                to="/tenant/maintenance"
-                className="w-full bg-warning-plot text-white px-4 py-3 rounded-lg hover:bg-warning-plot/90 transition-colors text-center font-medium flex items-center justify-center"
-              >
-                <TbHome className="h-5 w-5 mr-2" />
-                Report Issue
-              </Link>
-            </div>
-          </div>
-
-          {/* Contact Information */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-secondary-plot mb-4">
-              Need Help?
-            </h3>
-            <div className="space-y-3">
-              <div className="text-sm">
-                <p className="text-gray-500">For urgent issues, contact:</p>
-                <p className="font-medium text-gray-900">
-                  Emergency: +254 700 000 000
-                </p>
-              </div>
-              <div className="text-sm">
-                <p className="text-gray-500">Property Manager:</p>
-                <p className="font-medium text-gray-900">John Doe</p>
-                <p className="text-gray-600">+254 712 345 678</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Important Dates */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-secondary-plot mb-4">
-              Important Dates
-            </h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Rent Due Date</span>
-                <span className="text-sm font-medium text-gray-900">
-                  15th of each month
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Lease Start</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {new Date(unit.created_at).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Last Updated</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {new Date(unit.updated_at).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Unit Images */}
-      {unit.image_urls && unit.image_urls.length > 0 && (
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-secondary-plot mb-4">
-            Unit Gallery
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {unit.image_urls.map((url, index) => (
-              <div
-                key={index}
-                className="aspect-w-16 aspect-h-12 bg-gray-100 rounded-lg overflow-hidden"
-              >
-                <div className="flex items-center justify-center h-32 bg-gray-100 rounded-lg">
-                  <TbHome className="h-8 w-8 text-gray-400" />
-                  <span className="ml-2 text-sm text-gray-500">
-                    Image {index + 1}
+              {/* Status badge */}
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center px-3 py-1.5 rounded-full bg-green-500/30 border border-green-400/50 backdrop-blur-sm">
+                  <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse mr-2"></div>
+                  <span className="text-xs font-medium text-green-100">
+                    {unit.status?.charAt(0).toUpperCase() +
+                      unit.status?.slice(1) || "Occupied"}
                   </span>
                 </div>
               </div>
-            ))}
+            </div>
+
+            <div className="text-center md:text-right">
+              <p className="text-white/70 text-sm mb-1">Monthly Rent</p>
+              <div className="flex items-center justify-center md:justify-end space-x-2">
+                <TbCurrencyDollar className="h-6 w-6 text-white/80" />
+                <p className="text-3xl md:text-4xl font-bold">
+                  {unit.rent_amount?.toLocaleString() || "0"}
+                </p>
+              </div>
+              <p className="text-white/60 text-xs mt-1">KES per month</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Unit Details Grid - Enhanced styling */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Property Information */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Basic Info - Enhanced */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
+                  <TbHome className="text-blue-600" size={24} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-secondary-plot">
+                    Property Information
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Details about your unit and property
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-gradient-to-br from-gray-50 to-blue-50/50 rounded-xl border border-gray-100">
+                  <label className="text-sm font-semibold text-gray-600 mb-2 block">
+                    Property Name
+                  </label>
+                  <p className="text-base font-bold text-gray-900">
+                    {property.name}
+                  </p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-gray-50 to-blue-50/50 rounded-xl border border-gray-100">
+                  <label className="text-sm font-semibold text-gray-600 mb-2 block">
+                    Unit Name
+                  </label>
+                  <p className="text-base font-bold text-gray-900">
+                    {unit.name}
+                  </p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-gray-50 to-blue-50/50 rounded-xl border border-gray-100">
+                  <label className="text-sm font-semibold text-gray-600 mb-2 block">
+                    Address
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <TbMapPin className="h-4 w-4 text-gray-400" />
+                    <p className="text-base text-gray-900">
+                      {property.address}
+                    </p>
+                  </div>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-gray-50 to-blue-50/50 rounded-xl border border-gray-100">
+                  <label className="text-sm font-semibold text-gray-600 mb-2 block">
+                    Status
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <TbChecks className="h-4 w-4 text-success-plot" />
+                    <span
+                      className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
+                        unit.status === "occupied"
+                          ? "bg-success-plot/10 text-success-plot border border-success-plot/30"
+                          : unit.status === "available"
+                          ? "bg-info-plot/10 text-info-plot border border-info-plot/30"
+                          : "bg-warning-plot/10 text-warning-plot border border-warning-plot/30"
+                      }`}
+                    >
+                      {unit.status?.charAt(0).toUpperCase() +
+                        unit.status?.slice(1) || "Occupied"}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-gray-50 to-green-50/50 rounded-xl border border-gray-100">
+                  <label className="text-sm font-semibold text-gray-600 mb-2 block">
+                    Monthly Rent
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <TbCurrencyDollar className="h-4 w-4 text-green-600" />
+                    <p className="text-lg font-bold text-gray-900">
+                      KES {unit.rent_amount?.toLocaleString() || "0"}
+                    </p>
+                  </div>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-gray-50 to-purple-50/50 rounded-xl border border-gray-100">
+                  <label className="text-sm font-semibold text-gray-600 mb-2 block">
+                    Move-in Date
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <TbCalendar className="h-4 w-4 text-purple-600" />
+                    <p className="text-base text-gray-900">
+                      {new Date(unit.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Property Description - Enhanced */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="p-3 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl">
+                  <TbSparkles className="text-purple-600" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-secondary-plot">
+                    About This Property
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Property description and features
+                  </p>
+                </div>
+              </div>
+              <div className="p-4 bg-gradient-to-br from-purple-50/50 to-pink-50/30 rounded-xl border border-purple-100/50">
+                <p className="text-gray-700 leading-relaxed">
+                  {property.description}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Amenities - Enhanced */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl">
+                  <TbSparkles className="text-green-600" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-secondary-plot">
+                    Amenities & Features
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Available facilities and services
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {amenities.map((amenity, index) => {
+                  const IconComponent = amenityIcons[amenity] || TbBulb;
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-3 p-4 bg-gradient-to-br from-green-50 to-emerald-50/50 rounded-xl border border-green-100/50 hover:shadow-md transition-all duration-200 hover:scale-105"
+                    >
+                      <div className="p-2 bg-white rounded-lg shadow-sm">
+                        <IconComponent className="h-5 w-5 text-green-600" />
+                      </div>
+                      <span className="text-sm font-semibold text-gray-700">
+                        {amenity}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar - Enhanced */}
+        <div className="space-y-6">
+          {/* Quick Actions - Enhanced */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-orange-100 to-red-100 rounded-xl">
+                  <TbSparkles className="text-orange-600" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-secondary-plot">
+                    Quick Actions
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Common tasks and services
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <Link
+                  to="/tenant/payments"
+                  className="group w-full bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-200 font-semibold flex items-center justify-center space-x-3 hover:scale-105"
+                >
+                  <TbCurrencyDollar className="h-5 w-5" />
+                  <span>Make Payment</span>
+                </Link>
+                <Link
+                  to="/tenant/maintenance"
+                  className="group w-full bg-gradient-to-r from-warning-plot to-orange-500 text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-200 font-semibold flex items-center justify-center space-x-3 hover:scale-105"
+                >
+                  <TbHome className="h-5 w-5" />
+                  <span>Report Issue</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Information - Enhanced */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
+                  <TbPhone className="text-blue-600" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-secondary-plot">
+                    Need Help?
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Contact information for support
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="p-4 bg-gradient-to-br from-red-50 to-pink-50/50 rounded-xl border border-red-100">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <TbPhone className="h-4 w-4 text-red-600" />
+                    <p className="text-sm font-semibold text-red-700">
+                      Emergency Contact
+                    </p>
+                  </div>
+                  <p className="font-bold text-gray-900">+254 700 000 000</p>
+                </div>
+
+                <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-xl border border-blue-100">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <TbUser className="h-4 w-4 text-blue-600" />
+                    <p className="text-sm font-semibold text-blue-700">
+                      Property Manager
+                    </p>
+                  </div>
+                  <p className="font-bold text-gray-900 mb-1">John Doe</p>
+                  <p className="text-gray-600 text-sm">+254 712 345 678</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Important Dates - Enhanced */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl">
+                  <TbCalendar className="text-purple-600" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-secondary-plot">
+                    Important Dates
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Key rental information and deadlines
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50/50 to-pink-50/30 rounded-lg border border-purple-100/50">
+                  <span className="text-sm font-semibold text-gray-700">
+                    Rent Due Date
+                  </span>
+                  <span className="text-sm font-bold text-gray-900">
+                    15th of each month
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50/50 to-indigo-50/30 rounded-lg border border-blue-100/50">
+                  <span className="text-sm font-semibold text-gray-700">
+                    Lease Start
+                  </span>
+                  <span className="text-sm font-bold text-gray-900">
+                    {new Date(unit.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50/50 to-emerald-50/30 rounded-lg border border-green-100/50">
+                  <span className="text-sm font-semibold text-gray-700">
+                    Last Updated
+                  </span>
+                  <span className="text-sm font-bold text-gray-900">
+                    {new Date(unit.updated_at).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Unit Images - Enhanced */}
+      {unit.image_urls && unit.image_urls.length > 0 && (
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+
+          <div className="relative z-10">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-3 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl">
+                <TbHome className="text-indigo-600" size={24} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-secondary-plot">
+                  Unit Gallery
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Photos and images of your unit
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {unit.image_urls.map((url, index) => (
+                <div
+                  key={index}
+                  className="aspect-w-16 aspect-h-12 bg-gradient-to-br from-gray-100 to-indigo-100/50 rounded-xl overflow-hidden border border-gray-200 hover:shadow-md transition-all duration-200 hover:scale-105"
+                >
+                  <div className="flex items-center justify-center h-32 bg-gradient-to-br from-gray-100 to-indigo-100/50 rounded-xl">
+                    <div className="text-center">
+                      <TbHome className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                      <span className="text-sm text-gray-500 font-medium">
+                        Image {index + 1}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

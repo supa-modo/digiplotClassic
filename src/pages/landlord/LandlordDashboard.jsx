@@ -21,6 +21,10 @@ import {
   TbPhone,
   TbMail,
   TbEye,
+  TbSparkles,
+  TbTrendingUp,
+  TbCash,
+  TbHomeDot,
 } from "react-icons/tb";
 
 const LandlordDashboard = () => {
@@ -143,28 +147,28 @@ const LandlordDashboard = () => {
       title: "Add Property",
       description: "Create a new property listing",
       icon: TbBuilding,
-      color: "bg-blue-500",
+      color: "from-blue-500 to-indigo-600",
       href: "/landlord/properties?action=new",
     },
     {
       title: "Add Tenant",
       description: "Register a new tenant",
       icon: TbUsers,
-      color: "bg-green-500",
+      color: "from-green-500 to-emerald-600",
       href: "/landlord/tenants?action=new",
     },
     {
       title: "View Reports",
       description: "Financial and occupancy reports",
       icon: TbChartBar,
-      color: "bg-purple-500",
+      color: "from-purple-500 to-violet-600",
       href: "/landlord/reports",
     },
     {
       title: "Maintenance",
       description: "Manage maintenance requests",
       icon: TbTool,
-      color: "bg-orange-500",
+      color: "from-orange-500 to-red-600",
       href: "/landlord/maintenance",
     },
   ];
@@ -172,217 +176,326 @@ const LandlordDashboard = () => {
   return (
     <LandlordLayout>
       <div className="space-y-6">
-        {/* Page Header */}
-        <div>
-          <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
-            Dashboard Overview
-          </h1>
-          <p className="text-gray-600 mt-1 text-sm lg:text-base">
-            Monitor your properties, tenants, and revenue performance
-          </p>
+        {/* Page Header - Enhanced */}
+        <div className="bg-gradient-to-br from-primary-plot/5 via-secondary-plot/5 to-primary-plot/5 rounded-2xl p-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary-plot/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary-plot/5 rounded-full -ml-5 -mb-5 blur-lg"></div>
+
+          <div className="relative z-10 flex items-center space-x-4">
+            <div className="p-4 bg-gradient-to-br from-primary-plot/20 to-secondary-plot/20 rounded-xl backdrop-blur-sm border border-white/20">
+              <TbSparkles className="h-8 w-8 text-primary-plot" />
+            </div>
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
+                Dashboard Overview
+              </h1>
+              <p className="text-gray-600 mt-1 text-sm lg:text-base">
+                Monitor your properties, tenants, and revenue performance
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
+        {/* Stats Grid - Enhanced */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           {/* Total Properties */}
-          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
-            <div className="flex items-center justify-between">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full -mr-5 -mt-5 blur-lg group-hover:bg-blue-500/10 transition-colors"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
+                  <TbBuilding className="h-6 w-6 text-blue-600" />
+                </div>
+                <div className="flex items-center px-2 py-1 bg-blue-50 rounded-full">
+                  <TbTrendingUp className="h-3 w-3 text-blue-600 mr-1" />
+                  <span className="text-xs font-semibold text-blue-600">
+                    +5%
+                  </span>
+                </div>
+              </div>
+
               <div>
-                <p className="text-xs lg:text-sm font-medium text-gray-600">
+                <p className="text-sm font-semibold text-gray-600 mb-1">
                   Properties
                 </p>
-                <p className="text-lg lg:text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-2xl lg:text-3xl font-bold text-gray-900">
                   {dashboardData.stats.totalProperties || 0}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {dashboardData.stats.totalUnits || 0} units
+                <p className="text-xs text-gray-500 mt-1 flex items-center">
+                  <TbHomeDot className="h-3 w-3 mr-1" />
+                  {dashboardData.stats.totalUnits || 0} total units
                 </p>
-              </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <TbBuilding className="h-6 w-6 text-blue-600" />
               </div>
             </div>
           </div>
 
           {/* Total Tenants */}
-          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
-            <div className="flex items-center justify-between">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-green-500/5 rounded-full -mr-5 -mt-5 blur-lg group-hover:bg-green-500/10 transition-colors"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl">
+                  <TbUsers className="h-6 w-6 text-green-600" />
+                </div>
+                <div className="flex items-center px-2 py-1 bg-green-50 rounded-full">
+                  <span className="text-xs font-semibold text-green-600">
+                    {dashboardData.stats.occupancyRate?.toFixed(1) || 0}%
+                  </span>
+                </div>
+              </div>
+
               <div>
-                <p className="text-xs lg:text-sm font-medium text-gray-600">
+                <p className="text-sm font-semibold text-gray-600 mb-1">
                   Tenants
                 </p>
-                <p className="text-lg lg:text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-2xl lg:text-3xl font-bold text-gray-900">
                   {dashboardData.stats.totalTenants || 0}
                 </p>
-                <p className="text-xs text-green-600 mt-1">
-                  {dashboardData.stats.occupancyRate?.toFixed(1) || 0}%
-                  occupancy
+                <p className="text-xs text-green-600 mt-1 font-medium">
+                  Occupancy Rate
                 </p>
-              </div>
-              <div className="p-2 lg:p-3 bg-green-100 rounded-lg">
-                <TbUsers className="h-4 w-4 lg:h-6 lg:w-6 text-green-600" />
               </div>
             </div>
           </div>
 
           {/* Monthly Revenue */}
-          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
-            <div className="flex items-center justify-between">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-yellow-500/5 rounded-full -mr-5 -mt-5 blur-lg group-hover:bg-yellow-500/10 transition-colors"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-xl">
+                  <TbCash className="h-6 w-6 text-yellow-600" />
+                </div>
+                <div className="flex items-center px-2 py-1 bg-green-50 rounded-full">
+                  <TbArrowUp className="h-3 w-3 text-green-600 mr-1" />
+                  <span className="text-xs font-semibold text-green-600">
+                    +12%
+                  </span>
+                </div>
+              </div>
+
               <div>
-                <p className="text-xs lg:text-sm font-medium text-gray-600">
+                <p className="text-sm font-semibold text-gray-600 mb-1">
                   Revenue
                 </p>
-                <p className="text-lg lg:text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-lg lg:text-xl font-bold text-gray-900">
                   {formatCurrency(dashboardData.stats.monthlyRevenue || 0)}
                 </p>
-                <p className="text-xs text-gray-500 mt-1 flex items-center">
-                  <TbArrowUp className="h-3 w-3 text-green-500 mr-1" />
-                  +12%
-                </p>
-              </div>
-              <div className="p-2 lg:p-3 bg-yellow-100 rounded-lg">
-                <TbCreditCard className="h-4 w-4 lg:h-6 lg:w-6 text-yellow-600" />
+                <p className="text-xs text-gray-500 mt-1">This month</p>
               </div>
             </div>
           </div>
 
           {/* Pending Maintenance */}
-          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
-            <div className="flex items-center justify-between">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full -mr-5 -mt-5 blur-lg group-hover:bg-red-500/10 transition-colors"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-gradient-to-br from-red-100 to-pink-100 rounded-xl">
+                  <TbTool className="h-6 w-6 text-red-600" />
+                </div>
+                {dashboardData.stats.pendingMaintenance > 0 && (
+                  <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                )}
+              </div>
+
               <div>
-                <p className="text-xs lg:text-sm font-medium text-gray-600">
+                <p className="text-sm font-semibold text-gray-600 mb-1">
                   Pending
                 </p>
-                <p className="text-lg lg:text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-2xl lg:text-3xl font-bold text-gray-900">
                   {dashboardData.stats.pendingMaintenance || 0}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">Maintenance</p>
-              </div>
-              <div className="p-2 lg:p-3 bg-red-100 rounded-lg">
-                <TbTool className="h-4 w-4 lg:h-6 lg:w-6 text-red-600" />
+                <p className="text-xs text-gray-500 mt-1">
+                  Maintenance requests
+                </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-          {/* Quick Actions */}
-          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
-            <h2 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">
-              Quick Actions
-            </h2>
-            <div className="grid grid-cols-2 gap-3 lg:gap-4">
-              {quickActions.map((action, index) => {
-                const IconComponent = action.icon;
-                return (
-                  <a
-                    key={index}
-                    href={action.href}
-                    className="group p-3 lg:p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200"
-                  >
-                    <div
-                      className={`w-8 h-8 lg:w-12 lg:h-12 ${action.color} rounded-lg flex items-center justify-center mb-2 lg:mb-3 group-hover:scale-110 transition-transform`}
-                    >
-                      <IconComponent className="h-4 w-4 lg:h-6 lg:w-6 text-white" />
-                    </div>
-                    <h3 className="font-medium text-gray-900 text-xs lg:text-sm">
-                      {action.title}
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                      {action.description}
-                    </p>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
+        {/* Main Content Grid - Enhanced */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Quick Actions - Enhanced */}
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
 
-          {/* Recent Activity */}
-          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
-            <h2 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">
-              Recent Activity
-            </h2>
-            <div className="space-y-3 lg:space-y-4">
-              {getRecentActivity().length > 0 ? (
-                getRecentActivity().map((activity, index) => (
-                  <div key={index} className="flex items-start space-x-3">
-                    <div
-                      className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                        activity.color === "success"
-                          ? "bg-green-500"
-                          : activity.color === "warning"
-                          ? "bg-yellow-500"
-                          : "bg-blue-500"
-                      }`}
-                    ></div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs lg:text-sm text-gray-900">
-                        {activity.message}
-                      </p>
-                      {activity.amount && (
-                        <p className="text-xs lg:text-sm font-medium text-green-600">
-                          {formatCurrency(activity.amount)}
-                        </p>
-                      )}
-                      <p className="text-xs text-gray-500 mt-1">
-                        {new Date(activity.time).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-6 lg:py-8">
-                  <TbCalendar className="mx-auto h-8 w-8 lg:h-12 lg:w-12 text-gray-300" />
-                  <p className="mt-2 text-xs lg:text-sm text-gray-500">
-                    No recent activity
+            <div className="relative z-10">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl">
+                  <TbSparkles className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">
+                    Quick Actions
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Frequently used operations
                   </p>
                 </div>
-              )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {quickActions.map((action, index) => {
+                  const IconComponent = action.icon;
+                  return (
+                    <a
+                      key={index}
+                      href={action.href}
+                      className="group p-4 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 hover:scale-105"
+                    >
+                      <div
+                        className={`w-12 h-12 bg-gradient-to-br ${action.color} rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg`}
+                      >
+                        <IconComponent className="h-6 w-6 text-white" />
+                      </div>
+                      <h3 className="font-bold text-gray-900 text-sm mb-1">
+                        {action.title}
+                      </h3>
+                      <p className="text-xs text-gray-500 line-clamp-2">
+                        {action.description}
+                      </p>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Activity - Enhanced */}
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl">
+                  <TbCalendar className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">
+                    Recent Activity
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Latest updates and changes
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {getRecentActivity().length > 0 ? (
+                  getRecentActivity().map((activity, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start space-x-4 p-3 bg-gradient-to-r from-gray-50 to-blue-50/30 rounded-xl border border-gray-100"
+                    >
+                      <div
+                        className={`w-3 h-3 rounded-full mt-2 flex-shrink-0 ${
+                          activity.color === "success"
+                            ? "bg-green-500"
+                            : activity.color === "warning"
+                            ? "bg-yellow-500"
+                            : "bg-blue-500"
+                        }`}
+                      ></div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-900">
+                          {activity.message}
+                        </p>
+                        {activity.amount && (
+                          <p className="text-sm font-bold text-green-600">
+                            {formatCurrency(activity.amount)}
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-500 mt-1">
+                          {new Date(activity.time).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="p-4 bg-gray-100 rounded-2xl inline-flex">
+                      <TbCalendar className="h-12 w-12 text-gray-300" />
+                    </div>
+                    <p className="mt-3 text-sm text-gray-500 font-medium">
+                      No recent activity
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Activity will appear here as it happens
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Properties Overview */}
+        {/* Properties Overview - Enhanced */}
         {dashboardData.properties.length > 0 && (
-          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
-            <div className="flex items-center justify-between mb-4 lg:mb-6">
-              <h2 className="text-base lg:text-lg font-semibold text-gray-900">
-                Properties Overview
-              </h2>
-              <a
-                href="/landlord/properties"
-                className="text-primary-plot hover:text-primary-plot/80 text-xs lg:text-sm font-medium"
-              >
-                View all →
-              </a>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4">
-              {dashboardData.properties.slice(0, 3).map((property) => (
-                <div
-                  key={property.id}
-                  className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:border-gray-300 transition-colors"
-                >
-                  <h3 className="font-medium text-gray-900 mb-2 text-sm lg:text-base">
-                    {property.name}
-                  </h3>
-                  <div className="flex items-center text-xs lg:text-sm text-gray-500 mb-2">
-                    <TbMapPin className="h-3 w-3 lg:h-4 lg:w-4 mr-1 flex-shrink-0" />
-                    <span className="truncate">{property.address}</span>
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl">
+                    <TbBuilding className="h-6 w-6 text-green-600" />
                   </div>
-                  <div className="flex items-center justify-between text-xs lg:text-sm">
-                    <span className="text-gray-600">
-                      {property.units?.length || 0} units
-                    </span>
-                    <span className="font-medium text-gray-900">
-                      {property.units?.filter(
-                        (unit) => unit.status === "occupied"
-                      ).length || 0}{" "}
-                      occupied
-                    </span>
+                  <div>
+                    <h2 className="text-lg font-bold text-gray-900">
+                      Properties Overview
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      Your property portfolio at a glance
+                    </p>
                   </div>
                 </div>
-              ))}
+                <a
+                  href="/landlord/properties"
+                  className="flex items-center space-x-2 text-primary-plot hover:text-primary-plot/80 text-sm font-semibold px-4 py-2 bg-primary-plot/5 rounded-lg hover:bg-primary-plot/10 transition-all duration-200"
+                >
+                  <span>View all</span>
+                  <TbEye className="h-4 w-4" />
+                </a>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                {dashboardData.properties.slice(0, 3).map((property) => (
+                  <div
+                    key={property.id}
+                    className="border-2 border-gray-200 rounded-xl p-4 hover:border-primary-plot/30 hover:shadow-md transition-all duration-200 bg-gradient-to-br from-gray-50 to-blue-50/30"
+                  >
+                    <h3 className="font-bold text-gray-900 mb-3 text-base">
+                      {property.name}
+                    </h3>
+                    <div className="flex items-center text-sm text-gray-500 mb-3">
+                      <TbMapPin className="h-4 w-4 mr-2 flex-shrink-0 text-gray-400" />
+                      <span className="truncate">{property.address}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="px-3 py-1 bg-blue-100 rounded-full">
+                          <span className="text-xs font-bold text-blue-700">
+                            {property.units?.length || 0} units
+                          </span>
+                        </div>
+                      </div>
+                      <div className="px-3 py-1 bg-green-100 rounded-full">
+                        <span className="text-xs font-bold text-green-700">
+                          {property.units?.filter(
+                            (unit) => unit.status === "occupied"
+                          ).length || 0}{" "}
+                          occupied
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}

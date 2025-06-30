@@ -51,59 +51,80 @@ const ConfirmationModal = ({
     const configs = {
       confirm: {
         icon: TbAlertCircle,
-        iconColor: "text-blue-500",
+        iconColor: "text-blue-600",
+        iconBg: "bg-gradient-to-br from-blue-100 to-indigo-100",
         headerColor: "text-blue-600",
-        primaryButtonColor: "bg-blue-600 hover:bg-blue-700",
+        primaryButtonColor:
+          "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700",
         defaultTitle: "Confirm Action",
         defaultConfirmText: "Confirm",
+        decorativeColor: "bg-blue-500/5",
       },
       delete: {
         icon: TbAlertTriangle,
-        iconColor: "text-red-500",
+        iconColor: "text-red-600",
+        iconBg: "bg-gradient-to-br from-red-100 to-pink-100",
         headerColor: "text-red-600",
-        primaryButtonColor: "bg-red-600 hover:bg-red-700",
+        primaryButtonColor:
+          "bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700",
         defaultTitle: "Confirm Deletion",
         defaultConfirmText: "Delete",
+        decorativeColor: "bg-red-500/5",
       },
       edit: {
         icon: TbEdit,
-        iconColor: "text-orange-500",
+        iconColor: "text-orange-600",
+        iconBg: "bg-gradient-to-br from-orange-100 to-yellow-100",
         headerColor: "text-orange-600",
-        primaryButtonColor: "bg-orange-600 hover:bg-orange-700",
+        primaryButtonColor:
+          "bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700",
         defaultTitle: "Confirm Edit",
         defaultConfirmText: "Save Changes",
+        decorativeColor: "bg-orange-500/5",
       },
       success: {
         icon: FiCheckCircle,
-        iconColor: "text-green-500",
+        iconColor: "text-green-600",
+        iconBg: "bg-gradient-to-br from-green-100 to-emerald-100",
         headerColor: "text-green-600",
-        primaryButtonColor: "bg-green-600 hover:bg-green-700",
+        primaryButtonColor:
+          "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700",
         defaultTitle: "Success",
         defaultConfirmText: "OK",
+        decorativeColor: "bg-green-500/5",
       },
       error: {
         icon: TbShieldX,
-        iconColor: "text-red-500",
+        iconColor: "text-red-600",
+        iconBg: "bg-gradient-to-br from-red-100 to-pink-100",
         headerColor: "text-red-600",
-        primaryButtonColor: "bg-red-600 hover:bg-red-700",
+        primaryButtonColor:
+          "bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700",
         defaultTitle: "Error",
         defaultConfirmText: "OK",
+        decorativeColor: "bg-red-500/5",
       },
       info: {
         icon: TbInfoCircle,
-        iconColor: "text-blue-500",
+        iconColor: "text-blue-600",
+        iconBg: "bg-gradient-to-br from-blue-100 to-cyan-100",
         headerColor: "text-blue-600",
-        primaryButtonColor: "bg-blue-600 hover:bg-blue-700",
+        primaryButtonColor:
+          "bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700",
         defaultTitle: "Information",
         defaultConfirmText: "OK",
+        decorativeColor: "bg-blue-500/5",
       },
       warning: {
         icon: TbExclamationMark,
-        iconColor: "text-yellow-500",
+        iconColor: "text-yellow-600",
+        iconBg: "bg-gradient-to-br from-yellow-100 to-orange-100",
         headerColor: "text-yellow-600",
-        primaryButtonColor: "bg-yellow-600 hover:bg-yellow-700",
+        primaryButtonColor:
+          "bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700",
         defaultTitle: "Warning",
         defaultConfirmText: "Proceed",
+        decorativeColor: "bg-yellow-500/5",
       },
     };
 
@@ -130,7 +151,7 @@ const ConfirmationModal = ({
           <>
             Are you sure you want to delete{" "}
             {itemName ? (
-              <span className="font-medium text-gray-900">"{itemName}"</span>
+              <span className="font-bold text-gray-900">"{itemName}"</span>
             ) : (
               "this item"
             )}
@@ -142,7 +163,7 @@ const ConfirmationModal = ({
           <>
             Are you sure you want to save changes to{" "}
             {itemName ? (
-              <span className="font-medium text-gray-900">"{itemName}"</span>
+              <span className="font-bold text-gray-900">"{itemName}"</span>
             ) : (
               "this item"
             )}
@@ -169,34 +190,47 @@ const ConfirmationModal = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-50 p-3.5"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={handleBackdropClick}
         >
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="bg-white rounded-xl shadow-lg max-w-lg w-full"
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full relative overflow-hidden border border-gray-100"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Decorative elements */}
+            <div
+              className={`absolute -top-20 -right-20 h-40 w-40 rounded-full ${config.decorativeColor} blur-xl pointer-events-none`}
+            ></div>
+            <div
+              className={`absolute bottom-0 left-0 h-32 w-32 rounded-full ${config.decorativeColor} blur-xl pointer-events-none`}
+            ></div>
+
             {/* Header */}
-            <div className="px-3 md:px-6 py-4">
+            <div className="relative z-10 px-6 py-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <IconComponent
-                    className={`block md:hidden h-5 w-5 ${config.iconColor} mr-1.5`}
-                  />
-                  <h3
-                    className={`text-base md:text-lg font-semibold ${config.headerColor}`}
-                  >
-                    {title || config.defaultTitle}
-                  </h3>
+                <div className="flex items-center space-x-4">
+                  <div className={`p-3 rounded-xl ${config.iconBg} shadow-sm`}>
+                    <IconComponent className={`h-6 w-6 ${config.iconColor}`} />
+                  </div>
+                  <div>
+                    <h3 className={`text-xl font-bold ${config.headerColor}`}>
+                      {title || config.defaultTitle}
+                    </h3>
+                    {isAutoClosing && (
+                      <p className="text-sm text-gray-500 mt-1">
+                        Auto-closing in {Math.ceil(autoCloseDelay / 1000)}s...
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <button
                   onClick={onClose}
                   disabled={isLoading}
-                  className="p-1 text-gray-400 hover:text-gray-600 rounded disabled:opacity-50 transition-colors"
+                  className="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 disabled:opacity-50 transition-all duration-200"
                 >
                   <TbX className="h-5 w-5" />
                 </button>
@@ -204,63 +238,79 @@ const ConfirmationModal = ({
             </div>
 
             {/* Content */}
-            <div className="px-6">
-              <div className="text-center mb-4">
-                <IconComponent
-                  className={`hidden md:block h-12 w-12 ${config.iconColor} mx-auto mb-3`}
-                />
-
-                <div className="text-gray-700 text-sm md:text-[0.95rem]">
-                  {message || getDefaultMessage()}
+            <div className="relative z-10 px-6 py-6">
+              {/* Large icon for desktop */}
+              <div className="hidden md:flex justify-center mb-6">
+                <div className={`p-4 rounded-2xl ${config.iconBg} shadow-lg`}>
+                  <IconComponent className={`h-12 w-12 ${config.iconColor}`} />
                 </div>
+              </div>
 
-                {(type === "delete" || type === "warning") && (
-                  <p className="text-[0.78rem] md:text-sm text-gray-500 mt-2">
-                    This action cannot be undone.
-                  </p>
+              <div className="text-center">
+                <p className="text-gray-700 text-lg leading-relaxed">
+                  {message || getDefaultMessage()}
+                </p>
+
+                {type === "delete" && (
+                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+                    <div className="flex items-center justify-center space-x-2 text-red-700">
+                      <TbAlertTriangle className="h-4 w-4" />
+                      <span className="text-sm font-semibold">
+                        This action cannot be undone
+                      </span>
+                    </div>
+                  </div>
                 )}
-
-                {type === "error" && (
-                  <p className="text-[0.78rem] md:text-sm text-gray-500 mt-2">
-                    Please try again or contact support if the problem persists.
-                  </p>
-                )}
-
-                {autoClose &&
-                  isAutoClosing &&
-                  (type === "success" || type === "info") && (
-                    <p className="text-[0.78rem] md:text-sm text-gray-500 mt-2">
-                      This message will close automatically...
-                    </p>
-                  )}
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="px-3.5 md:px-4 pt-3 lg:px-6 pb-4 md:pb-[1.3rem] flex justify-center gap-1.5 md:gap-3">
-              {shouldShowCancel && (
+            {/* Actions */}
+            <div className="relative z-10 px-6 py-6 bg-gray-50/50 border-t border-gray-100">
+              <div className="flex flex-col-reverse sm:flex-row sm:justify-end space-y-2 space-y-reverse sm:space-y-0 sm:space-x-3">
+                {shouldShowCancel && (
+                  <button
+                    onClick={onClose}
+                    disabled={isLoading}
+                    className="w-full sm:w-auto px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 transition-all duration-200 font-semibold shadow-sm hover:shadow-md"
+                  >
+                    {cancelButtonText}
+                  </button>
+                )}
                 <button
-                  onClick={onClose}
+                  onClick={onConfirm}
                   disabled={isLoading}
-                  className="w-full px-8 py-2 lg:py-2.5 text-gray-700 text-sm font-medium bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className={`w-full sm:w-auto px-6 py-3 text-white rounded-xl disabled:opacity-50 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2 ${config.primaryButtonColor}`}
                 >
-                  {cancelButtonText}
+                  {isLoading ? (
+                    <>
+                      <TbAlertCircle className="h-5 w-5 animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    <span>
+                      {confirmButtonText || config.defaultConfirmText}
+                    </span>
+                  )}
                 </button>
-              )}
-              <button
-                onClick={onConfirm || onClose}
-                disabled={isLoading}
-                className={`w-full px-8 py-2 lg:py-2.5 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${config.primaryButtonColor}`}
-              >
-                {isLoading
-                  ? `${
-                      config.defaultConfirmText.endsWith("e")
-                        ? config.defaultConfirmText.slice(0, -1)
-                        : config.defaultConfirmText
-                    }ing...`
-                  : confirmButtonText || config.defaultConfirmText}
-              </button>
+              </div>
             </div>
+
+            {/* Auto-close progress bar */}
+            {isAutoClosing && (
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200">
+                <motion.div
+                  initial={{ width: "100%" }}
+                  animate={{ width: "0%" }}
+                  transition={{
+                    duration: autoCloseDelay / 1000,
+                    ease: "linear",
+                  }}
+                  className={`h-full ${
+                    config.primaryButtonColor.split(" ")[0]
+                  } rounded`}
+                />
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

@@ -41,7 +41,7 @@ const ResetPassword = () => {
   useEffect(() => {
     // Validate token on component mount
     if (!token) {
-      setError("Invalid reset link. Please request a new password reset.");
+      setError("Invalid reset link. Please request a new password reset link.");
       setValidToken(false);
     } else {
       setValidToken(true);
@@ -89,12 +89,16 @@ const ResetPassword = () => {
         // }, 5000);
       } else {
         setError(
-          result.message || "Failed to reset password. Please try again."
+          result.message ||
+            "Failed to reset password. Please check your new password and try again."
         );
       }
     } catch (error) {
       console.error("Reset password error:", error);
-      setError(error.message || "Failed to reset password. Please try again.");
+      setError(
+        error.message ||
+          "Failed to reset password. Please check your new password and try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -113,7 +117,7 @@ const ResetPassword = () => {
             </h2>
             <p className="text-gray-600 mb-6">
               This password reset link is invalid or has expired. Please request
-              a new password reset.
+              a new password reset link.
             </p>
             <Link
               to="/forgot-password"

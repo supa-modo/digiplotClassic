@@ -187,6 +187,12 @@ class AuthService {
       if (ENABLE_DEBUG_LOGGING) {
         console.error("❌ Get profile failed:", error);
       }
+
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        throw new Error(errorData.message || "Failed to get profile");
+      }
+
       throw error;
     }
   }
@@ -217,6 +223,12 @@ class AuthService {
       if (ENABLE_DEBUG_LOGGING) {
         console.error("❌ Update profile failed:", error);
       }
+
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        throw new Error(errorData.message || "Failed to update profile");
+      }
+
       throw error;
     }
   }
@@ -246,6 +258,12 @@ class AuthService {
       if (ENABLE_DEBUG_LOGGING) {
         console.error("❌ Change password failed:", error);
       }
+
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        throw new Error(errorData.message || "Failed to change password");
+      }
+
       throw error;
     }
   }
@@ -273,6 +291,12 @@ class AuthService {
       if (ENABLE_DEBUG_LOGGING) {
         console.error("❌ Forgot password failed:", error);
       }
+
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        throw new Error(errorData.message || "Failed to send reset email");
+      }
+
       throw error;
     }
   }
@@ -302,6 +326,12 @@ class AuthService {
       if (ENABLE_DEBUG_LOGGING) {
         console.error("❌ Reset password failed:", error);
       }
+
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        throw new Error(errorData.message || "Failed to reset password");
+      }
+
       throw error;
     }
   }
@@ -326,6 +356,12 @@ class AuthService {
       if (ENABLE_DEBUG_LOGGING) {
         console.error("❌ Setup 2FA failed:", error);
       }
+
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        throw new Error(errorData.message || "Failed to setup 2FA");
+      }
+
       throw error;
     }
   }
@@ -352,6 +388,12 @@ class AuthService {
       if (ENABLE_DEBUG_LOGGING) {
         console.error("❌ Enable 2FA failed:", error);
       }
+
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        throw new Error(errorData.message || "Failed to enable 2FA");
+      }
+
       throw error;
     }
   }
@@ -377,6 +419,12 @@ class AuthService {
       if (ENABLE_DEBUG_LOGGING) {
         console.error("❌ Disable 2FA failed:", error);
       }
+
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        throw new Error(errorData.message || "Failed to disable 2FA");
+      }
+
       throw error;
     }
   }
@@ -401,6 +449,12 @@ class AuthService {
       if (ENABLE_DEBUG_LOGGING) {
         console.error("❌ Get 2FA status failed:", error);
       }
+
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        throw new Error(errorData.message || "Failed to get 2FA status");
+      }
+
       throw error;
     }
   }

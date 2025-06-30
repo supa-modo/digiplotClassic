@@ -7,7 +7,8 @@ export const demoUsers = [
     id: "landlord-1",
     role: "landlord",
     email: "landlord@example.com",
-    full_name: "John Doe",
+    first_name: "John",
+    last_name: "Doe",
     phone: "+254712345678",
     status: "active",
     created_at: "2024-01-01T00:00:00Z",
@@ -15,12 +16,11 @@ export const demoUsers = [
   },
   // Active Tenant user
   {
-    id: "tenant-1",
+    id: "a8ae45ad-2111-412b-ad8c-0a048e0e5466",
     role: "tenant",
     email: "tenant@example.com",
     first_name: "Alice",
     last_name: "Johnson",
-    full_name: "Alice Johnson",
     phone: "+254723456789",
     emergency_contact_name: "Jane Johnson",
     emergency_contact_phone: "+254711223344",
@@ -39,7 +39,6 @@ export const demoUsers = [
     email: "tenant2@example.com",
     first_name: "Michael",
     last_name: "Smith",
-    full_name: "Michael Smith",
     phone: "+254734567890",
     emergency_contact_name: "Sarah Smith",
     emergency_contact_phone: "+254712334455",
@@ -58,7 +57,6 @@ export const demoUsers = [
     email: "tenant3@example.com",
     first_name: "Sarah",
     last_name: "Wilson",
-    full_name: "Sarah Wilson",
     phone: "+254745678901",
     emergency_contact_name: "David Wilson",
     emergency_contact_phone: "+254723445566",
@@ -86,10 +84,10 @@ export const demoLandlords = [
 
 export const demoTenants = [
   {
-    id: "tenant-1",
+    id: "a8ae45ad-2111-412b-ad8c-0a048e0e5466",
     landlord_id: "landlord-1",
     unit_id: "unit-1",
-    id_document_url: "/uploads/tenant-1-id.pdf",
+    id_document_url: "/uploads/a8ae45ad-2111-412b-ad8c-0a048e0e5466-id.pdf",
   },
   {
     id: "tenant-2",
@@ -229,10 +227,10 @@ export const demoUnits = [
 ];
 
 export const demoPayments = [
-  // Payments for tenant-1 (current tenant of unit-1)
+  // Payments for a8ae45ad-2111-412b-ad8c-0a048e0e5466 (current tenant of unit-1)
   {
     id: "payment-1",
-    tenant_id: "tenant-1",
+    tenant_id: "a8ae45ad-2111-412b-ad8c-0a048e0e5466",
     unit_id: "unit-1",
     amount: 25000,
     payment_date: "2024-01-15T10:30:00Z",
@@ -243,7 +241,7 @@ export const demoPayments = [
   },
   {
     id: "payment-2",
-    tenant_id: "tenant-1",
+    tenant_id: "a8ae45ad-2111-412b-ad8c-0a048e0e5466",
     unit_id: "unit-1",
     amount: 25000,
     payment_date: "2024-02-15T09:15:00Z",
@@ -254,7 +252,7 @@ export const demoPayments = [
   },
   {
     id: "payment-3",
-    tenant_id: "tenant-1",
+    tenant_id: "a8ae45ad-2111-412b-ad8c-0a048e0e5466",
     unit_id: "unit-1",
     amount: 25000,
     payment_date: "2024-03-15T14:20:00Z",
@@ -326,7 +324,7 @@ export const demoMaintenanceRequests = [
   // Maintenance requests for unit-1
   {
     id: "maintenance-1",
-    tenant_id: "tenant-1",
+    tenant_id: "a8ae45ad-2111-412b-ad8c-0a048e0e5466",
     unit_id: "unit-1",
     title: "Leaking Kitchen Faucet",
     description:
@@ -341,7 +339,7 @@ export const demoMaintenanceRequests = [
   },
   {
     id: "maintenance-2",
-    tenant_id: "tenant-1",
+    tenant_id: "a8ae45ad-2111-412b-ad8c-0a048e0e5466",
     unit_id: "unit-1",
     title: "Broken Window Lock",
     description:
@@ -356,7 +354,7 @@ export const demoMaintenanceRequests = [
   },
   {
     id: "maintenance-3",
-    tenant_id: "tenant-1",
+    tenant_id: "a8ae45ad-2111-412b-ad8c-0a048e0e5466",
     unit_id: "unit-1",
     title: "Air Conditioning Not Working",
     description:

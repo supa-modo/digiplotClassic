@@ -15,7 +15,19 @@ import {
   TbLogout,
   TbUser,
   TbHome,
+  TbCoins,
+  TbTools,
 } from "react-icons/tb";
+import {
+  PiBuildingsBold,
+  PiBuildingsDuotone,
+  PiGearDuotone,
+  PiUsersDuotone,
+} from "react-icons/pi";
+import { BiSupport } from "react-icons/bi";
+import { LuLogOut } from "react-icons/lu";
+import { MdSpaceDashboard } from "react-icons/md";
+import { FaTools } from "react-icons/fa";
 
 const LandlordLayout = ({ children }) => {
   const { user, logout } = useAuth();
@@ -27,32 +39,36 @@ const LandlordLayout = ({ children }) => {
   const navItems = [
     {
       category: "null",
-      items: [{ name: "Dashboard", href: "/landlord", icon: TbDashboard }],
+      items: [{ name: "Dashboard", href: "/landlord", icon: MdSpaceDashboard }],
     },
     {
       category: "Property Management",
       items: [
-        { name: "Properties", href: "/landlord/properties", icon: TbBuilding },
-        { name: "Tenants", href: "/landlord/tenants", icon: TbUsers },
+        {
+          name: "Properties",
+          href: "/landlord/properties",
+          icon: PiBuildingsDuotone,
+        },
+        { name: "Tenants", href: "/landlord/tenants", icon: PiUsersDuotone },
       ],
     },
     {
       category: "Financial",
       items: [
-        { name: "Payments", href: "/landlord/payments", icon: TbCreditCard },
+        { name: "Payments", href: "/landlord/payments", icon: TbCoins },
         { name: "Reports", href: "/landlord/reports", icon: TbChartBar },
       ],
     },
     {
       category: "Operations",
       items: [
-        { name: "Maintenance", href: "/landlord/maintenance", icon: TbTool },
+        { name: "Maintenance", href: "/landlord/maintenance", icon: FaTools },
       ],
     },
     {
       category: "null",
       items: [
-        { name: "Settings", href: "/landlord/settings", icon: TbSettings },
+        { name: "Settings", href: "/landlord/settings", icon: PiGearDuotone },
       ],
     },
   ];
@@ -69,190 +85,362 @@ const LandlordLayout = ({ children }) => {
     return "Good evening";
   };
 
+  const getCurrentPageName = () => {
+    const currentNav = navItems
+      .flatMap((category) => category.items)
+      .find((item) => item.href === location.pathname);
+    return currentNav?.name || "Dashboard";
+  };
+
+  // Simple function to get user initials
+  const getUserInitials = () => {
+    const first = user?.first_name?.[0] || user?.full_name?.[0] || "";
+    const last = user?.last_name?.[0] || "";
+    return (first + last).toUpperCase() || "L";
+  };
+
   return (
-    <div className="h-screen bg-gray-50 flex overflow-hidden">
-      {/* Mobile sidebar overlay */}
+    <div className="h-screen bg-background-plot flex overflow-hidden">
+      {/* Mobile sidebar */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 flex z-40 lg:hidden">
+          <div
+            className="fixed inset-0 bg-gray-600 bg-opacity-75"
+            onClick={() => setSidebarOpen(false)}
+          ></div>
+          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-gradient-to-b from-amber-800 to-amber-800/90 border-r border-gray-200">
+            {/* Subtle pattern overlay */}
+            <div
+              className="absolute inset-0 opacity-[0.03] pointer-events-none"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              }}
+            ></div>
+
+            {/* Decorative elements */}
+            <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-white/5 blur-xl pointer-events-none"></div>
+            <div className="absolute bottom-1/4 -left-20 h-40 w-40 rounded-full bg-primary-plot/10 blur-xl pointer-events-none"></div>
+
+            <div className="absolute top-0 right-0 -mr-12 pt-2">
+              <button
+                type="button"
+                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <TbX className="h-6 w-6 text-white" />
+              </button>
+            </div>
+
+            {/* Mobile sidebar content */}
+            <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+              <div className="flex-shrink-0 flex items-center px-4 mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-white rounded-[0.35rem] flex items-center justify-center">
+                    <PiBuildingsBold className="text-primary-plot h-6 w-6" />
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-bold text-white">DIGIPLOT</h1>
+                    <p className="text-xs text-white/70 font-medium">
+                      Landlord Portal
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* User profile card - Mobile */}
+              <div className="mx-4 mb-6">
+                <div className="flex items-center">
+                  {/* Avatar with initials */}
+                  <div className="relative">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-white/30 to-white/10 shadow-lg backdrop-blur-sm border border-white/20">
+                      <span className="text-sm font-bold text-white tracking-wide">
+                        {getUserInitials()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="ml-3 flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-white truncate">
+                      {user?.first_name && user?.last_name
+                        ? `${user.first_name} ${user.last_name}`
+                        : user?.full_name || "Landlord"}
+                    </p>
+
+                    {/* Status badge */}
+                    <div className="mt-1.5 flex items-center">
+                      <div className="flex items-center px-2 py-0.5 rounded-full bg-green-500/30 border border-green-400/50">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse mr-1.5"></div>
+                        <span className="text-[0.65rem] font-medium text-green-100">
+                          Property Owner
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Navigation */}
+              <nav className="px-4">
+                {navItems.map((category, index) => (
+                  <div key={index} className="mb-1">
+                    {/* Category label */}
+                    {category.category !== "null" && (
+                      <div className="text-[0.65rem] uppercase tracking-wider text-white/60 font-medium px-3 py-1 mb-2">
+                        {category.category}
+                      </div>
+                    )}
+
+                    {/* Category items */}
+                    <div className="space-y-1">
+                      {category.items.map((item) => (
+                        <NavLink
+                          key={item.name}
+                          to={item.href}
+                          onClick={() => setSidebarOpen(false)}
+                          className={({ isActive }) =>
+                            `flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 group
+                            ${
+                              isActive
+                                ? "bg-white/20 text-white border-r-2 border-white"
+                                : "text-white/80 hover:bg-white/10 hover:text-white"
+                            }`
+                          }
+                        >
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-md">
+                              <item.icon
+                                size={22}
+                                className={`${
+                                  location.pathname === item.href
+                                    ? "text-white"
+                                    : "text-white/70 group-hover:text-white"
+                                }`}
+                              />
+                            </div>
+                            <span className="ml-3">{item.name}</span>
+                          </div>
+                        </NavLink>
+                      ))}
+                    </div>
+
+                    {/* Category separator */}
+                    {index < navItems.length - 1 && (
+                      <div className="mx-1 my-3 border-t border-white/20"></div>
+                    )}
+                  </div>
+                ))}
+              </nav>
+            </div>
+
+            {/* Help and Support link */}
+            <div className="mb-3">
+              <button className="w-full text-center text-sm text-white/70 hover:text-white transition-colors duration-200">
+                <div className="flex items-center justify-center">
+                  <BiSupport className="w-5 h-5 mr-2" />
+                  <span>Help & Support ?</span>
+                </div>
+              </button>
+            </div>
+
+            {/* Mobile user section */}
+            <div className="border-t border-white/20 px-4 py-4">
+              <div className="rounded-xl bg-gray-50 p-1.5 border border-gray-200">
+                <button
+                  onClick={handleLogout}
+                  className="flex w-full justify-center items-center rounded-lg px-4 space-x-2 py-2.5 text-left text-sm font-medium text-gray-700 hover:bg-red-500 hover:text-white transition-all duration-200"
+                >
+                  <LuLogOut className="w-5 h-5" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
-      {/* Sidebar */}
-      <div
-        className={`
-        fixed inset-y-0 left-0 z-30 w-60 lg:w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:relative lg:flex lg:flex-col lg:translate-x-0
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-      `}
-      >
-        {/* Sidebar header */}
-        <div className="flex items-center justify-between h-14 lg:h-16 px-4 lg:px-6 border-b border-gray-200 flex-shrink-0">
-          <div className="flex items-center space-x-2 lg:space-x-3">
-            <div className="w-7 h-7 lg:w-8 lg:h-8 bg-primary-plot rounded-lg flex items-center justify-center">
-              <TbHome className="text-white" size={16} />
-            </div>
-            <span className="text-lg lg:text-xl font-bold text-secondary-plot">
-              DigiPlot
-            </span>
-          </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-gray-500 hover:text-gray-700 p-1"
-          >
-            <TbX size={20} />
-          </button>
-        </div>
+      {/* Desktop sidebar */}
+      <div className="hidden lg:flex lg:w-72 lg:flex-col lg:fixed lg:inset-y-0">
+        <div className="flex-1 flex flex-col min-h-0 bg-gradient-to-b from-amber-800 to-amber-800/90 border-r border-gray-200">
+          {/* Subtle pattern overlay */}
+          <div
+            className="absolute inset-0 opacity-[0.03] pointer-events-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          ></div>
 
-        {/* User info */}
-        <div className="p-4 lg:p-6 border-b border-gray-200 flex-shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-primary-plot rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-semibold text-sm lg:text-base">
-                {user?.first_name?.[0] || user?.full_name?.[0] || "L"}
-              </span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs lg:text-sm font-medium text-gray-900 truncate">
-                {user?.first_name && user?.last_name
-                  ? `${user.first_name} ${user.last_name}`
-                  : user?.full_name || "Landlord"}
-              </p>
-              <p className="text-xs text-gray-500 truncate">Landlord Account</p>
-            </div>
-          </div>
-        </div>
+          {/* Decorative elements */}
+          <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-white/5 blur-xl pointer-events-none"></div>
+          <div className="absolute bottom-1/4 -left-20 h-40 w-40 rounded-full bg-primary-plot/10 blur-xl pointer-events-none"></div>
 
-        {/* Navigation */}
-        <div className="flex-1 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-          <nav>
-            {navItems.map((category, index) => (
-              <div key={index} className="mb-1 px-3">
-                {/* Category label */}
-                {category.category !== "null" && (
-                  <div className="text-[0.65rem] uppercase tracking-wider text-gray-400 font-medium px-3 py-1 mb-2">
-                    {category.category}
+          <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+            {/* Logo */}
+            <div className="flex items-center flex-shrink-0 px-6 mb-8">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white rounded-[0.35rem] flex items-center justify-center">
+                  <PiBuildingsBold className="text-primary-plot h-7 w-7" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-white">DIGIPLOT</h1>
+                  <p className="text-xs text-white/70 font-medium">
+                    Landlord Portal
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* User profile card - Desktop */}
+            <div className="mx-3.5 mb-8">
+              <div className="flex items-center">
+                {/* Avatar with initials */}
+                <div className="relative">
+                  <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-white/30 to-white/10 shadow-lg backdrop-blur-sm border border-white/20">
+                    <span className="text-base font-bold text-white tracking-wide">
+                      {getUserInitials()}
+                    </span>
                   </div>
-                )}
+                </div>
 
-                {/* Category items */}
-                <div className="space-y-1">
-                  {category.items.map((item) => {
-                    const IconComponent = item.icon;
-                    return (
+                <div className="ml-4 flex-1 min-w-0">
+                  <p className="text-base font-semibold text-white truncate">
+                    {user?.first_name && user?.last_name
+                      ? `${user.first_name} ${user.last_name}`
+                      : user?.full_name || "Landlord"}
+                  </p>
+
+                  {/* Status badge */}
+                  <div className="mt-1.5 flex items-center">
+                    <div className="flex items-center px-2.5 py-1 rounded-full bg-green-500/30 border border-green-400/50">
+                      <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse mr-2"></div>
+                      <span className="text-xs font-medium text-green-100">
+                        Property Owner
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex-1 px-4">
+              {navItems.map((category, index) => (
+                <div key={index} className="mb-1">
+                  {/* Category label */}
+                  {category.category !== "null" && (
+                    <div className="text-[0.65rem] uppercase tracking-wider text-white/60 font-medium px-3 py-1 mb-2">
+                      {category.category}
+                    </div>
+                  )}
+
+                  {/* Category items */}
+                  <div className="space-y-1">
+                    {category.items.map((item) => (
                       <NavLink
                         key={item.name}
                         to={item.href}
-                        onClick={() => setSidebarOpen(false)}
                         className={({ isActive }) =>
-                          `flex items-center px-3 py-2.5 lg:py-2 text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 group
+                          `flex items-center px-3 py-2 text-sm font-medium rounded-[0.6rem] transition-all duration-200 group
                           ${
                             isActive
-                              ? "bg-primary-plot text-white"
-                              : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                              ? "bg-white/20 text-white border-r-2 border-white"
+                              : "text-white/80 hover:bg-white/10 hover:text-white"
                           }`
                         }
                       >
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-md">
-                            <IconComponent
-                              size={18}
+                            <item.icon
+                              size={22}
                               className={`${
                                 location.pathname === item.href
                                   ? "text-white"
-                                  : "text-gray-400 group-hover:text-gray-600"
+                                  : "text-white/70 group-hover:text-white"
                               }`}
                             />
                           </div>
-                          <span className="ml-2 truncate">{item.name}</span>
+                          <span className="ml-3">{item.name}</span>
                         </div>
                       </NavLink>
-                    );
-                  })}
+                    ))}
+                  </div>
+
+                  {/* Category separator */}
+                  {index < navItems.length - 1 && (
+                    <div className="mx-1 my-3 border-t border-white/20"></div>
+                  )}
                 </div>
+              ))}
+            </nav>
+          </div>
 
-                {/* Category separator */}
-                {index < navItems.length - 1 && (
-                  <div className="mx-1 my-3 border-t border-gray-200"></div>
-                )}
+          {/* Help and Support link */}
+          <div className="mb-3">
+            <button className="w-full text-center text-sm text-white/70 hover:text-white transition-colors duration-200">
+              <div className="flex items-center justify-center">
+                <BiSupport className="w-5 h-5 mr-2" />
+                <span>Help & Support ?</span>
               </div>
-            ))}
-          </nav>
-        </div>
-
-        {/* Bottom section with logout */}
-        <div className="border-t border-gray-200 px-3 py-4 flex-shrink-0">
-          <div className="rounded-xl bg-gray-50 p-1.5 border border-gray-200">
-            <button
-              onClick={handleLogout}
-              className="flex w-full justify-center items-center rounded-lg px-4 space-x-2 py-2.5 text-left text-sm font-medium text-gray-700 hover:bg-red-500 hover:text-white transition-all duration-200"
-            >
-              <TbLogout className="w-5 h-5" />
-              <span>Logout</span>
             </button>
+          </div>
+
+          {/* Bottom section with logout */}
+          <div className="border-t border-white/20 px-4 py-4">
+            <div className="rounded-xl bg-gray-50 p-1.5 border border-gray-200">
+              <button
+                onClick={handleLogout}
+                className="flex w-full justify-center items-center rounded-lg px-4 space-x-2 py-2.5 text-left text-sm font-medium text-gray-700 hover:bg-red-500 hover:text-white transition-all duration-200"
+              >
+                <LuLogOut className="w-5 h-5" />
+                <span>Logout</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col lg:ml-0 overflow-hidden">
-        {/* Header - Fixed */}
-        <header className="bg-white shadow-sm border-b border-gray-200 flex-shrink-0 z-10">
-          <div className="flex items-center justify-between h-14 lg:h-16 px-3 sm:px-4 lg:px-8">
-            {/* Mobile menu button and mobile greeting */}
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden text-gray-500 hover:text-gray-700 p-1"
-              >
-                <TbMenu2 size={20} />
-              </button>
+      <div className="lg:pl-72 flex flex-col flex-1 overflow-hidden">
+        {/* Top header - Fixed */}
+        <div className="lg:hidden relative z-10 flex-shrink-0 flex h-16 bg-white shadow-sm border-b border-gray-200">
+          <button
+            type="button"
+            className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-plot lg:hidden"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <TbMenu2 className="h-6 w-6" />
+          </button>
 
-              {/* Mobile greeting */}
-              <div className="lg:hidden">
-                <h1 className="text-sm font-semibold text-gray-900 truncate">
-                  {getGreeting()}!
-                </h1>
-              </div>
+          <div className="flex-1 px-4 flex justify-between items-center">
+            <div className="flex-1 flex">
+              <h2 className="text-xl font-semibold text-secondary-plot">
+                {getCurrentPageName()}
+              </h2>
             </div>
 
-            {/* Desktop greeting */}
-            <div className="hidden lg:block">
-              <h1 className="text-lg font-semibold text-gray-900">
-                {getGreeting()},{" "}
-                {user?.first_name ||
-                  user?.full_name?.split(" ")[0] ||
-                  "Landlord"}
-                !
-              </h1>
-            </div>
-
-            {/* Header actions */}
-            <div className="flex items-center space-x-2 lg:space-x-4">
+            <div className="ml-4 flex items-center space-x-4">
               {/* Notifications */}
-              <button className="relative p-1.5 lg:p-2 text-gray-500 hover:text-gray-700 transition-colors">
-                <TbBell size={18} className="lg:hidden" />
-                <TbBell size={20} className="hidden lg:block" />
-                <span className="absolute top-0 right-0 block h-2 w-2 bg-red-400 rounded-full"></span>
+              <button className="text-gray-400 hover:text-gray-500 relative">
+                <TbBell className="h-6 w-6" />
+                <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full flex items-center justify-center">
+                  <span className="text-[0.5rem] font-bold text-white">2</span>
+                </span>
               </button>
 
-              {/* Profile dropdown */}
-              <div className="relative">
-                <button className="flex items-center space-x-1 lg:space-x-2 p-1.5 lg:p-2 text-gray-500 hover:text-gray-700 transition-colors">
-                  <TbUser size={18} className="lg:hidden" />
-                  <TbUser size={20} className="hidden lg:block" />
-                  <span className="hidden sm:block text-xs lg:text-sm font-medium truncate">
-                    Profile
-                  </span>
-                </button>
-              </div>
+              {/* Settings */}
+              <button className="text-gray-400 hover:text-gray-500">
+                <TbSettings className="h-6 w-6" />
+              </button>
             </div>
           </div>
-        </header>
+        </div>
 
         {/* Page content - Scrollable */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
-          <div className="p-3 sm:p-4 lg:p-6 xl:p-8">{children}</div>
+        <main className="flex-1 relative overflow-y-auto focus:outline-none scrollbar-hide lg:scrollbar-default bg-background-plot">
+          <div className="py-6">
+            <div className="max-w-screen-2xl mx-auto px-2 md:px-0">
+              {children}
+            </div>
+          </div>
         </main>
       </div>
     </div>

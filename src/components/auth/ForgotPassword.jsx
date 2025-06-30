@@ -40,13 +40,15 @@ const ForgotPassword = () => {
         setSuccess(true);
       } else {
         setError(
-          result.message || "Failed to send reset email. Please try again."
+          result.message ||
+            "Failed to send reset email. Please check your email address and try again."
         );
       }
     } catch (error) {
       console.error("Forgot password error:", error);
       setError(
-        error.message || "Failed to send reset email. Please try again."
+        error.message ||
+          "Failed to send reset email. Please check your email address and try again."
       );
     } finally {
       setLoading(false);
