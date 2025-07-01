@@ -199,7 +199,7 @@ const ConfirmationModal = ({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full relative overflow-hidden border border-gray-100"
+            className="bg-white rounded-2xl shadow-2xl max-w-[34rem] w-full relative overflow-hidden border border-gray-100"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Decorative elements */}
@@ -242,14 +242,14 @@ const ConfirmationModal = ({
             </div>
 
             {/* Content */}
-            <div className="relative z-10 px-2.5 py-2.5 md:px-5 md:py-5">
+            <div className="relative z-10 px-2.5 py-2.5 md:px-6  md:py-5">
               <div className="text-center">
                 <p className="text-gray-700 text-sm md:text-base leading-relaxed">
                   {message || getDefaultMessage()}
                 </p>
 
                 {type === "delete" && (
-                  <div className="mt-4 p-2 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="mt-4 max-w-[28rem] mx-auto p-2 bg-red-50 border border-red-200 rounded-lg">
                     <div className="flex items-center justify-center  text-red-700">
                       <span className="text-[0.8rem] md:text-sm font-semibold">
                         This action cannot be undone

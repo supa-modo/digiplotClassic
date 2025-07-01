@@ -22,6 +22,7 @@ import {
   TbCoins,
   TbHomeDot,
   TbHomeX,
+  TbHomePlus,
 } from "react-icons/tb";
 import {
   PiBuildingsDuotone,
@@ -380,7 +381,7 @@ const PropertyCard = ({
                   className="w-full border-2 border-secondary-700 text-secondary-700 px-4 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-secondary-600 hover:border-secondary-600 hover:text-white transition-all"
                 >
                   <div className="flex items-center justify-center gap-2">
-                    <TbPlus className="h-4 md:h-5 w-4 md:w-5" />
+                    <TbHomePlus className="h-4 md:h-5 w-4 md:w-5" />
                     <span className="text-[0.8rem] md:text-sm">
                       Add New Unit
                     </span>
@@ -461,9 +462,17 @@ const PropertyCard = ({
                 {formatCurrency(stats.revenue)}
               </div>
             </div>
+            <div>
+              <div className="text-[0.7rem] md:text-xs font-medium text-secondary-600">
+                Occupied
+              </div>
+              <div className="text-lg md:text-xl font-bold text-secondary-plot">
+                {stats.occupied}
+              </div>
+            </div>
             <div className="text-right">
               <div className="text-[0.7rem] md:text-xs font-medium text-secondary-600">
-                Vacant Units
+                Vacant
               </div>
               <div className="text-lg md:text-xl font-bold text-secondary-plot">
                 {stats.available}
@@ -491,7 +500,7 @@ const PropertyCard = ({
             className="w-full border-2 border-secondary-700 text-secondary-700 px-4 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-secondary-600 hover:border-secondary-600 hover:text-white transition-all"
           >
             <div className="flex items-center justify-center gap-2">
-              <TbPlus className="h-4 md:h-5 w-4 md:w-5" />
+              <TbHomePlus className="h-4 md:h-5 w-4 md:w-5" />
               <span className="text-[0.8rem] md:text-sm">Add New Unit</span>
             </div>
           </button>
