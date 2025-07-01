@@ -19,12 +19,34 @@ import {
   TbBuildingSkyscraper,
   TbSparkles,
   TbChecks,
+  TbCalendarEvent,
+  TbSun,
+  TbSunset,
+  TbMoon,
 } from "react-icons/tb";
+import { useEffect, useState } from "react";
 
 const UnitInfo = () => {
+  const [timeOfDay, setTimeOfDay] = useState("");
   const { user } = useAuth();
-  const unit = getUnitById(user?.unit_id);
+  const unit = getUnitById("unit-1");
   const property = unit ? getPropertyById(unit.property_id) : null;
+
+  useEffect(() => {
+    // Set time of day greeting
+    const hours = new Date().getHours();
+    if (hours < 12) setTimeOfDay("morning");
+    else if (hours < 18) setTimeOfDay("afternoon");
+    else setTimeOfDay("evening");
+  }, []);
+
+  const getTimeIcon = () => {
+    if (timeOfDay === "morning") return TbSun;
+    if (timeOfDay === "afternoon") return TbSunset;
+    return TbMoon;
+  };
+
+  const TimeIcon = getTimeIcon();
 
   if (!unit || !property) {
     return (
@@ -61,6 +83,30 @@ const UnitInfo = () => {
 
   return (
     <div className="space-y-6">
+      {/* Enhanced Welcome Section */}
+      <div className="mb-4 md:mb-6">
+        <div className="px-4 flex items-baseline justify-between mb-2 lg:mb-0">
+          <div className="">
+            <div className="flex items-center mb-2 md:mb-3">
+              <div className="flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-secondary-plot/20 to-primary-plot/20 text-[0.8rem] md:text-sm font-medium text-secondary-plot">
+                <TimeIcon className="h-4 w-4 mr-1.5 text-primary-plot" />
+                <span>Good {timeOfDay}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden md:flex items-center mt-1.5 text-[0.8rem] md:text-sm font-medium text-gray-600">
+            <TbCalendarEvent className="h-4 w-4 mr-1.5 text-secondary-plot" />
+            <span>
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
+          </div>
+        </div>
+      </div>
       {/* Unit Header - Enhanced with premium styling */}
       <div className="bg-gradient-to-br from-primary-plot via-primary-plot to-secondary-plot rounded-2xl p-8 text-white relative overflow-hidden shadow-xl">
         {/* Decorative elements */}

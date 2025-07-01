@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   TbX,
   TbBuilding,
@@ -6,6 +7,17 @@ import {
   TbPhone,
   TbMail,
   TbUser,
+  TbEdit,
+  TbPlus,
+  TbSparkles,
+  TbAlertTriangle,
+  TbCheck,
+  TbLoader2,
+  TbHome,
+  TbCalendar,
+  TbParkingCircle,
+  TbStar,
+  TbPhoto,
 } from "react-icons/tb";
 
 const PropertyModal = ({ isOpen, onClose, onSave, property }) => {
@@ -27,10 +39,20 @@ const PropertyModal = ({ isOpen, onClose, onSave, property }) => {
     manager_name: "",
     manager_phone: "",
     manager_email: "",
+    image_urls: [],
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isEditing = !!property;
+
+  const propertyTypes = [
+    { value: "residential", label: "Residential" },
+    { value: "commercial", label: "Commercial" },
+    { value: "mixed", label: "Mixed Use" },
+    { value: "industrial", label: "Industrial" },
+  ];
 
   const amenitiesList = [
     "WiFi",
@@ -70,6 +92,7 @@ const PropertyModal = ({ isOpen, onClose, onSave, property }) => {
         manager_name: property.manager_name || "",
         manager_phone: property.manager_phone || "",
         manager_email: property.manager_email || "",
+        image_urls: property.image_urls || [],
       });
     } else {
       // Reset form for new property
@@ -91,6 +114,7 @@ const PropertyModal = ({ isOpen, onClose, onSave, property }) => {
         manager_name: "",
         manager_phone: "",
         manager_email: "",
+        image_urls: [],
       });
     }
     setErrors({});
@@ -190,384 +214,653 @@ const PropertyModal = ({ isOpen, onClose, onSave, property }) => {
     }
   };
 
-  if (!isOpen) return null;
+  const handleClose = () => {
+    setFormData({
+      name: "",
+      address: "",
+      city: "",
+      state: "",
+      postal_code: "",
+      country: "Kenya",
+      description: "",
+      property_type: "residential",
+      year_built: "",
+      total_floors: "",
+      parking_spaces: "",
+      amenities: [],
+      contact_phone: "",
+      contact_email: "",
+      manager_name: "",
+      manager_phone: "",
+      manager_email: "",
+      image_urls: [],
+    });
+    setErrors({});
+    onClose();
+  };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-primary-plot/10 rounded-lg">
-              <TbBuilding className="h-6 w-6 text-primary-plot" />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                {property ? "Edit Property" : "Add New Property"}
-              </h2>
-              <p className="text-sm text-gray-600">
-                {property
-                  ? "Update property information"
-                  : "Enter property details below"}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={handleClose}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+          />
+
+          {/* Modal */}
+          <motion.div
+            initial={{ x: "100%", opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: "100%", opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="fixed right-0 top-0 h-full w-full max-w-4xl bg-gradient-to-br from-primary-plot/5 via-secondary-plot/5 to-primary-plot/5 backdrop-blur-xl border-l border-white/20 shadow-2xl z-50 overflow-hidden"
           >
-            <TbX className="h-6 w-6 text-gray-400" />
-          </button>
-        </div>
+            {/* Decorative Elements */}
+            <div className="absolute top-20 -right-20 w-40 h-40 bg-primary-plot/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-20 -right-16 w-32 h-32 bg-secondary-plot/10 rounded-full blur-2xl" />
+            <div className="absolute top-1/2 -right-24 w-48 h-48 bg-gradient-to-r from-primary-plot/5 to-secondary-plot/5 rounded-full blur-3xl" />
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
-          <div className="p-6 space-y-6">
-            {/* Basic Information */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Basic Information
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Property Name *
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                      errors.name ? "border-red-300" : "border-gray-300"
-                    }`}
-                    placeholder="Enter property name"
-                  />
-                  {errors.name && (
-                    <p className="text-red-500 text-xs mt-1">{errors.name}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Property Type
-                  </label>
-                  <select
-                    name="property_type"
-                    value={formData.property_type}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+            {/* Content Container */}
+            <div className="relative h-full flex flex-col bg-white/95 backdrop-blur-xl">
+              {/* Header */}
+              <div className="flex-shrink-0 relative px-8 py-6 bg-gradient-to-r from-primary-plot via-secondary-plot to-primary-plot border-b border-white/20">
+                <div className="absolute inset-0 bg-white/10 backdrop-blur-xl" />
+                <div className="relative flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/20">
+                      {isEditing ? (
+                        <TbEdit className="w-6 h-6 text-white" />
+                      ) : (
+                        <TbBuilding className="w-6 h-6 text-white" />
+                      )}
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                        {isEditing ? "Edit Property" : "Add New Property"}
+                        <TbSparkles className="w-5 h-5 text-yellow-300" />
+                      </h2>
+                      <p className="text-white/80 text-sm mt-1">
+                        {isEditing
+                          ? "Update property information and details"
+                          : "Create a new property in your portfolio"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleClose}
+                    disabled={isSubmitting}
+                    className="w-10 h-10 bg-white/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20 text-white hover:bg-white/30 transition-all duration-200 hover:scale-105"
                   >
-                    <option value="residential">Residential</option>
-                    <option value="commercial">Commercial</option>
-                    <option value="mixed">Mixed Use</option>
-                    <option value="industrial">Industrial</option>
-                  </select>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Address *
-                  </label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                      errors.address ? "border-red-300" : "border-gray-300"
-                    }`}
-                    placeholder="Enter full address"
-                  />
-                  {errors.address && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.address}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    City *
-                  </label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                      errors.city ? "border-red-300" : "border-gray-300"
-                    }`}
-                    placeholder="Enter city"
-                  />
-                  {errors.city && (
-                    <p className="text-red-500 text-xs mt-1">{errors.city}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    State/County
-                  </label>
-                  <input
-                    type="text"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
-                    placeholder="Enter state or county"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Postal Code
-                  </label>
-                  <input
-                    type="text"
-                    name="postal_code"
-                    value={formData.postal_code}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
-                    placeholder="Enter postal code"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Country
-                  </label>
-                  <input
-                    type="text"
-                    name="country"
-                    value={formData.country}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
-                    placeholder="Enter country"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Property Details */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Property Details
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Year Built
-                  </label>
-                  <input
-                    type="number"
-                    name="year_built"
-                    value={formData.year_built}
-                    onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                      errors.year_built ? "border-red-300" : "border-gray-300"
-                    }`}
-                    placeholder="e.g. 2020"
-                    min="1800"
-                    max={new Date().getFullYear()}
-                  />
-                  {errors.year_built && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.year_built}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Total Floors
-                  </label>
-                  <input
-                    type="number"
-                    name="total_floors"
-                    value={formData.total_floors}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
-                    placeholder="e.g. 3"
-                    min="1"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Parking Spaces
-                  </label>
-                  <input
-                    type="number"
-                    name="parking_spaces"
-                    value={formData.parking_spaces}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
-                    placeholder="e.g. 10"
-                    min="0"
-                  />
+                    <TbX className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
 
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
-                  placeholder="Enter property description..."
-                />
-              </div>
-            </div>
+              {/* Form Content */}
+              <div className="flex-1 overflow-y-auto">
+                <form onSubmit={handleSubmit} className="p-8 space-y-8">
+                  {/* Basic Information */}
+                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
+                        <TbHome className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Basic Information
+                      </h3>
+                    </div>
 
-            {/* Amenities */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Amenities
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                {amenitiesList.map((amenity) => (
-                  <label
-                    key={amenity}
-                    className="flex items-center space-x-2 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={formData.amenities.includes(amenity)}
-                      onChange={() => handleAmenityToggle(amenity)}
-                      className="rounded border-gray-300 text-primary-plot focus:ring-primary-plot"
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Property Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                            errors.name
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                          } focus:ring-4 focus:outline-none`}
+                          placeholder="e.g., Sunset Gardens Apartments"
+                          disabled={isSubmitting}
+                        />
+                        {errors.name && (
+                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                            <TbAlertTriangle className="w-4 h-4" />
+                            {errors.name}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Property Type
+                          </label>
+                          <select
+                            name="property_type"
+                            value={formData.property_type}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                            disabled={isSubmitting}
+                          >
+                            {propertyTypes.map((type) => (
+                              <option key={type.value} value={type.value}>
+                                {type.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Year Built
+                          </label>
+                          <div className="relative">
+                            <TbCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <input
+                              type="number"
+                              name="year_built"
+                              value={formData.year_built}
+                              onChange={handleInputChange}
+                              min="1800"
+                              max={new Date().getFullYear()}
+                              className={`w-full pl-10 pr-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                                errors.year_built
+                                  ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                                  : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                              } focus:ring-4 focus:outline-none`}
+                              placeholder="2020"
+                              disabled={isSubmitting}
+                            />
+                          </div>
+                          {errors.year_built && (
+                            <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                              <TbAlertTriangle className="w-4 h-4" />
+                              {errors.year_built}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Total Floors
+                          </label>
+                          <input
+                            type="number"
+                            name="total_floors"
+                            value={formData.total_floors}
+                            onChange={handleInputChange}
+                            min="1"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                            placeholder="5"
+                            disabled={isSubmitting}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Parking Spaces
+                          </label>
+                          <div className="relative">
+                            <TbParkingCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <input
+                              type="number"
+                              name="parking_spaces"
+                              value={formData.parking_spaces}
+                              onChange={handleInputChange}
+                              min="0"
+                              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                              placeholder="20"
+                              disabled={isSubmitting}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Location */}
+                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
+                        <TbMapPin className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Location
+                      </h3>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Address *
+                        </label>
+                        <input
+                          type="text"
+                          name="address"
+                          value={formData.address}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                            errors.address
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                          } focus:ring-4 focus:outline-none`}
+                          placeholder="123 Main Street, Kilimani"
+                          disabled={isSubmitting}
+                        />
+                        {errors.address && (
+                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                            <TbAlertTriangle className="w-4 h-4" />
+                            {errors.address}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            City *
+                          </label>
+                          <input
+                            type="text"
+                            name="city"
+                            value={formData.city}
+                            onChange={handleInputChange}
+                            className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                              errors.city
+                                ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                                : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                            } focus:ring-4 focus:outline-none`}
+                            placeholder="Nairobi"
+                            disabled={isSubmitting}
+                          />
+                          {errors.city && (
+                            <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                              <TbAlertTriangle className="w-4 h-4" />
+                              {errors.city}
+                            </p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            State/County
+                          </label>
+                          <input
+                            type="text"
+                            name="state"
+                            value={formData.state}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                            placeholder="Nairobi County"
+                            disabled={isSubmitting}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Postal Code
+                          </label>
+                          <input
+                            type="text"
+                            name="postal_code"
+                            value={formData.postal_code}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                            placeholder="00100"
+                            disabled={isSubmitting}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Country
+                          </label>
+                          <input
+                            type="text"
+                            name="country"
+                            value={formData.country}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                            placeholder="Kenya"
+                            disabled={isSubmitting}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact Information */}
+                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
+                        <TbPhone className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Contact Information
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Contact Phone
+                        </label>
+                        <input
+                          type="tel"
+                          name="contact_phone"
+                          value={formData.contact_phone}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                          placeholder="+254 712 345 678"
+                          disabled={isSubmitting}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Contact Email
+                        </label>
+                        <input
+                          type="email"
+                          name="contact_email"
+                          value={formData.contact_email}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                            errors.contact_email
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                          } focus:ring-4 focus:outline-none`}
+                          placeholder="contact@property.com"
+                          disabled={isSubmitting}
+                        />
+                        {errors.contact_email && (
+                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                            <TbAlertTriangle className="w-4 h-4" />
+                            {errors.contact_email}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Property Manager */}
+                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
+                        <TbUser className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Property Manager (Optional)
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Manager Name
+                        </label>
+                        <input
+                          type="text"
+                          name="manager_name"
+                          value={formData.manager_name}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                          placeholder="John Doe"
+                          disabled={isSubmitting}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Manager Phone
+                        </label>
+                        <input
+                          type="tel"
+                          name="manager_phone"
+                          value={formData.manager_phone}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                          placeholder="+254 712 345 678"
+                          disabled={isSubmitting}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Manager Email
+                        </label>
+                        <input
+                          type="email"
+                          name="manager_email"
+                          value={formData.manager_email}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                            errors.manager_email
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                          } focus:ring-4 focus:outline-none`}
+                          placeholder="manager@property.com"
+                          disabled={isSubmitting}
+                        />
+                        {errors.manager_email && (
+                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                            <TbAlertTriangle className="w-4 h-4" />
+                            {errors.manager_email}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
+                        <TbStar className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Description
+                      </h3>
+                    </div>
+
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      rows={4}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm resize-none"
+                      placeholder="Describe the property's features, location advantages, and unique characteristics..."
+                      disabled={isSubmitting}
                     />
-                    <span className="text-sm text-gray-700">{amenity}</span>
-                  </label>
-                ))}
+                  </div>
+
+                  {/* Property Images */}
+                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
+                        <TbPhoto className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Property Images
+                      </h3>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Image URLs
+                          <span className="text-gray-500 text-xs ml-1">
+                            (Enter image URLs one at a time)
+                          </span>
+                        </label>
+
+                        {/* Display existing images */}
+                        {formData.image_urls.length > 0 && (
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                            {formData.image_urls.map((url, index) => (
+                              <div key={index} className="relative group">
+                                <img
+                                  src={url}
+                                  alt={`Property image ${index + 1}`}
+                                  className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                                  onError={(e) => {
+                                    e.target.src =
+                                      "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SW1hZ2U8L3RleHQ+PC9zdmc+";
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newUrls = formData.image_urls.filter(
+                                      (_, i) => i !== index
+                                    );
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      image_urls: newUrls,
+                                    }));
+                                  }}
+                                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                  disabled={isSubmitting}
+                                >
+                                  <TbX className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Add new image URL */}
+                        <div className="flex gap-2">
+                          <input
+                            type="url"
+                            placeholder="Enter image URL (e.g., /appartment-1.png or https://...)"
+                            className="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                            disabled={isSubmitting}
+                            onKeyPress={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                const url = e.target.value.trim();
+                                if (url && !formData.image_urls.includes(url)) {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    image_urls: [...prev.image_urls, url],
+                                  }));
+                                  e.target.value = "";
+                                }
+                              }
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              const input =
+                                e.target.parentElement.querySelector("input");
+                              const url = input.value.trim();
+                              if (url && !formData.image_urls.includes(url)) {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  image_urls: [...prev.image_urls, url],
+                                }));
+                                input.value = "";
+                              }
+                            }}
+                            className="px-4 py-3 bg-gradient-to-r from-primary-plot to-secondary-plot text-white rounded-xl hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+                            disabled={isSubmitting}
+                          >
+                            <TbPlus className="w-4 h-4" />
+                            Add
+                          </button>
+                        </div>
+
+                        <p className="text-xs text-gray-500 mt-2">
+                          Add multiple images to create a slideshow for your
+                          property. Images will auto-slide every 4 seconds when
+                          viewed.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Amenities */}
+                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
+                        <TbStar className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Property Amenities
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {amenitiesList.map((amenity) => (
+                        <label
+                          key={amenity}
+                          className="flex items-center space-x-3 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.amenities.includes(amenity)}
+                            onChange={() => handleAmenityToggle(amenity)}
+                            className="w-4 h-4 text-primary-plot bg-white/70 border-gray-300 rounded focus:ring-primary-plot focus:ring-2"
+                            disabled={isSubmitting}
+                          />
+                          <span className="text-sm text-gray-700">
+                            {amenity}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4 pt-6">
+                    <button
+                      type="button"
+                      onClick={handleClose}
+                      disabled={isSubmitting}
+                      className="flex-1 px-6 py-3 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all duration-200 font-medium bg-white/70 backdrop-blur-sm hover:scale-105"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-primary-plot to-secondary-plot text-white hover:from-primary-plot/90 hover:to-secondary-plot/90 transition-all duration-200 font-medium flex items-center justify-center gap-2 hover:scale-105 shadow-lg"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <TbLoader2 className="w-5 h-5 animate-spin" />
+                          {isEditing ? "Updating..." : "Creating..."}
+                        </>
+                      ) : (
+                        <>
+                          <TbCheck className="w-5 h-5" />
+                          {isEditing ? "Update Property" : "Create Property"}
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
-
-            {/* Contact Information */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Contact Information
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Contact Phone
-                  </label>
-                  <input
-                    type="tel"
-                    name="contact_phone"
-                    value={formData.contact_phone}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
-                    placeholder="e.g. +254 700 000 000"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Contact Email
-                  </label>
-                  <input
-                    type="email"
-                    name="contact_email"
-                    value={formData.contact_email}
-                    onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                      errors.contact_email
-                        ? "border-red-300"
-                        : "border-gray-300"
-                    }`}
-                    placeholder="contact@property.com"
-                  />
-                  {errors.contact_email && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.contact_email}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Manager Name
-                  </label>
-                  <input
-                    type="text"
-                    name="manager_name"
-                    value={formData.manager_name}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
-                    placeholder="Property manager name"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Manager Phone
-                  </label>
-                  <input
-                    type="tel"
-                    name="manager_phone"
-                    value={formData.manager_phone}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
-                    placeholder="Manager phone number"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Manager Email
-                  </label>
-                  <input
-                    type="email"
-                    name="manager_email"
-                    value={formData.manager_email}
-                    onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                      errors.manager_email
-                        ? "border-red-300"
-                        : "border-gray-300"
-                    }`}
-                    placeholder="manager@property.com"
-                  />
-                  {errors.manager_email && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.manager_email}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="flex items-center justify-end space-x-4 p-6 border-t border-gray-200 bg-gray-50">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-6 py-2 bg-primary-plot text-white rounded-lg hover:bg-primary-plot/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting
-                ? "Saving..."
-                : property
-                ? "Update Property"
-                : "Create Property"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
 

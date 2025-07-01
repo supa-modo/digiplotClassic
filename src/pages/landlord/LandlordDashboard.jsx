@@ -25,7 +25,14 @@ import {
   TbTrendingUp,
   TbCash,
   TbHomeDot,
+  TbSun,
+  TbMoon,
+  TbSunset,
+  TbCalendarEvent,
+  TbCoins,
 } from "react-icons/tb";
+import { PiBuildingsDuotone, PiUsersDuotone } from "react-icons/pi";
+import { FaTools } from "react-icons/fa";
 
 const LandlordDashboard = () => {
   const { user } = useAuth();
@@ -36,6 +43,16 @@ const LandlordDashboard = () => {
     payments: [],
     stats: {},
   });
+
+  const [timeOfDay, setTimeOfDay] = useState("");
+
+  useEffect(() => {
+    // Set time of day greeting
+    const hours = new Date().getHours();
+    if (hours < 12) setTimeOfDay("morning");
+    else if (hours < 18) setTimeOfDay("afternoon");
+    else setTimeOfDay("evening");
+  }, []);
 
   useEffect(() => {
     if (user?.id) {
@@ -102,6 +119,14 @@ const LandlordDashboard = () => {
     }
   }, [user]);
 
+  const getTimeIcon = () => {
+    if (timeOfDay === "morning") return TbSun;
+    if (timeOfDay === "afternoon") return TbSunset;
+    return TbMoon;
+  };
+
+  const TimeIcon = getTimeIcon();
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-KE", {
       style: "currency",
@@ -146,29 +171,29 @@ const LandlordDashboard = () => {
     {
       title: "Add Property",
       description: "Create a new property listing",
-      icon: TbBuilding,
-      color: "from-blue-500 to-indigo-600",
+      icon: PiBuildingsDuotone,
+      color: "secondary-plot",
       href: "/landlord/properties?action=new",
     },
     {
       title: "Add Tenant",
       description: "Register a new tenant",
-      icon: TbUsers,
-      color: "from-green-500 to-emerald-600",
+      icon: PiUsersDuotone,
+      color: "secondary-plot",
       href: "/landlord/tenants?action=new",
     },
     {
       title: "View Reports",
       description: "Financial and occupancy reports",
       icon: TbChartBar,
-      color: "from-purple-500 to-violet-600",
+      color: "secondary-plot",
       href: "/landlord/reports",
     },
     {
       title: "Maintenance",
       description: "Manage maintenance requests",
-      icon: TbTool,
-      color: "from-orange-500 to-red-600",
+      icon: FaTools,
+      color: "secondary-plot",
       href: "/landlord/maintenance",
     },
   ];
@@ -176,26 +201,40 @@ const LandlordDashboard = () => {
   return (
     <LandlordLayout>
       <div className="space-y-6">
-        {/* Page Header - Enhanced */}
-        <div className="bg-gradient-to-br from-primary-plot/5 via-secondary-plot/5 to-primary-plot/5 rounded-2xl p-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary-plot/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary-plot/5 rounded-full -ml-5 -mb-5 blur-lg"></div>
+        {/* Enhanced Welcome Section */}
+        <div className="mb-4 md:mb-6">
+          <div className="px-4 flex items-baseline justify-between mb-2 lg:mb-0">
+            <div className="">
+              <div className="flex items-center mb-2 md:mb-3">
+                <div className="flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-amber-700/20 to-amber-500/30 text-[0.8rem] md:text-sm font-medium text-amber-600">
+                  <TimeIcon className="h-4 w-4 mr-1.5 text-amber-600" />
+                  <span>Good {timeOfDay}</span>
+                </div>
+              </div>
 
-          <div className="relative z-10 flex items-center space-x-4">
-            <div className="p-4 bg-gradient-to-br from-primary-plot/20 to-secondary-plot/20 rounded-xl backdrop-blur-sm border border-white/20">
-              <TbSparkles className="h-8 w-8 text-primary-plot" />
-            </div>
-            <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
-                Dashboard Overview
+              <h1 className="text-xl md:text-2xl font-bold text-secondary-plot">
+                Welcome back,{" "}
+                <span className="text-amber-700/90">
+                  {user?.firstName + " " + user?.lastName}
+                </span>
               </h1>
               <p className="text-gray-600 mt-1 text-sm lg:text-base">
-                Monitor your properties, tenants, and revenue performance
+                Monitor & manage your properties, tenants, and revenue performance
               </p>
+            </div>
+
+            <div className="hidden md:flex items-center mt-1.5 text-[0.8rem] md:text-sm font-medium text-gray-600">
+              <TbCalendarEvent className="h-5 w-5 mr-1.5 text-secondary-600" />
+              <span>
+                {new Date().toLocaleDateString("en-US", {
+                  weekday: "long",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
             </div>
           </div>
         </div>
-
         {/* Stats Grid - Enhanced */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           {/* Total Properties */}
@@ -203,9 +242,23 @@ const LandlordDashboard = () => {
             <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full -mr-5 -mt-5 blur-lg group-hover:bg-blue-500/10 transition-colors"></div>
 
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
-                  <TbBuilding className="h-6 w-6 text-blue-600" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
+                    <PiBuildingsDuotone className="h-10 w-10 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-[0.8rem] font-semibold text-gray-600">
+                      Properties
+                    </p>
+                    <p className="text-2xl lg:text-3xl font-bold text-gray-900">
+                      {dashboardData.stats.totalProperties || 0}
+                    </p>
+                    <p className="text-xs text-gray-500 flex items-center">
+                      <TbHomeDot className="h-3 w-3 mr-1" />
+                      {dashboardData.stats.totalUnits || 0} total units
+                    </p>
+                  </div>
                 </div>
                 <div className="flex items-center px-2 py-1 bg-blue-50 rounded-full">
                   <TbTrendingUp className="h-3 w-3 text-blue-600 mr-1" />
@@ -213,19 +266,6 @@ const LandlordDashboard = () => {
                     +5%
                   </span>
                 </div>
-              </div>
-
-              <div>
-                <p className="text-sm font-semibold text-gray-600 mb-1">
-                  Properties
-                </p>
-                <p className="text-2xl lg:text-3xl font-bold text-gray-900">
-                  {dashboardData.stats.totalProperties || 0}
-                </p>
-                <p className="text-xs text-gray-500 mt-1 flex items-center">
-                  <TbHomeDot className="h-3 w-3 mr-1" />
-                  {dashboardData.stats.totalUnits || 0} total units
-                </p>
               </div>
             </div>
           </div>
@@ -235,27 +275,29 @@ const LandlordDashboard = () => {
             <div className="absolute top-0 right-0 w-20 h-20 bg-green-500/5 rounded-full -mr-5 -mt-5 blur-lg group-hover:bg-green-500/10 transition-colors"></div>
 
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl">
-                  <TbUsers className="h-6 w-6 text-green-600" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl">
+                    <PiUsersDuotone className="h-10 w-10 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-[0.8rem] font-semibold text-gray-600">
+                      Tenants
+                    </p>
+                    <p className="text-2xl lg:text-3xl font-bold text-gray-900">
+                      {dashboardData.stats.totalTenants || 0}
+                    </p>
+                    <p className="text-xs text-green-600 font-medium">
+                      Occupancy Rate
+                    </p>
+                  </div>
                 </div>
+
                 <div className="flex items-center px-2 py-1 bg-green-50 rounded-full">
                   <span className="text-xs font-semibold text-green-600">
                     {dashboardData.stats.occupancyRate?.toFixed(1) || 0}%
                   </span>
                 </div>
-              </div>
-
-              <div>
-                <p className="text-sm font-semibold text-gray-600 mb-1">
-                  Tenants
-                </p>
-                <p className="text-2xl lg:text-3xl font-bold text-gray-900">
-                  {dashboardData.stats.totalTenants || 0}
-                </p>
-                <p className="text-xs text-green-600 mt-1 font-medium">
-                  Occupancy Rate
-                </p>
               </div>
             </div>
           </div>
@@ -265,26 +307,28 @@ const LandlordDashboard = () => {
             <div className="absolute top-0 right-0 w-20 h-20 bg-yellow-500/5 rounded-full -mr-5 -mt-5 blur-lg group-hover:bg-yellow-500/10 transition-colors"></div>
 
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-xl">
-                  <TbCash className="h-6 w-6 text-yellow-600" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-xl">
+                    <TbCoins className="h-10 w-10 text-yellow-600" />
+                  </div>
+                  <div>
+                    <p className="text-[0.8rem] font-semibold text-gray-600">
+                      Revenue
+                    </p>
+                    <p className="text-2xl lg:text-3xl font-bold text-gray-900">
+                      {formatCurrency(dashboardData.stats.monthlyRevenue || 0)}
+                    </p>
+                    <p className="text-xs text-gray-500">This month</p>
+                  </div>
                 </div>
+
                 <div className="flex items-center px-2 py-1 bg-green-50 rounded-full">
                   <TbArrowUp className="h-3 w-3 text-green-600 mr-1" />
                   <span className="text-xs font-semibold text-green-600">
                     +12%
                   </span>
                 </div>
-              </div>
-
-              <div>
-                <p className="text-sm font-semibold text-gray-600 mb-1">
-                  Revenue
-                </p>
-                <p className="text-lg lg:text-xl font-bold text-gray-900">
-                  {formatCurrency(dashboardData.stats.monthlyRevenue || 0)}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">This month</p>
               </div>
             </div>
           </div>
@@ -294,25 +338,31 @@ const LandlordDashboard = () => {
             <div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full -mr-5 -mt-5 blur-lg group-hover:bg-red-500/10 transition-colors"></div>
 
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-gradient-to-br from-red-100 to-pink-100 rounded-xl">
+                    <TbTool className="h-10 w-10 text-red-600" />
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-semibold text-gray-600">
+                      Pending
+                    </p>
+                    <p className="text-2xl lg:text-3xl font-bold text-gray-900">
+                      {dashboardData.stats.pendingMaintenance || 0}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Maintenance requests
+                    </p>
+                  </div>
+                  <div></div>
+                </div>
                 <div className="p-3 bg-gradient-to-br from-red-100 to-pink-100 rounded-xl">
                   <TbTool className="h-6 w-6 text-red-600" />
                 </div>
                 {dashboardData.stats.pendingMaintenance > 0 && (
                   <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
                 )}
-              </div>
-
-              <div>
-                <p className="text-sm font-semibold text-gray-600 mb-1">
-                  Pending
-                </p>
-                <p className="text-2xl lg:text-3xl font-bold text-gray-900">
-                  {dashboardData.stats.pendingMaintenance || 0}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  Maintenance requests
-                </p>
               </div>
             </div>
           </div>
@@ -326,8 +376,8 @@ const LandlordDashboard = () => {
 
             <div className="relative z-10">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="p-3 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl">
-                  <TbSparkles className="h-6 w-6 text-purple-600" />
+                <div className="p-3 bg-gradient-to-br from-primary-100 to-secondary-100 border border-secondary-500/20 rounded-xl">
+                  <TbSparkles className="h-6 w-6 text-secondary-600" />
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-gray-900">
@@ -346,14 +396,14 @@ const LandlordDashboard = () => {
                     <a
                       key={index}
                       href={action.href}
-                      className="group p-4 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 hover:scale-105"
+                      className="group p-4 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200"
                     >
                       <div
-                        className={`w-12 h-12 bg-gradient-to-br ${action.color} rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg`}
+                        className={`w-12 h-12 bg-${action.color} rounded-xl flex items-center justify-center mb-3 transition-transform shadow-lg`}
                       >
                         <IconComponent className="h-6 w-6 text-white" />
                       </div>
-                      <h3 className="font-bold text-gray-900 text-sm mb-1">
+                      <h3 className="font-bold text-secondary-700 text-sm mb-1">
                         {action.title}
                       </h3>
                       <p className="text-xs text-gray-500 line-clamp-2">

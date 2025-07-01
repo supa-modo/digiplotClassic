@@ -78,13 +78,6 @@ const LandlordLayout = ({ children }) => {
     navigate("/login");
   };
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 17) return "Good afternoon";
-    return "Good evening";
-  };
-
   const getCurrentPageName = () => {
     const currentNav = navItems
       .flatMap((category) => category.items)
@@ -92,11 +85,10 @@ const LandlordLayout = ({ children }) => {
     return currentNav?.name || "Dashboard";
   };
 
-  // Simple function to get user initials
   const getUserInitials = () => {
-    const first = user?.first_name?.[0] || user?.full_name?.[0] || "";
-    const last = user?.last_name?.[0] || "";
-    return (first + last).toUpperCase() || "L";
+    const first = user?.firstName?.[0] || "";
+    const last = user?.lastName?.[0] || "";
+    return (first + last).toUpperCase() || "T";
   };
 
   return (
@@ -161,9 +153,7 @@ const LandlordLayout = ({ children }) => {
 
                   <div className="ml-3 flex-1 min-w-0">
                     <p className="text-sm font-semibold text-white truncate">
-                      {user?.first_name && user?.last_name
-                        ? `${user.first_name} ${user.last_name}`
-                        : user?.full_name || "Landlord"}
+                      {user?.firstName + " " + user?.lastName || "Tenant"}
                     </p>
 
                     {/* Status badge */}
@@ -302,10 +292,8 @@ const LandlordLayout = ({ children }) => {
                 </div>
 
                 <div className="ml-4 flex-1 min-w-0">
-                  <p className="text-base font-semibold text-white truncate">
-                    {user?.first_name && user?.last_name
-                      ? `${user.first_name} ${user.last_name}`
-                      : user?.full_name || "Landlord"}
+                  <p className="text-sm font-semibold text-white truncate">
+                    {user?.firstName + " " + user?.lastName || "Landlord"}
                   </p>
 
                   {/* Status badge */}

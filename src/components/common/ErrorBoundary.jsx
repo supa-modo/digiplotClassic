@@ -51,7 +51,10 @@ class ErrorBoundary extends React.Component {
                   <div>
                     <strong>Stack:</strong>
                     <pre className="whitespace-pre-wrap">
-                      {this.state.errorInfo.componentStack}
+                      {this.state.errorInfo &&
+                      this.state.errorInfo.componentStack
+                        ? this.state.errorInfo.componentStack
+                        : "Stack trace not available"}
                     </pre>
                   </div>
                 </div>

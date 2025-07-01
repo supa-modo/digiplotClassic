@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   TbX,
   TbUser,
@@ -10,6 +11,10 @@ import {
   TbEyeOff,
   TbCheck,
   TbAlertTriangle,
+  TbUserPlus,
+  TbEdit,
+  TbStar,
+  TbSparkles,
 } from "react-icons/tb";
 
 const UserModal = ({
@@ -169,385 +174,413 @@ const UserModal = ({
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              {isEditing ? "Edit User" : "Create New User"}
-            </h2>
-            <p className="text-sm text-gray-500 mt-1">
-              {isEditing
-                ? "Update user information and permissions"
-                : "Add a new user to the system"}
-            </p>
-          </div>
-          <button
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 p-1"
-            disabled={loading}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+          />
+
+          {/* Modal */}
+          <motion.div
+            initial={{ x: "100%", opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: "100%", opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="fixed right-0 top-0 h-full w-full max-w-2xl bg-gradient-to-br from-primary-plot/5 via-secondary-plot/5 to-primary-plot/5 backdrop-blur-xl border-l border-white/20 shadow-2xl z-50 overflow-hidden"
           >
-            <TbX size={24} />
-          </button>
-        </div>
+            {/* Decorative Elements */}
+            <div className="absolute top-20 -right-20 w-40 h-40 bg-primary-plot/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-20 -right-16 w-32 h-32 bg-secondary-plot/10 rounded-full blur-2xl" />
+            <div className="absolute top-1/2 -right-24 w-48 h-48 bg-gradient-to-r from-primary-plot/5 to-secondary-plot/5 rounded-full blur-3xl" />
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Personal Information */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Personal Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* First Name */}
-              <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  First Name *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <TbUser className="h-5 w-5 text-gray-400" />
+            {/* Content Container */}
+            <div className="relative h-full flex flex-col bg-white/95 backdrop-blur-xl">
+              {/* Header */}
+              <div className="flex-shrink-0 relative px-8 py-6 bg-gradient-to-r from-primary-plot via-secondary-plot to-primary-plot border-b border-white/20">
+                <div className="absolute inset-0 bg-white/10 backdrop-blur-xl" />
+                <div className="relative flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/20">
+                      {isEditing ? (
+                        <TbEdit className="w-6 h-6 text-white" />
+                      ) : (
+                        <TbUserPlus className="w-6 h-6 text-white" />
+                      )}
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                        {isEditing ? "Edit User" : "Create New User"}
+                        <TbSparkles className="w-5 h-5 text-yellow-300" />
+                      </h2>
+                      <p className="text-white/80 text-sm mt-1">
+                        {isEditing
+                          ? "Update user information and permissions"
+                          : "Add a new user to the system"}
+                      </p>
+                    </div>
                   </div>
-                  <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    className={`appearance-none block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ${
-                      errors.firstName ? "border-red-300" : "border-gray-300"
-                    }`}
-                    placeholder="John"
-                  />
-                </div>
-                {errors.firstName && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.firstName}
-                  </p>
-                )}
-              </div>
-
-              {/* Last Name */}
-              <div>
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Last Name *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <TbUser className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    className={`appearance-none block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ${
-                      errors.lastName ? "border-red-300" : "border-gray-300"
-                    }`}
-                    placeholder="Doe"
-                  />
-                </div>
-                {errors.lastName && (
-                  <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="mt-4">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Email Address *
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <TbMail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={`appearance-none block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ${
-                    errors.email ? "border-red-300" : "border-gray-300"
-                  }`}
-                  placeholder="john.doe@example.com"
-                />
-              </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-              )}
-            </div>
-
-            {/* Phone */}
-            <div className="mt-4">
-              <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Phone Number
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <TbPhone className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className={`appearance-none block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ${
-                    errors.phone ? "border-red-300" : "border-gray-300"
-                  }`}
-                  placeholder="+1 (555) 123-4567"
-                />
-              </div>
-              {errors.phone && (
-                <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Security & Access */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Security & Access
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Role */}
-              <div>
-                <label
-                  htmlFor="role"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Role *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <TbShield className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <select
-                    id="role"
-                    name="role"
-                    value={formData.role}
-                    onChange={handleInputChange}
-                    className={`appearance-none block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ${
-                      errors.role ? "border-red-300" : "border-gray-300"
-                    }`}
-                  >
-                    <option value="tenant">Tenant</option>
-                    <option value="landlord">Landlord</option>
-                    <option value="admin">Administrator</option>
-                  </select>
-                </div>
-                {errors.role && (
-                  <p className="mt-1 text-sm text-red-600">{errors.role}</p>
-                )}
-              </div>
-
-              {/* Status */}
-              <div>
-                <label
-                  htmlFor="status"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Status
-                </label>
-                <select
-                  id="status"
-                  name="status"
-                  value={formData.status}
-                  onChange={handleInputChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="suspended">Suspended</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Password fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              {/* Password */}
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Password {!isEditing && "*"}
-                  {isEditing && (
-                    <span className="text-gray-500">
-                      (leave blank to keep current)
-                    </span>
-                  )}
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className={`appearance-none block w-full pr-10 px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ${
-                      errors.password ? "border-red-300" : "border-gray-300"
-                    }`}
-                    placeholder="••••••••"
-                  />
                   <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    onClick={handleClose}
+                    disabled={loading}
+                    className="w-10 h-10 bg-white/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20 text-white hover:bg-white/30 transition-all duration-200 hover:scale-105"
                   >
-                    {showPassword ? (
-                      <TbEyeOff size={20} />
-                    ) : (
-                      <TbEye size={20} />
-                    )}
+                    <TbX className="w-5 h-5" />
                   </button>
                 </div>
-                {errors.password && (
-                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-                )}
               </div>
 
-              {/* Confirm Password */}
-              <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Confirm Password {!isEditing && "*"}
-                </label>
-                <div className="relative">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className={`appearance-none block w-full pr-10 px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ${
-                      errors.confirmPassword
-                        ? "border-red-300"
-                        : "border-gray-300"
-                    }`}
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showConfirmPassword ? (
-                      <TbEyeOff size={20} />
-                    ) : (
-                      <TbEye size={20} />
-                    )}
-                  </button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.confirmPassword}
-                  </p>
-                )}
+              {/* Form Content */}
+              <div className="flex-1 overflow-y-auto">
+                <form onSubmit={handleSubmit} className="p-8 space-y-8">
+                  {/* Personal Information */}
+                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
+                        <TbUser className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Personal Information
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          First Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="firstName"
+                          value={formData.firstName}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                            errors.firstName
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                          } focus:ring-4 focus:outline-none`}
+                          disabled={loading}
+                        />
+                        {errors.firstName && (
+                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                            <TbAlertTriangle className="w-4 h-4" />
+                            {errors.firstName}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Last Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="lastName"
+                          value={formData.lastName}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                            errors.lastName
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                          } focus:ring-4 focus:outline-none`}
+                          disabled={loading}
+                        />
+                        {errors.lastName && (
+                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                            <TbAlertTriangle className="w-4 h-4" />
+                            {errors.lastName}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact Information */}
+                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
+                        <TbMail className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Contact Information
+                      </h3>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                            errors.email
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                          } focus:ring-4 focus:outline-none`}
+                          disabled={loading}
+                        />
+                        {errors.email && (
+                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                            <TbAlertTriangle className="w-4 h-4" />
+                            {errors.email}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                            errors.phone
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                          } focus:ring-4 focus:outline-none`}
+                          disabled={loading}
+                        />
+                        {errors.phone && (
+                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                            <TbAlertTriangle className="w-4 h-4" />
+                            {errors.phone}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Security & Access */}
+                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
+                        <TbShield className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Security & Access
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Role *
+                        </label>
+                        <select
+                          name="role"
+                          value={formData.role}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                            errors.role
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                          } focus:ring-4 focus:outline-none`}
+                          disabled={loading}
+                        >
+                          <option value="tenant">Tenant</option>
+                          <option value="landlord">Landlord</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                        {errors.role && (
+                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                            <TbAlertTriangle className="w-4 h-4" />
+                            {errors.role}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Status
+                        </label>
+                        <select
+                          name="status"
+                          value={formData.status}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                          disabled={loading}
+                        >
+                          <option value="active">Active</option>
+                          <option value="inactive">Inactive</option>
+                          <option value="suspended">Suspended</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Password Section */}
+                    <div className="mt-6 space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          {isEditing
+                            ? "New Password (leave blank to keep current)"
+                            : "Password *"}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            className={`w-full px-4 py-3 pr-12 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                              errors.password
+                                ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                                : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                            } focus:ring-4 focus:outline-none`}
+                            disabled={loading}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                          >
+                            {showPassword ? (
+                              <TbEyeOff size={20} />
+                            ) : (
+                              <TbEye size={20} />
+                            )}
+                          </button>
+                        </div>
+                        {errors.password && (
+                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                            <TbAlertTriangle className="w-4 h-4" />
+                            {errors.password}
+                          </p>
+                        )}
+                      </div>
+
+                      {(formData.password || !isEditing) && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Confirm Password {!isEditing && "*"}
+                          </label>
+                          <div className="relative">
+                            <input
+                              type={showConfirmPassword ? "text" : "password"}
+                              name="confirmPassword"
+                              value={formData.confirmPassword}
+                              onChange={handleInputChange}
+                              className={`w-full px-4 py-3 pr-12 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                                errors.confirmPassword
+                                  ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                                  : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
+                              } focus:ring-4 focus:outline-none`}
+                              disabled={loading}
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setShowConfirmPassword(!showConfirmPassword)
+                              }
+                              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                            >
+                              {showConfirmPassword ? (
+                                <TbEyeOff size={20} />
+                              ) : (
+                                <TbEye size={20} />
+                              )}
+                            </button>
+                          </div>
+                          {errors.confirmPassword && (
+                            <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                              <TbAlertTriangle className="w-4 h-4" />
+                              {errors.confirmPassword}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Emergency Contact */}
+                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
+                        <TbPhone className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Emergency Contact (Optional)
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Contact Name
+                        </label>
+                        <input
+                          type="text"
+                          name="emergencyContactName"
+                          value={formData.emergencyContactName}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                          disabled={loading}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Contact Phone
+                        </label>
+                        <input
+                          type="tel"
+                          name="emergencyContactPhone"
+                          value={formData.emergencyContactPhone}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                          disabled={loading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4 pt-6">
+                    <button
+                      type="button"
+                      onClick={handleClose}
+                      disabled={loading}
+                      className="flex-1 px-6 py-3 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all duration-200 font-medium bg-white/70 backdrop-blur-sm hover:scale-105"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-primary-plot to-secondary-plot text-white hover:from-primary-plot/90 hover:to-secondary-plot/90 transition-all duration-200 font-medium flex items-center justify-center gap-2 hover:scale-105 shadow-lg"
+                    >
+                      {loading ? (
+                        <>
+                          <TbLoader2 className="w-5 h-5 animate-spin" />
+                          {isEditing ? "Updating..." : "Creating..."}
+                        </>
+                      ) : (
+                        <>
+                          <TbCheck className="w-5 h-5" />
+                          {isEditing ? "Update User" : "Create User"}
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
-          </div>
-
-          {/* Emergency Contact (for tenants) */}
-          {formData.role === "tenant" && (
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Emergency Contact
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Emergency Contact Name */}
-                <div>
-                  <label
-                    htmlFor="emergencyContactName"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Contact Name
-                  </label>
-                  <input
-                    type="text"
-                    id="emergencyContactName"
-                    name="emergencyContactName"
-                    value={formData.emergencyContactName}
-                    onChange={handleInputChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                    placeholder="Jane Doe"
-                  />
-                </div>
-
-                {/* Emergency Contact Phone */}
-                <div>
-                  <label
-                    htmlFor="emergencyContactPhone"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Contact Phone
-                  </label>
-                  <input
-                    type="tel"
-                    id="emergencyContactPhone"
-                    name="emergencyContactPhone"
-                    value={formData.emergencyContactPhone}
-                    onChange={handleInputChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                    placeholder="+1 (555) 987-6543"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Footer */}
-          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <>
-                  <TbLoader2 className="animate-spin -ml-1 mr-2 h-4 w-4" />
-                  {isEditing ? "Updating..." : "Creating..."}
-                </>
-              ) : (
-                <>
-                  <TbCheck className="-ml-1 mr-2 h-4 w-4" />
-                  {isEditing ? "Update User" : "Create User"}
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
 

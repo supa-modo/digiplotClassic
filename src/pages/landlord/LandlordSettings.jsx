@@ -156,46 +156,44 @@ const LandlordSettings = () => {
   };
 
   const renderProfile = () => (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Profile Picture */}
       <div className="flex items-center space-x-6">
-        <div className="w-24 h-24 bg-primary-plot rounded-full flex items-center justify-center">
-          <span className="text-white font-bold text-2xl">
+        <div className="w-32 h-32 bg-gradient-to-br from-primary-plot to-secondary-plot rounded-full flex items-center justify-center shadow-xl">
+          <span className="text-white font-bold text-3xl">
             {profileData.first_name[0] || "L"}
             {profileData.last_name[0] || ""}
           </span>
         </div>
         <div>
-          <h3 className="text-lg font-medium text-gray-900">Profile Picture</h3>
-          <p className="text-sm text-gray-500 mb-3">
-            Update your profile picture
-          </p>
-          <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+          <h3 className="text-xl font-bold text-gray-900">Profile Picture</h3>
+          <p className="text-gray-600 mb-4">Update your profile picture</p>
+          <button className="bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold">
             Change Photo
           </button>
         </div>
       </div>
 
       {/* Personal Information */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium text-gray-900">
+      <div className="bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 rounded-2xl p-8 border border-primary-plot/20">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-2xl font-bold text-gray-900">
             Personal Information
           </h3>
           <button
             onClick={() =>
               isEditing ? handleProfileSave() : setIsEditing(true)
             }
-            className="bg-primary-plot text-white px-4 py-2 rounded-lg hover:bg-primary-plot/90 transition-colors text-sm flex items-center space-x-2"
+            className="bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold flex items-center space-x-2"
           >
             {isEditing ? <FaSave size={16} /> : <TbEdit size={16} />}
             <span>{isEditing ? "Save Changes" : "Edit Profile"}</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               First Name
             </label>
             <input
@@ -208,14 +206,14 @@ const LandlordSettings = () => {
                 }))
               }
               disabled={!isEditing}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                !isEditing ? "bg-gray-50" : ""
+              className={`w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent transition-all ${
+                !isEditing ? "bg-gray-50" : "bg-white/80 backdrop-blur-sm"
               }`}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Last Name
             </label>
             <input
@@ -228,14 +226,14 @@ const LandlordSettings = () => {
                 }))
               }
               disabled={!isEditing}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                !isEditing ? "bg-gray-50" : ""
+              className={`w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent transition-all ${
+                !isEditing ? "bg-gray-50" : "bg-white/80 backdrop-blur-sm"
               }`}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Email
             </label>
             <input
@@ -245,14 +243,14 @@ const LandlordSettings = () => {
                 setProfileData((prev) => ({ ...prev, email: e.target.value }))
               }
               disabled={!isEditing}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                !isEditing ? "bg-gray-50" : ""
+              className={`w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent transition-all ${
+                !isEditing ? "bg-gray-50" : "bg-white/80 backdrop-blur-sm"
               }`}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Phone
             </label>
             <input
@@ -262,14 +260,14 @@ const LandlordSettings = () => {
                 setProfileData((prev) => ({ ...prev, phone: e.target.value }))
               }
               disabled={!isEditing}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                !isEditing ? "bg-gray-50" : ""
+              className={`w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent transition-all ${
+                !isEditing ? "bg-gray-50" : "bg-white/80 backdrop-blur-sm"
               }`}
             />
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Address
             </label>
             <input
@@ -279,14 +277,14 @@ const LandlordSettings = () => {
                 setProfileData((prev) => ({ ...prev, address: e.target.value }))
               }
               disabled={!isEditing}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                !isEditing ? "bg-gray-50" : ""
+              className={`w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent transition-all ${
+                !isEditing ? "bg-gray-50" : "bg-white/80 backdrop-blur-sm"
               }`}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               City
             </label>
             <input
@@ -296,14 +294,14 @@ const LandlordSettings = () => {
                 setProfileData((prev) => ({ ...prev, city: e.target.value }))
               }
               disabled={!isEditing}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                !isEditing ? "bg-gray-50" : ""
+              className={`w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent transition-all ${
+                !isEditing ? "bg-gray-50" : "bg-white/80 backdrop-blur-sm"
               }`}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               State/County
             </label>
             <input
@@ -313,14 +311,14 @@ const LandlordSettings = () => {
                 setProfileData((prev) => ({ ...prev, state: e.target.value }))
               }
               disabled={!isEditing}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                !isEditing ? "bg-gray-50" : ""
+              className={`w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent transition-all ${
+                !isEditing ? "bg-gray-50" : "bg-white/80 backdrop-blur-sm"
               }`}
             />
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Bio
             </label>
             <textarea
@@ -329,9 +327,9 @@ const LandlordSettings = () => {
                 setProfileData((prev) => ({ ...prev, bio: e.target.value }))
               }
               disabled={!isEditing}
-              rows={3}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent ${
-                !isEditing ? "bg-gray-50" : ""
+              rows={4}
+              className={`w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent transition-all ${
+                !isEditing ? "bg-gray-50" : "bg-white/80 backdrop-blur-sm"
               }`}
               placeholder="Tell us about yourself..."
             />
@@ -342,14 +340,14 @@ const LandlordSettings = () => {
   );
 
   const renderSecurity = () => (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+    <div className="space-y-8">
+      <div className="bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 rounded-2xl p-8 border border-primary-plot/20">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">
           Change Password
         </h3>
-        <div className="max-w-md space-y-4">
+        <div className="max-w-md space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Current Password
             </label>
             <div className="relative">
@@ -362,7 +360,7 @@ const LandlordSettings = () => {
                     current_password: e.target.value,
                   }))
                 }
-                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/80 backdrop-blur-sm"
               />
               <button
                 type="button"
@@ -372,19 +370,19 @@ const LandlordSettings = () => {
                     current: !prev.current,
                   }))
                 }
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary-plot transition-colors"
               >
                 {showPasswords.current ? (
-                  <TbEyeOff size={16} />
+                  <TbEyeOff size={20} />
                 ) : (
-                  <TbEye size={16} />
+                  <TbEye size={20} />
                 )}
               </button>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               New Password
             </label>
             <div className="relative">
@@ -397,26 +395,26 @@ const LandlordSettings = () => {
                     new_password: e.target.value,
                   }))
                 }
-                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/80 backdrop-blur-sm"
               />
               <button
                 type="button"
                 onClick={() =>
                   setShowPasswords((prev) => ({ ...prev, new: !prev.new }))
                 }
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary-plot transition-colors"
               >
                 {showPasswords.new ? (
-                  <TbEyeOff size={16} />
+                  <TbEyeOff size={20} />
                 ) : (
-                  <TbEye size={16} />
+                  <TbEye size={20} />
                 )}
               </button>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Confirm New Password
             </label>
             <div className="relative">
@@ -429,7 +427,7 @@ const LandlordSettings = () => {
                     confirm_password: e.target.value,
                   }))
                 }
-                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/80 backdrop-blur-sm"
               />
               <button
                 type="button"
@@ -439,12 +437,12 @@ const LandlordSettings = () => {
                     confirm: !prev.confirm,
                   }))
                 }
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary-plot transition-colors"
               >
                 {showPasswords.confirm ? (
-                  <TbEyeOff size={16} />
+                  <TbEyeOff size={20} />
                 ) : (
-                  <TbEye size={16} />
+                  <TbEye size={20} />
                 )}
               </button>
             </div>
@@ -452,21 +450,23 @@ const LandlordSettings = () => {
 
           <button
             onClick={handlePasswordChange}
-            className="bg-primary-plot text-white px-6 py-2 rounded-lg hover:bg-primary-plot/90 transition-colors"
+            className="bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold"
           >
             Update Password
           </button>
         </div>
       </div>
 
-      <div className="border-t border-gray-200 pt-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-200">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">
           Two-Factor Authentication
         </h3>
-        <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+        <div className="flex items-center justify-between p-6 border border-blue-200 rounded-xl bg-white/80 backdrop-blur-sm">
           <div>
-            <p className="font-medium text-gray-900">SMS Authentication</p>
-            <p className="text-sm text-gray-500">
+            <p className="font-semibold text-gray-900 text-lg">
+              SMS Authentication
+            </p>
+            <p className="text-gray-600 mt-1">
               Receive verification codes via SMS
             </p>
           </div>
@@ -480,15 +480,15 @@ const LandlordSettings = () => {
   );
 
   const renderMpesaSettings = () => (
-    <div className="space-y-6">
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+    <div className="space-y-8">
+      <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border border-yellow-200 rounded-2xl p-6">
         <div className="flex items-start">
-          <TbShield className="h-5 w-5 text-yellow-600 mt-0.5 mr-3" />
+          <TbShield className="h-6 w-6 text-yellow-600 mt-1 mr-3" />
           <div>
-            <h4 className="text-sm font-medium text-yellow-800">
+            <h4 className="text-lg font-bold text-yellow-800">
               Important Security Notice
             </h4>
-            <p className="text-sm text-yellow-700 mt-1">
+            <p className="text-yellow-700 mt-1">
               Your M-Pesa credentials are encrypted and stored securely. Only
               use production credentials in live environment.
             </p>
@@ -496,13 +496,13 @@ const LandlordSettings = () => {
         </div>
       </div>
 
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+      <div className="bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 rounded-2xl p-8 border border-primary-plot/20">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">
           M-Pesa Integration Settings
         </h3>
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Environment
             </label>
             <select
@@ -513,16 +513,16 @@ const LandlordSettings = () => {
                   environment: e.target.value,
                 }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/80 backdrop-blur-sm"
             >
               <option value="sandbox">Sandbox (Testing)</option>
               <option value="production">Production (Live)</option>
             </select>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Consumer Key
               </label>
               <input
@@ -534,13 +534,13 @@ const LandlordSettings = () => {
                     consumer_key: e.target.value,
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/80 backdrop-blur-sm"
                 placeholder="Enter your consumer key"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Consumer Secret
               </label>
               <input
@@ -552,13 +552,13 @@ const LandlordSettings = () => {
                     consumer_secret: e.target.value,
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/80 backdrop-blur-sm"
                 placeholder="Enter your consumer secret"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Shortcode
               </label>
               <input
@@ -570,13 +570,13 @@ const LandlordSettings = () => {
                     shortcode: e.target.value,
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/80 backdrop-blur-sm"
                 placeholder="e.g. 174379"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Passkey
               </label>
               <input
@@ -588,13 +588,13 @@ const LandlordSettings = () => {
                     passkey: e.target.value,
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/80 backdrop-blur-sm"
                 placeholder="Enter your passkey"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Callback URL
               </label>
               <input
@@ -606,7 +606,7 @@ const LandlordSettings = () => {
                     callback_url: e.target.value,
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/80 backdrop-blur-sm"
                 placeholder="https://yourdomain.com/api/mpesa/callback"
               />
             </div>
@@ -615,11 +615,11 @@ const LandlordSettings = () => {
           <div className="flex items-center space-x-4">
             <button
               onClick={handleMpesaSave}
-              className="bg-primary-plot text-white px-6 py-2 rounded-lg hover:bg-primary-plot/90 transition-colors"
+              className="bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold"
             >
               Save M-Pesa Settings
             </button>
-            <button className="bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 px-8 py-3 rounded-xl hover:bg-white hover:shadow-md transition-all duration-300 font-semibold">
               Test Connection
             </button>
           </div>
@@ -629,17 +629,19 @@ const LandlordSettings = () => {
   );
 
   const renderNotifications = () => (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+    <div className="space-y-8">
+      <div className="bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 rounded-2xl p-8 border border-primary-plot/20">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">
           Notification Preferences
         </h3>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between p-6 border border-gray-200 rounded-xl bg-white/80 backdrop-blur-sm hover:shadow-md transition-all">
             <div>
-              <p className="font-medium text-gray-900">Email Notifications</p>
-              <p className="text-sm text-gray-500">
+              <p className="font-semibold text-gray-900 text-lg">
+                Email Notifications
+              </p>
+              <p className="text-gray-600 mt-1">
                 Receive notifications via email
               </p>
             </div>
@@ -659,10 +661,12 @@ const LandlordSettings = () => {
             </label>
           </div>
 
-          <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+          <div className="flex items-center justify-between p-6 border border-gray-200 rounded-xl bg-white/80 backdrop-blur-sm hover:shadow-md transition-all">
             <div>
-              <p className="font-medium text-gray-900">SMS Notifications</p>
-              <p className="text-sm text-gray-500">
+              <p className="font-semibold text-gray-900 text-lg">
+                SMS Notifications
+              </p>
+              <p className="text-gray-600 mt-1">
                 Receive notifications via SMS
               </p>
             </div>
@@ -682,8 +686,10 @@ const LandlordSettings = () => {
             </label>
           </div>
 
-          <div className="border-t border-gray-200 pt-4">
-            <h4 className="font-medium text-gray-900 mb-3">Alert Types</h4>
+          <div className="border-t border-gray-200 pt-6">
+            <h4 className="font-bold text-gray-900 mb-4 text-xl">
+              Alert Types
+            </h4>
 
             {[
               {
@@ -714,13 +720,13 @@ const LandlordSettings = () => {
             ].map((alert) => (
               <div
                 key={alert.key}
-                className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg"
+                className="flex items-center justify-between p-4 hover:bg-gradient-to-r hover:from-primary-plot/5 hover:to-secondary-plot/5 rounded-xl transition-all"
               >
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-semibold text-gray-900">
                     {alert.label}
                   </p>
-                  <p className="text-xs text-gray-500">{alert.description}</p>
+                  <p className="text-xs text-gray-600">{alert.description}</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
@@ -742,7 +748,7 @@ const LandlordSettings = () => {
 
           <button
             onClick={handleNotificationSave}
-            className="bg-primary-plot text-white px-6 py-2 rounded-lg hover:bg-primary-plot/90 transition-colors"
+            className="bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold"
           >
             Save Notification Settings
           </button>
@@ -752,15 +758,13 @@ const LandlordSettings = () => {
   );
 
   const renderApiKeys = () => (
-    <div className="space-y-6">
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div className="space-y-8">
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
         <div className="flex items-start">
-          <TbApi className="h-5 w-5 text-blue-600 mt-0.5 mr-3" />
+          <TbApi className="h-6 w-6 text-blue-600 mt-1 mr-3" />
           <div>
-            <h4 className="text-sm font-medium text-blue-800">
-              API Integration
-            </h4>
-            <p className="text-sm text-blue-700 mt-1">
+            <h4 className="text-lg font-bold text-blue-800">API Integration</h4>
+            <p className="text-blue-700 mt-1">
               Use these API keys to integrate with third-party applications.
               Keep your secret keys secure.
             </p>
@@ -768,9 +772,9 @@ const LandlordSettings = () => {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 rounded-2xl p-8 border border-primary-plot/20 space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Public API Key
           </label>
           <div className="flex">
@@ -778,16 +782,16 @@ const LandlordSettings = () => {
               type="text"
               value="1234"
               readOnly
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg bg-gray-50 text-gray-600"
+              className="flex-1 px-4 py-3 border border-gray-200 rounded-l-xl bg-gray-50 text-gray-600"
             />
-            <button className="px-4 py-2 bg-gray-200 border border-l-0 border-gray-300 rounded-r-lg hover:bg-gray-300 transition-colors text-sm">
+            <button className="px-6 py-3 bg-gradient-to-r from-primary-plot/10 to-secondary-plot/10 border border-l-0 border-gray-200 rounded-r-xl hover:bg-gradient-to-r hover:from-primary-plot/20 hover:to-secondary-plot/20 transition-all text-sm font-semibold text-primary-plot">
               Copy
             </button>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Secret API Key
           </label>
           <div className="flex">
@@ -795,41 +799,45 @@ const LandlordSettings = () => {
               type="password"
               value="123"
               readOnly
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg bg-gray-50 text-gray-600"
+              className="flex-1 px-4 py-3 border border-gray-200 rounded-l-xl bg-gray-50 text-gray-600"
             />
-            <button className="px-4 py-2 bg-gray-200 border border-l-0 border-gray-300 rounded-r-lg hover:bg-gray-300 transition-colors text-sm">
+            <button className="px-6 py-3 bg-gradient-to-r from-primary-plot/10 to-secondary-plot/10 border border-l-0 border-gray-200 rounded-r-xl hover:bg-gradient-to-r hover:from-primary-plot/20 hover:to-secondary-plot/20 transition-all text-sm font-semibold text-primary-plot">
               Copy
             </button>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Webhook URL
           </label>
           <div className="flex">
             <input
               type="text"
               value="https://yourdomain.com/api/webhooks"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
+              className="flex-1 px-4 py-3 border border-gray-200 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/80 backdrop-blur-sm"
             />
-            <button className="px-4 py-2 bg-primary-plot text-white border border-l-0 border-primary-plot rounded-r-lg hover:bg-primary-plot/90 transition-colors text-sm">
+            <button className="px-6 py-3 bg-gradient-to-r from-primary-plot to-secondary-plot text-white border border-l-0 border-primary-plot rounded-r-xl hover:shadow-lg transition-all text-sm font-semibold">
               Save
             </button>
           </div>
         </div>
 
-        <div className="border-t border-gray-200 pt-4">
+        <div className="border-t border-gray-200 pt-6">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium text-gray-900">Regenerate API Keys</h4>
-            <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors text-sm">
+            <div>
+              <h4 className="font-bold text-gray-900 text-lg">
+                Regenerate API Keys
+              </h4>
+              <p className="text-gray-600 mt-1">
+                Warning: Regenerating API keys will invalidate existing
+                integrations. Make sure to update all connected applications.
+              </p>
+            </div>
+            <button className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold">
               Regenerate Keys
             </button>
           </div>
-          <p className="text-sm text-gray-500 mt-2">
-            Warning: Regenerating API keys will invalidate existing
-            integrations. Make sure to update all connected applications.
-          </p>
         </div>
       </div>
     </div>
@@ -837,74 +845,87 @@ const LandlordSettings = () => {
 
   return (
     <LandlordLayout>
-      <div className="p-6">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600 mt-1">
-            Manage your account settings, preferences, and integrations
-          </p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-primary-plot/5 via-secondary-plot/5 to-primary-plot/5 relative">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-primary-plot/10 to-transparent rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-secondary-plot/10 to-transparent rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
-        {/* Status Messages */}
-        {saveStatus && (
-          <div
-            className={`mb-6 p-4 rounded-lg flex items-center space-x-3 ${
-              saveStatus === "saved"
-                ? "bg-green-50 text-green-800 border border-green-200"
-                : saveStatus === "saving"
-                ? "bg-blue-50 text-blue-800 border border-blue-200"
-                : "bg-red-50 text-red-800 border border-red-200"
-            }`}
-          >
-            {saveStatus === "saved" && <TbCheck className="h-5 w-5" />}
-            {saveStatus === "saving" && (
-              <div className="animate-spin h-5 w-5 border-2 border-current border-t-transparent rounded-full"></div>
-            )}
-            {saveStatus === "error" && <TbX className="h-5 w-5" />}
-            {saveStatus === "password-mismatch" && <TbX className="h-5 w-5" />}
-            <span>
-              {saveStatus === "saved" && "Settings saved successfully!"}
-              {saveStatus === "saving" && "Saving changes..."}
-              {saveStatus === "error" &&
-                "Error saving settings. Please try again."}
-              {saveStatus === "password-mismatch" && "Passwords do not match."}
-            </span>
-          </div>
-        )}
-
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar Navigation */}
-          <div className="lg:w-64">
-            <nav className="space-y-1">
-              {tabs.map((tab) => {
-                const IconComponent = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                      activeTab === tab.id
-                        ? "bg-primary-plot text-white"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                  >
-                    <IconComponent className="mr-3 h-5 w-5" />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </nav>
+        <div className="relative p-6">
+          {/* Header */}
+          <div className="bg-white/80 backdrop-blur-xl shadow-xl rounded-2xl p-8 mb-6 border border-white/20">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-plot to-secondary-plot bg-clip-text text-transparent">
+              Settings
+            </h1>
+            <p className="text-gray-600 mt-2 text-lg">
+              Manage your account settings, preferences, and integrations
+            </p>
           </div>
 
-          {/* Main Content */}
-          <div className="flex-1">
-            <div className="bg-white rounded-lg border p-6">
-              {activeTab === "profile" && renderProfile()}
-              {activeTab === "security" && renderSecurity()}
-              {activeTab === "mpesa" && renderMpesaSettings()}
-              {activeTab === "notifications" && renderNotifications()}
-              {activeTab === "api" && renderApiKeys()}
+          {/* Status Messages */}
+          {saveStatus && (
+            <div
+              className={`mb-6 p-6 rounded-2xl flex items-center space-x-3 shadow-lg ${
+                saveStatus === "saved"
+                  ? "bg-gradient-to-r from-green-50 to-emerald-50 text-green-800 border border-green-200"
+                  : saveStatus === "saving"
+                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-800 border border-blue-200"
+                  : "bg-gradient-to-r from-red-50 to-rose-50 text-red-800 border border-red-200"
+              }`}
+            >
+              {saveStatus === "saved" && <TbCheck className="h-6 w-6" />}
+              {saveStatus === "saving" && (
+                <div className="animate-spin h-6 w-6 border-2 border-current border-t-transparent rounded-full"></div>
+              )}
+              {saveStatus === "error" && <TbX className="h-6 w-6" />}
+              {saveStatus === "password-mismatch" && (
+                <TbX className="h-6 w-6" />
+              )}
+              <span className="font-semibold">
+                {saveStatus === "saved" && "Settings saved successfully!"}
+                {saveStatus === "saving" && "Saving changes..."}
+                {saveStatus === "error" &&
+                  "Error saving settings. Please try again."}
+                {saveStatus === "password-mismatch" &&
+                  "Passwords do not match."}
+              </span>
+            </div>
+          )}
+
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Sidebar Navigation */}
+            <div className="lg:w-80">
+              <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl">
+                <nav className="space-y-2">
+                  {tabs.map((tab) => {
+                    const IconComponent = tab.icon;
+                    return (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`w-full flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-300 ${
+                          activeTab === tab.id
+                            ? "bg-gradient-to-r from-primary-plot to-secondary-plot text-white shadow-lg"
+                            : "text-gray-700 hover:bg-gradient-to-r hover:from-primary-plot/10 hover:to-secondary-plot/10 hover:text-primary-plot"
+                        }`}
+                      >
+                        <IconComponent className="mr-3 h-5 w-5" />
+                        {tab.label}
+                      </button>
+                    );
+                  })}
+                </nav>
+              </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="flex-1">
+              <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
+                {activeTab === "profile" && renderProfile()}
+                {activeTab === "security" && renderSecurity()}
+                {activeTab === "mpesa" && renderMpesaSettings()}
+                {activeTab === "notifications" && renderNotifications()}
+                {activeTab === "api" && renderApiKeys()}
+              </div>
             </div>
           </div>
         </div>

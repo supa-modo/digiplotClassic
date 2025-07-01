@@ -460,7 +460,7 @@ const ResetPassword = () => {
         </div>
 
         {/* Copyright - should be aligned at the very bottom and center of page always */}
-        <div className="mt-auto text-center absolute bottom-0 left-0 right-0">
+        <div className="mt-auto text-center absolute bottom-0 left-0 right-0 mb-4">
           <p className="text-[0.8rem] md:text-sm font-medium text-secondary-plot">
             &copy; {new Date().getFullYear()} DIGIPLOT. All rights reserved.
           </p>

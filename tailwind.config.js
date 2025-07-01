@@ -23,6 +23,16 @@ module.exports = {
           800: "#003c43",
           900: "#00262b",
         },
+        //secondary color should be amber based
+        secondary: {
+          100: "#fef3c7",
+          200: "#fde68a",
+          300: "#fcd34d",
+          400: "#fbbf24",
+          500: "#f59e0b",
+          600: "#d97706",
+          700: "#b45309",
+        },
       },
       fontFamily: {
         lexend: ["Lexend", "sans-serif"],

@@ -11,32 +11,44 @@ const ProtectedRoute = ({
     useAuth();
   const location = useLocation();
 
-  // Only log when there's an issue or on important events
+  // Get authentication status
   const isAuth = isAuthenticated();
-  if (!isAuth && localStorage.getItem("digiplot_user")) {
-    console.log("ProtectedRoute: Auth issue detected", {
-      path: location.pathname,
-      loading,
-      authenticated: isAuth,
-      userRole,
-      requiredRole,
-      userId: user?.id,
-      hasLocalStorage: !!localStorage.getItem("digiplot_user"),
-    });
-  }
 
-  // If we have localStorage data but no user state, try to refresh
+  // Handle auth state refresh when localStorage data exists but user state is missing
   React.useEffect(() => {
-    const savedUser = localStorage.getItem("digiplot_user");
-    const savedRole = localStorage.getItem("digiplot_role");
+    // Only try to refresh if we're not loading and don't have user state
+    if (!loading && !isAuth) {
+      const savedUser = localStorage.getItem("digiplot_user");
+      const savedRole = localStorage.getItem("digiplot_role");
 
-    if (savedUser && savedRole && !loading && (!user || !userRole)) {
-      console.log(
-        "ProtectedRoute: Found localStorage but missing auth state, refreshing"
-      );
-      refreshAuthState();
+      if (savedUser && savedRole) {
+        if (process.env.NODE_ENV === "development") {
+          console.log(
+            "ProtectedRoute: Found localStorage but missing auth state, refreshing"
+          );
+        }
+        refreshAuthState();
+      }
     }
-  }, [location.pathname, user, userRole, loading, refreshAuthState]);
+  }, [loading, isAuth, refreshAuthState]);
+
+  // Log auth issues in development only
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === "development" && !isAuth && !loading) {
+      const hasLocalStorage = !!localStorage.getItem("digiplot_user");
+      if (hasLocalStorage) {
+        console.log("ProtectedRoute: Auth issue detected", {
+          path: location.pathname,
+          loading,
+          authenticated: isAuth,
+          userRole,
+          requiredRole,
+          userId: user?.id,
+          hasLocalStorage,
+        });
+      }
+    }
+  }, [isAuth, loading, location.pathname, userRole, requiredRole, user?.id]);
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -52,25 +64,26 @@ const ProtectedRoute = ({
 
   // If not authenticated, redirect to login with the current location
   if (!isAuth) {
-    console.log("ProtectedRoute: Not authenticated, redirecting to login", {
-      path: location.pathname,
-      hasLocalStorage: !!localStorage.getItem("digiplot_user"),
-    });
+    if (process.env.NODE_ENV === "development") {
+      console.log("ProtectedRoute: Not authenticated, redirecting to login", {
+        path: location.pathname,
+        hasLocalStorage: !!localStorage.getItem("digiplot_user"),
+      });
+    }
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
   }
 
   // If authenticated but doesn't have the required role
   if (requiredRole && userRole !== requiredRole) {
     // Redirect based on actual user role
-    if (userRole === "tenant") {
-      return <Navigate to="/tenant" replace />;
-    } else if (userRole === "landlord") {
-      return <Navigate to="/landlord" replace />;
-    } else if (userRole === "admin") {
-      return <Navigate to="/admin" replace />;
-    } else {
-      return <Navigate to="/login" replace />;
-    }
+    const roleRedirectMap = {
+      tenant: "/tenant",
+      landlord: "/landlord",
+      admin: "/admin",
+    };
+
+    const redirectPath = roleRedirectMap[userRole] || "/login";
+    return <Navigate to={redirectPath} replace />;
   }
 
   // If authenticated and has correct role (or no role required), render the children

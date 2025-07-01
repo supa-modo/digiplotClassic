@@ -34,7 +34,8 @@ const LandlordReports = () => {
   const [reportType, setReportType] = useState("financial");
 
   // Get landlord's data
-  const landlordProperties = getPropertiesForLandlord(user?.id).map(
+  // TODO: Replace with actual user id
+  const landlordProperties = getPropertiesForLandlord("landlord-1").map(
     (property) => {
       const units = demoUnits.filter(
         (unit) => unit.property_id === property.id
@@ -189,12 +190,14 @@ const LandlordReports = () => {
   const renderFinancialReport = () => (
     <div className="space-y-6">
       {/* Revenue Chart */}
-      <div className="bg-white rounded-lg border p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-medium text-gray-900">Revenue Trends</h3>
-          <div className="flex items-center space-x-2">
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
+        <div className="flex items-center justify-between mb-8">
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-plot to-secondary-plot bg-clip-text text-transparent">
+            Revenue Trends
+          </h3>
+          <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
             <TbTrendingUp className="h-5 w-5 text-green-600" />
-            <span className="text-sm font-medium text-green-600">
+            <span className="text-sm font-semibold text-green-700">
               +{revenueGrowth.toFixed(1)}% from last month
             </span>
           </div>
@@ -203,16 +206,18 @@ const LandlordReports = () => {
         <div className="space-y-4">
           {monthlyRevenueData.map((data, index) => (
             <div key={index} className="flex items-center space-x-4">
-              <div className="w-12 text-sm text-gray-600">{data.month}</div>
-              <div className="flex-1 bg-gray-200 rounded-full h-8 relative">
+              <div className="w-12 text-sm text-gray-600 font-medium">
+                {data.month}
+              </div>
+              <div className="flex-1 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full h-10 relative overflow-hidden">
                 <div
-                  className="bg-primary-plot h-8 rounded-full flex items-center justify-end pr-3"
+                  className="bg-gradient-to-r from-primary-plot to-secondary-plot h-10 rounded-full flex items-center justify-end pr-4 transition-all duration-700"
                   style={{
                     width: `${(data.revenue / maxRevenue) * 100}%`,
-                    minWidth: data.revenue > 0 ? "60px" : "0",
+                    minWidth: data.revenue > 0 ? "80px" : "0",
                   }}
                 >
-                  <span className="text-white text-sm font-medium">
+                  <span className="text-white text-sm font-semibold">
                     KES {data.revenue.toLocaleString()}
                   </span>
                 </div>
@@ -223,28 +228,34 @@ const LandlordReports = () => {
       </div>
 
       {/* Payment Summary */}
-      <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">
           Payment Summary
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="text-center p-4 bg-green-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
+            <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
               {allPayments.filter((p) => p.status === "successful").length}
             </div>
-            <div className="text-sm text-green-600">Successful Payments</div>
+            <div className="text-sm font-semibold text-green-600 mt-2">
+              Successful Payments
+            </div>
           </div>
-          <div className="text-center p-4 bg-yellow-50 rounded-lg">
-            <div className="text-2xl font-bold text-yellow-600">
+          <div className="text-center p-6 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
+            <div className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent">
               {allPayments.filter((p) => p.status === "pending").length}
             </div>
-            <div className="text-sm text-yellow-600">Pending Payments</div>
+            <div className="text-sm font-semibold text-yellow-600 mt-2">
+              Pending Payments
+            </div>
           </div>
-          <div className="text-center p-4 bg-red-50 rounded-lg">
-            <div className="text-2xl font-bold text-red-600">
+          <div className="text-center p-6 bg-gradient-to-br from-red-50 to-rose-50 rounded-2xl border border-red-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
+            <div className="text-3xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
               {allPayments.filter((p) => p.status === "failed").length}
             </div>
-            <div className="text-sm text-red-600">Failed Payments</div>
+            <div className="text-sm font-semibold text-red-600 mt-2">
+              Failed Payments
+            </div>
           </div>
         </div>
       </div>
@@ -253,11 +264,11 @@ const LandlordReports = () => {
 
   const renderOccupancyReport = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">
           Occupancy Overview
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {landlordProperties.map((property) => {
             const propertyUnits = demoUnits.filter(
               (unit) => unit.property_id === property.id
@@ -269,22 +280,27 @@ const LandlordReports = () => {
               (propertyTenants.length / property.total_units) * 100;
 
             return (
-              <div key={property.id} className="p-4 border rounded-lg">
-                <h4 className="font-medium text-gray-900">{property.name}</h4>
-                <div className="mt-2">
+              <div
+                key={property.id}
+                className="p-6 bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 rounded-xl border border-primary-plot/20 hover:shadow-lg transition-all duration-300 hover:scale-105"
+              >
+                <h4 className="font-bold text-gray-900 text-lg">
+                  {property.name}
+                </h4>
+                <div className="mt-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span>Occupied</span>
-                    <span>
+                    <span className="font-medium text-gray-600">Occupied</span>
+                    <span className="font-bold text-gray-900">
                       {propertyTenants.length}/{property.total_units}
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                  <div className="w-full bg-gray-200 rounded-full h-3 mt-2">
                     <div
-                      className="bg-primary-plot h-2 rounded-full"
+                      className="bg-gradient-to-r from-primary-plot to-secondary-plot h-3 rounded-full transition-all duration-700"
                       style={{ width: `${occupancyRate}%` }}
                     ></div>
                   </div>
-                  <div className="text-sm text-gray-600 mt-1">
+                  <div className="text-sm font-semibold text-gray-700 mt-2">
                     {occupancyRate.toFixed(1)}% occupied
                   </div>
                 </div>
@@ -298,46 +314,54 @@ const LandlordReports = () => {
 
   const renderMaintenanceReport = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">
           Maintenance Statistics
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="text-center p-4 bg-blue-50 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
+            <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               {maintenanceRequests.length}
             </div>
-            <div className="text-sm text-blue-600">Total Requests</div>
+            <div className="text-sm font-semibold text-blue-600 mt-2">
+              Total Requests
+            </div>
           </div>
-          <div className="text-center p-4 bg-yellow-50 rounded-lg">
-            <div className="text-2xl font-bold text-yellow-600">
+          <div className="text-center p-6 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
+            <div className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent">
               {pendingMaintenance}
             </div>
-            <div className="text-sm text-yellow-600">Pending</div>
+            <div className="text-sm font-semibold text-yellow-600 mt-2">
+              Pending
+            </div>
           </div>
-          <div className="text-center p-4 bg-green-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">
+          <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
+            <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
               {completedMaintenance}
             </div>
-            <div className="text-sm text-green-600">Completed</div>
+            <div className="text-sm font-semibold text-green-600 mt-2">
+              Completed
+            </div>
           </div>
-          <div className="text-center p-4 bg-purple-50 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600">
+          <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl border border-purple-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
+            <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
               {
                 maintenanceRequests.filter((r) => r.status === "in_progress")
                   .length
               }
             </div>
-            <div className="text-sm text-purple-600">In Progress</div>
+            <div className="text-sm font-semibold text-purple-600 mt-2">
+              In Progress
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">
           Request Categories
         </h3>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {["plumbing", "electrical", "hvac", "appliances", "other"].map(
             (category) => {
               const categoryRequests = maintenanceRequests.filter(
@@ -350,20 +374,20 @@ const LandlordReports = () => {
 
               return (
                 <div key={category} className="flex items-center space-x-4">
-                  <div className="w-20 text-sm text-gray-600 capitalize">
+                  <div className="w-24 text-sm font-semibold text-gray-700 capitalize">
                     {category}
                   </div>
-                  <div className="flex-1 bg-gray-200 rounded-full h-6 relative">
+                  <div className="flex-1 bg-gray-200 rounded-full h-8 relative overflow-hidden">
                     <div
-                      className="bg-primary-plot h-6 rounded-full flex items-center justify-end pr-2"
-                      style={{ width: `${percentage}%`, minWidth: "40px" }}
+                      className="bg-gradient-to-r from-primary-plot to-secondary-plot h-8 rounded-full flex items-center justify-end pr-3 transition-all duration-700"
+                      style={{ width: `${percentage}%`, minWidth: "50px" }}
                     >
-                      <span className="text-white text-xs font-medium">
+                      <span className="text-white text-xs font-semibold">
                         {categoryRequests.length}
                       </span>
                     </div>
                   </div>
-                  <div className="w-12 text-sm text-gray-600">
+                  <div className="w-16 text-sm font-semibold text-gray-600">
                     {percentage.toFixed(1)}%
                   </div>
                 </div>
@@ -377,11 +401,11 @@ const LandlordReports = () => {
 
   const renderPropertyReport = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">
           Property Performance
         </h3>
-        <div className="space-y-4">
+        <div className="space-y-6">
           {landlordProperties.map((property) => {
             const propertyPayments = allPayments.filter((payment) => {
               const tenant = getTenantById(payment.tenant_id);
@@ -399,44 +423,48 @@ const LandlordReports = () => {
             return (
               <div
                 key={property.id}
-                className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="bg-gradient-to-br from-primary-plot/5 to-secondary-plot/5 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border border-primary-plot/20"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h4 className="font-medium text-gray-900">
+                    <h4 className="font-bold text-gray-900 text-xl">
                       {property.name}
                     </h4>
-                    <p className="text-sm text-gray-500">{property.address}</p>
+                    <p className="text-gray-600 mt-1">{property.address}</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-bold text-gray-900">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-primary-plot to-secondary-plot bg-clip-text text-transparent">
                       KES {propertyRevenue.toLocaleString()}
                     </div>
-                    <div className="text-sm text-gray-500">Total Revenue</div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      Total Revenue
+                    </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t">
+                <div className="grid grid-cols-3 gap-6 mt-6 pt-6 border-t border-primary-plot/20">
                   <div className="text-center">
-                    <div className="text-lg font-medium text-gray-900">
+                    <div className="text-2xl font-bold text-gray-900">
                       {property.total_units}
                     </div>
-                    <div className="text-sm text-gray-500">Total Units</div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      Total Units
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-medium text-gray-900">
+                    <div className="text-2xl font-bold text-gray-900">
                       {propertyTenants.length}
                     </div>
-                    <div className="text-sm text-gray-500">Occupied</div>
+                    <div className="text-sm text-gray-600 mt-1">Occupied</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-medium text-gray-900">
+                    <div className="text-2xl font-bold text-gray-900">
                       {(
                         (propertyTenants.length / property.total_units) *
                         100
                       ).toFixed(1)}
                       %
                     </div>
-                    <div className="text-sm text-gray-500">Occupancy</div>
+                    <div className="text-sm text-gray-600 mt-1">Occupancy</div>
                   </div>
                 </div>
               </div>
@@ -449,110 +477,125 @@ const LandlordReports = () => {
 
   return (
     <LandlordLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Reports & Analytics
-            </h1>
-            <p className="text-gray-600 mt-1">
-              Comprehensive insights into your property portfolio
-            </p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <select
-              value={selectedPeriod}
-              onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent"
-            >
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-              <option value="quarterly">Quarterly</option>
-              <option value="yearly">Yearly</option>
-            </select>
-            <button
-              onClick={() => handleExportReport("pdf")}
-              className="bg-primary-plot text-white px-4 py-2 rounded-lg hover:bg-primary-plot/90 transition-colors flex items-center space-x-2"
-            >
-              <TbDownload size={16} />
-              <span>Export PDF</span>
-            </button>
-            <button
-              onClick={() => handleExportReport("excel")}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
-            >
-              <TbDownload size={16} />
-              <span>Export Excel</span>
-            </button>
-          </div>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-primary-plot/5 via-secondary-plot/5 to-primary-plot/5 relative">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-primary-plot/10 to-transparent rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-secondary-plot/10 to-transparent rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <div key={index} className="bg-white rounded-lg border p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    {stat.title}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">
-                    {stat.value}
-                  </p>
-                  <div className="flex items-center mt-2">
-                    {stat.changeType === "increase" ? (
-                      <TbTrendingUp className="h-4 w-4 text-green-600 mr-1" />
-                    ) : stat.changeType === "decrease" ? (
-                      <TbTrendingDown className="h-4 w-4 text-red-600 mr-1" />
-                    ) : (
-                      <TbClock className="h-4 w-4 text-gray-600 mr-1" />
-                    )}
-                    <span
-                      className={`text-sm ${
-                        stat.changeType === "increase"
-                          ? "text-green-600"
-                          : stat.changeType === "decrease"
-                          ? "text-red-600"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      {stat.change}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-3 bg-primary-plot/10 rounded-lg">
-                  <stat.icon className="h-6 w-6 text-primary-plot" />
-                </div>
+        <div className="relative space-y-6 p-6">
+          {/* Header */}
+          <div className="bg-white/80 backdrop-blur-xl shadow-xl rounded-2xl p-8 border border-white/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-plot to-secondary-plot bg-clip-text text-transparent">
+                  Reports & Analytics
+                </h1>
+                <p className="text-gray-600 mt-2 text-lg">
+                  Comprehensive insights into your property portfolio
+                </p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <select
+                  value={selectedPeriod}
+                  onChange={(e) => setSelectedPeriod(e.target.value)}
+                  className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/50 backdrop-blur-sm"
+                >
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="quarterly">Quarterly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+                <button
+                  onClick={() => handleExportReport("pdf")}
+                  className="bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold flex items-center space-x-2"
+                >
+                  <TbDownload size={20} />
+                  <span>Export PDF</span>
+                </button>
+                <button
+                  onClick={() => handleExportReport("excel")}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold flex items-center space-x-2"
+                >
+                  <TbDownload size={20} />
+                  <span>Export Excel</span>
+                </button>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
 
-        {/* Report Type Selector */}
-        <div className="bg-white rounded-lg border p-6">
-          <div className="flex items-center space-x-4 mb-6">
-            {reportTypes.map((type) => (
-              <button
-                key={type.id}
-                onClick={() => setReportType(type.id)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                  reportType === type.id
-                    ? "bg-primary-plot text-white"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {stats.map((stat, index) => (
+              <div
+                key={index}
+                className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
               >
-                <type.icon size={16} />
-                <span>{type.label}</span>
-              </button>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-600">
+                      {stat.title}
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 mt-2">
+                      {stat.value}
+                    </p>
+                    <div className="flex items-center mt-3">
+                      {stat.changeType === "increase" ? (
+                        <div className="flex items-center space-x-1 px-2 py-1 bg-green-50 rounded-lg">
+                          <TbTrendingUp className="h-4 w-4 text-green-600" />
+                          <span className="text-xs font-semibold text-green-600">
+                            {stat.change}
+                          </span>
+                        </div>
+                      ) : stat.changeType === "decrease" ? (
+                        <div className="flex items-center space-x-1 px-2 py-1 bg-red-50 rounded-lg">
+                          <TbTrendingDown className="h-4 w-4 text-red-600" />
+                          <span className="text-xs font-semibold text-red-600">
+                            {stat.change}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-1 px-2 py-1 bg-gray-50 rounded-lg">
+                          <TbClock className="h-4 w-4 text-gray-600" />
+                          <span className="text-xs font-semibold text-gray-600">
+                            {stat.change}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="p-4 bg-gradient-to-br from-primary-plot/10 to-secondary-plot/10 rounded-xl">
+                    <stat.icon className="h-8 w-8 text-primary-plot" />
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
 
-          {/* Report Content */}
-          {reportType === "financial" && renderFinancialReport()}
-          {reportType === "occupancy" && renderOccupancyReport()}
-          {reportType === "maintenance" && renderMaintenanceReport()}
-          {reportType === "property" && renderPropertyReport()}
+          {/* Report Type Selector */}
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
+            <div className="flex items-center space-x-4 mb-8">
+              {reportTypes.map((type) => (
+                <button
+                  key={type.id}
+                  onClick={() => setReportType(type.id)}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-300 font-semibold ${
+                    reportType === type.id
+                      ? "bg-gradient-to-r from-primary-plot to-secondary-plot text-white shadow-lg"
+                      : "text-gray-600 hover:bg-gradient-to-r hover:from-primary-plot/10 hover:to-secondary-plot/10 hover:text-primary-plot"
+                  }`}
+                >
+                  <type.icon size={20} />
+                  <span>{type.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Report Content */}
+            {reportType === "financial" && renderFinancialReport()}
+            {reportType === "occupancy" && renderOccupancyReport()}
+            {reportType === "maintenance" && renderMaintenanceReport()}
+            {reportType === "property" && renderPropertyReport()}
+          </div>
         </div>
       </div>
     </LandlordLayout>

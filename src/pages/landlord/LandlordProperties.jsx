@@ -28,6 +28,7 @@ import {
   TbGridDots,
   TbLayoutList,
 } from "react-icons/tb";
+import { PiBuildingsDuotone } from "react-icons/pi";
 
 const LandlordProperties = () => {
   const { user } = useAuth();
@@ -40,6 +41,7 @@ const LandlordProperties = () => {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [viewMode, setViewMode] = useState("grid"); // grid or list
+  const [isMobile, setIsMobile] = useState(false);
 
   // Modal states
   const [confirmationModal, setConfirmationModal] = useState({
@@ -52,9 +54,27 @@ const LandlordProperties = () => {
     isLoading: false,
   });
 
+  // Track screen size for responsive behavior
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    // Check initial screen size
+    checkScreenSize();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => {
+      window.removeEventListener("resize", checkScreenSize);
+    };
+  }, []);
+
   useEffect(() => {
     if (user?.id) {
-      const landlordProperties = getPropertiesForLandlord(user.id);
+      // TODO: Replace with actual user id
+      const landlordProperties = getPropertiesForLandlord("landlord-1");
       const propertiesWithUnits = landlordProperties.map((property) => ({
         ...property,
         units: getUnitsForProperty(property.id),
@@ -511,8 +531,8 @@ const LandlordProperties = () => {
                 </div>
               </div>
 
-              {/* View Mode Toggle - Enhanced */}
-              <div className="flex items-center space-x-2 bg-gray-100 p-2 rounded-xl">
+              {/* View Mode Toggle - Enhanced (Hidden on mobile - mobile always uses grid) */}
+              <div className="hidden lg:flex items-center space-x-2 bg-gray-100 p-2 rounded-xl">
                 <button
                   onClick={() => setViewMode("grid")}
                   className={`p-3 rounded-lg transition-all duration-200 ${
@@ -540,19 +560,19 @@ const LandlordProperties = () => {
 
         {/* Properties List/Grid - Enhanced */}
         {filteredProperties.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gray-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
+          <div className="md:bg-white md:rounded-2xl md:shadow-lg md:border border-gray-100 p-4 md:p-12 text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 md:bg-gray-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
 
             <div className="relative z-10">
-              <div className="p-6 bg-gray-100 rounded-2xl inline-flex mb-6">
-                <TbBuilding className="h-16 w-16 text-gray-300" />
+              <div className="p-3 md:p-4 bg-gray-100 rounded-2xl inline-flex mb-2 md:mb-4">
+                <PiBuildingsDuotone className="h-16 w-16 text-gray-300" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <h3 className="text-base md:text-lg font-bold text-gray-500 mb-2">
                 {properties.length === 0
                   ? "No properties yet"
                   : "No properties found"}
               </h3>
-              <p className="text-gray-500 mb-6 max-w-md mx-auto">
+              <p className="text-gray-500 text-sm md:text-[0.9rem] mb-6 max-w-lg mx-auto">
                 {properties.length === 0
                   ? "Get started by adding your first property to begin building your rental portfolio"
                   : "Try adjusting your search terms or filter criteria to find the properties you're looking for"}
@@ -572,23 +592,28 @@ const LandlordProperties = () => {
           <div
             className={`
             ${
-              viewMode === "grid"
+              isMobile || viewMode === "grid"
                 ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 : "space-y-4"
             }
           `}
           >
-            {filteredProperties.map((property) => (
-              <PropertyCard
-                key={property.id}
-                property={property}
-                viewMode={viewMode}
-                onEdit={() => handleEditProperty(property)}
-                onAddUnit={() => handleAddUnit(property)}
-                onEditUnit={(unit) => handleEditUnit(property, unit)}
-                onDelete={() => handleDeleteProperty(property)}
-              />
-            ))}
+            {filteredProperties.map((property) => {
+              // Force grid mode on mobile, otherwise use selected viewMode
+              const effectiveViewMode = isMobile ? "grid" : viewMode;
+
+              return (
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  viewMode={effectiveViewMode}
+                  onEdit={() => handleEditProperty(property)}
+                  onAddUnit={() => handleAddUnit(property)}
+                  onEditUnit={(unit) => handleEditUnit(property, unit)}
+                  onDelete={() => handleDeleteProperty(property)}
+                />
+              );
+            })}
           </div>
         )}
       </div>

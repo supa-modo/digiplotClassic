@@ -51,6 +51,53 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
+  // Add effect to handle auth state synchronization
+  useEffect(() => {
+    if (loading) return;
+
+    const authenticated = user !== null && userRole !== null;
+    const serviceAuthenticated = authService.isAuthenticated();
+
+    // Check for auth mismatch and fix it
+    if (authenticated !== serviceAuthenticated) {
+      if (ENABLE_DEBUG_LOGGING) {
+        console.log("AuthProvider: Auth mismatch detected", {
+          contextAuthenticated: authenticated,
+          serviceAuthenticated,
+          user: !!user,
+          userRole,
+        });
+      }
+
+      // If service has auth but context doesn't, refresh context
+      if (serviceAuthenticated && !authenticated) {
+        const authData = authService.getStoredAuthData();
+        if (authData && authData.user && authData.role) {
+          try {
+            if (ENABLE_DEBUG_LOGGING) {
+              console.log("AuthProvider: Auto-refreshing missing auth state", {
+                userId: authData.user.id,
+                role: authData.role,
+              });
+            }
+            setUser(authData.user);
+            setUserRole(authData.role);
+          } catch (error) {
+            console.error("Error auto-refreshing auth state:", error);
+            authService.logout();
+          }
+        }
+      } else if (!serviceAuthenticated && authenticated) {
+        // If context has auth but service doesn't, clear context
+        if (ENABLE_DEBUG_LOGGING) {
+          console.log("AuthProvider: Clearing stale auth state");
+        }
+        setUser(null);
+        setUserRole(null);
+      }
+    }
+  }, [user, userRole, loading]);
+
   const login = async (email, password, userType, twoFactorToken = null) => {
     try {
       if (ENABLE_DEBUG_LOGGING) {
@@ -98,31 +145,12 @@ export const AuthProvider = ({ children }) => {
     authService.logout();
   };
 
+  // Make isAuthenticated a pure function that doesn't cause side effects
   const isAuthenticated = () => {
-    const authenticated = user !== null && userRole !== null;
-    const serviceAuthenticated = authService.isAuthenticated();
-
-    // Check for auth mismatch
-    if (authenticated !== serviceAuthenticated) {
-      if (ENABLE_DEBUG_LOGGING) {
-        console.log("AuthProvider: Auth mismatch detected", {
-          contextAuthenticated: authenticated,
-          serviceAuthenticated,
-          user: !!user,
-          userRole,
-        });
-      }
-
-      // If service has auth but context doesn't, refresh context
-      if (serviceAuthenticated && !authenticated) {
-        refreshAuthState();
-      }
-    }
-
-    return authenticated;
+    return user !== null && userRole !== null;
   };
 
-  // Add a function to manually refresh auth state
+  // Manual refresh function for external use
   const refreshAuthState = () => {
     if (ENABLE_DEBUG_LOGGING) {
       console.log("AuthProvider: Manually refreshing auth state");
@@ -130,10 +158,10 @@ export const AuthProvider = ({ children }) => {
 
     const authData = authService.getStoredAuthData();
 
-    if (authData && authData.user && authData.role && (!user || !userRole)) {
+    if (authData && authData.user && authData.role) {
       try {
         if (ENABLE_DEBUG_LOGGING) {
-          console.log("AuthProvider: Refreshing missing auth state", {
+          console.log("AuthProvider: Refreshing auth state", {
             userId: authData.user.id,
             role: authData.role,
           });
@@ -143,7 +171,13 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error("Error refreshing auth state:", error);
         authService.logout();
+        setUser(null);
+        setUserRole(null);
       }
+    } else {
+      // No valid auth data, clear state
+      setUser(null);
+      setUserRole(null);
     }
   };
 

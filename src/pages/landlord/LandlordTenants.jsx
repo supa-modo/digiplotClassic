@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import LandlordLayout from "../../components/landlord/LandlordLayout";
+import TenantModal from "../../components/landlord/TenantModal";
+import ConfirmationModal from "../../components/common/ConfirmationModal";
 import { useAuth } from "../../contexts/AuthContext";
-import { getTenantsForLandlord } from "../../utils/demoData";
+import {
+  getTenantsForLandlord,
+  getPropertiesForLandlord,
+} from "../../utils/demoData";
 import {
   TbPlus,
   TbSearch,
@@ -27,12 +32,35 @@ const LandlordTenants = () => {
   const [filteredTenants, setFilteredTenants] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [properties, setProperties] = useState([]);
+
+  // Modal states
+  const [showTenantModal, setShowTenantModal] = useState(false);
+  const [selectedTenant, setSelectedTenant] = useState(null);
+  const [confirmationModal, setConfirmationModal] = useState({
+    isOpen: false,
+    type: "confirm",
+    title: "",
+    message: "",
+    itemName: "",
+    onConfirm: null,
+    isLoading: false,
+  });
 
   useEffect(() => {
     if (user?.id) {
-      const landlordTenants = getTenantsForLandlord(user.id);
+      // TODO: Replace with actual user id
+      const landlordTenants = getTenantsForLandlord("landlord-1");
       setTenants(landlordTenants);
       setFilteredTenants(landlordTenants);
+
+      // Get properties with units for tenant assignment
+      const landlordProperties = getPropertiesForLandlord("landlord-1");
+      const propertiesWithUnits = landlordProperties.map((property) => ({
+        ...property,
+        units: property.units || [], // Ensure units array exists
+      }));
+      setProperties(propertiesWithUnits);
     }
   }, [user]);
 
@@ -58,6 +86,52 @@ const LandlordTenants = () => {
 
     setFilteredTenants(filtered);
   }, [tenants, searchTerm, statusFilter]);
+
+  const handleAddTenant = () => {
+    setSelectedTenant(null);
+    setShowTenantModal(true);
+  };
+
+  const handleEditTenant = (tenant) => {
+    setSelectedTenant(tenant);
+    setShowTenantModal(true);
+  };
+
+  const handleTenantSave = async (tenantData) => {
+    setConfirmationModal((prev) => ({ ...prev, isLoading: true }));
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("Tenant saved:", tenantData);
+
+      setShowTenantModal(false);
+      setConfirmationModal({
+        isOpen: true,
+        type: "success",
+        title: "Tenant Saved",
+        message: `Tenant "${tenantData.first_name} ${
+          tenantData.last_name
+        }" has been ${selectedTenant ? "updated" : "added"} successfully!`,
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        autoClose: true,
+        isLoading: false,
+      });
+
+      // Refresh tenants list in real app
+    } catch (error) {
+      setConfirmationModal({
+        isOpen: true,
+        type: "error",
+        title: "Error",
+        message: "Failed to save tenant. Please try again.",
+        onConfirm: () =>
+          setConfirmationModal((prev) => ({ ...prev, isOpen: false })),
+        isLoading: false,
+      });
+    }
+  };
 
   const getStatusBadge = (status) => {
     const statusConfig = {
@@ -115,7 +189,10 @@ const LandlordTenants = () => {
                 </p>
               </div>
             </div>
-            <button className="mt-4 lg:mt-0 bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-200 font-bold flex items-center space-x-2 transform hover:scale-105 shadow-lg">
+            <button
+              onClick={handleAddTenant}
+              className="mt-4 lg:mt-0 bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-200 font-bold flex items-center space-x-2 transform hover:scale-105 shadow-lg"
+            >
               <TbUserPlus size={20} />
               <span>Add Tenant</span>
             </button>
@@ -319,7 +396,10 @@ const LandlordTenants = () => {
                   : "Try adjusting your search terms or filter criteria to find the tenants you're looking for"}
               </p>
               {tenants.length === 0 && (
-                <button className="bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-200 font-bold flex items-center space-x-2 mx-auto transform hover:scale-105 shadow-lg">
+                <button
+                  onClick={handleAddTenant}
+                  className="bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-200 font-bold flex items-center space-x-2 mx-auto transform hover:scale-105 shadow-lg"
+                >
                   <TbUserPlus size={20} />
                   <span>Add Your First Tenant</span>
                 </button>
@@ -403,7 +483,10 @@ const LandlordTenants = () => {
                           <button className="text-primary-plot hover:text-primary-plot/80 p-2 hover:bg-primary-plot/5 rounded-lg transition-all duration-200">
                             <TbEye className="h-4 w-4" />
                           </button>
-                          <button className="text-blue-600 hover:text-blue-800 p-2 hover:bg-blue-50 rounded-lg transition-all duration-200">
+                          <button
+                            onClick={() => handleEditTenant(tenant)}
+                            className="text-blue-600 hover:text-blue-800 p-2 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                          >
                             <TbEdit className="h-4 w-4" />
                           </button>
                         </div>
@@ -415,6 +498,32 @@ const LandlordTenants = () => {
             </div>
           </div>
         )}
+
+        {/* Tenant Modal */}
+        {showTenantModal && (
+          <TenantModal
+            isOpen={showTenantModal}
+            onClose={() => setShowTenantModal(false)}
+            onSave={handleTenantSave}
+            tenant={selectedTenant}
+            properties={properties}
+          />
+        )}
+
+        {/* Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={confirmationModal.isOpen}
+          onClose={() =>
+            setConfirmationModal((prev) => ({ ...prev, isOpen: false }))
+          }
+          onConfirm={confirmationModal.onConfirm}
+          type={confirmationModal.type}
+          title={confirmationModal.title}
+          message={confirmationModal.message}
+          itemName={confirmationModal.itemName}
+          isLoading={confirmationModal.isLoading}
+          autoClose={confirmationModal.autoClose}
+        />
       </div>
     </LandlordLayout>
   );

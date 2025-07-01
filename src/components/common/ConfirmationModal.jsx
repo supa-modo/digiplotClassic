@@ -11,6 +11,7 @@ import {
   TbEdit,
   TbBulb,
   TbExclamationMark,
+  TbLoader2,
 } from "react-icons/tb";
 import { FiCheckCircle } from "react-icons/fi";
 
@@ -210,18 +211,21 @@ const ConfirmationModal = ({
             ></div>
 
             {/* Header */}
-            <div className="relative z-10 px-6 py-6 border-b border-gray-100">
+            <div className="relative z-10 px-4 py-3 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  <div className={`p-3 rounded-xl ${config.iconBg} shadow-sm`}>
-                    <IconComponent className={`h-6 w-6 ${config.iconColor}`} />
-                  </div>
+                  <IconComponent
+                    className={`h-8 md:h-10 w-8 md:w-10 ${config.iconColor}`}
+                  />
+
                   <div>
-                    <h3 className={`text-xl font-bold ${config.headerColor}`}>
+                    <h3
+                      className={`text-lg md:text-xl font-bold ${config.headerColor}`}
+                    >
                       {title || config.defaultTitle}
                     </h3>
                     {isAutoClosing && (
-                      <p className="text-sm text-gray-500 mt-1">
+                      <p className="text-xs md:text-[0.8rem] text-gray-500">
                         Auto-closing in {Math.ceil(autoCloseDelay / 1000)}s...
                       </p>
                     )}
@@ -238,24 +242,16 @@ const ConfirmationModal = ({
             </div>
 
             {/* Content */}
-            <div className="relative z-10 px-6 py-6">
-              {/* Large icon for desktop */}
-              <div className="hidden md:flex justify-center mb-6">
-                <div className={`p-4 rounded-2xl ${config.iconBg} shadow-lg`}>
-                  <IconComponent className={`h-12 w-12 ${config.iconColor}`} />
-                </div>
-              </div>
-
+            <div className="relative z-10 px-2.5 py-2.5 md:px-5 md:py-5">
               <div className="text-center">
-                <p className="text-gray-700 text-lg leading-relaxed">
+                <p className="text-gray-700 text-sm md:text-base leading-relaxed">
                   {message || getDefaultMessage()}
                 </p>
 
                 {type === "delete" && (
-                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-                    <div className="flex items-center justify-center space-x-2 text-red-700">
-                      <TbAlertTriangle className="h-4 w-4" />
-                      <span className="text-sm font-semibold">
+                  <div className="mt-4 p-2 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center justify-center  text-red-700">
+                      <span className="text-[0.8rem] md:text-sm font-semibold">
                         This action cannot be undone
                       </span>
                     </div>
@@ -265,13 +261,13 @@ const ConfirmationModal = ({
             </div>
 
             {/* Actions */}
-            <div className="relative z-10 px-6 py-6 bg-gray-50/50 border-t border-gray-100">
+            <div className="relative z-10 px-2.5 py-2.5 md:px-5 md:py-5 bg-gray-50/50 border-t border-gray-100">
               <div className="flex flex-col-reverse sm:flex-row sm:justify-end space-y-2 space-y-reverse sm:space-y-0 sm:space-x-3">
                 {shouldShowCancel && (
                   <button
                     onClick={onClose}
                     disabled={isLoading}
-                    className="w-full sm:w-auto px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 transition-all duration-200 font-semibold shadow-sm hover:shadow-md"
+                    className="w-full px-8 py-2.5 md:py-2 text-sm md:text-base text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 transition-all duration-300 font-semibold shadow-sm hover:shadow-md"
                   >
                     {cancelButtonText}
                   </button>
@@ -279,11 +275,11 @@ const ConfirmationModal = ({
                 <button
                   onClick={onConfirm}
                   disabled={isLoading}
-                  className={`w-full sm:w-auto px-6 py-3 text-white rounded-xl disabled:opacity-50 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2 ${config.primaryButtonColor}`}
+                  className={`w-full px-8 py-2.5 md:py-2 text-sm md:text-base text-white rounded-lg  disabled:opacity-50 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 ${config.primaryButtonColor}`}
                 >
                   {isLoading ? (
                     <>
-                      <TbAlertCircle className="h-5 w-5 animate-spin" />
+                      <TbLoader2 className="h-5 w-5 animate-spin" />
                       <span>Processing...</span>
                     </>
                   ) : (
