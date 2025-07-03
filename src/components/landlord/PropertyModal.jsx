@@ -19,6 +19,8 @@ import {
   TbStar,
   TbPhoto,
 } from "react-icons/tb";
+import propertyService from "../../services/propertyService";
+import FileUpload from "../common/FileUpload";
 
 const PropertyModal = ({ isOpen, onClose, onSave, property }) => {
   const [formData, setFormData] = useState({
@@ -44,6 +46,7 @@ const PropertyModal = ({ isOpen, onClose, onSave, property }) => {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState([]);
 
   const isEditing = !!property;
 
@@ -145,6 +148,10 @@ const PropertyModal = ({ isOpen, onClose, onSave, property }) => {
     }));
   };
 
+  const handleImagesChange = (files) => {
+    setUploadedImages(files);
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -196,19 +203,56 @@ const PropertyModal = ({ isOpen, onClose, onSave, property }) => {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      let response;
+      if (isEditing) {
+        // Update existing property
+        response = await propertyService.updateProperty(property.id, formData);
+      } else {
+        // Create new property
+        response = await propertyService.createProperty(formData);
+      }
 
-      onSave({
-        ...formData,
-        id: property?.id || Date.now(),
-        created_at: property?.created_at || new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
+      if (response.success) {
+        // Handle image uploads if there are any
+        if (uploadedImages.length > 0) {
+          try {
+            const propertyId =
+              response.property?.id || response.data?.property?.id;
+            if (propertyId) {
+              const imageFormData = new FormData();
+              uploadedImages.forEach((imageFile) => {
+                imageFormData.append("images", imageFile.file);
+              });
 
-      onClose();
+              await propertyService.uploadImages(propertyId, imageFormData);
+            }
+          } catch (uploadError) {
+            console.warn(
+              "Property created but image upload failed:",
+              uploadError
+            );
+          }
+        }
+
+        // Pass the property data from the API response
+        onSave(
+          response.property ||
+            response.data?.property || {
+              ...formData,
+              id: property?.id || Date.now(),
+              created_at: property?.created_at || new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            }
+        );
+        onClose();
+      } else {
+        setErrors({ general: response.message || "Failed to save property" });
+      }
     } catch (error) {
       console.error("Error saving property:", error);
+      setErrors({
+        general: error.message || "An error occurred while saving the property",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -236,6 +280,7 @@ const PropertyModal = ({ isOpen, onClose, onSave, property }) => {
       image_urls: [],
     });
     setErrors({});
+    setUploadedImages([]);
     onClose();
   };
 
@@ -698,100 +743,15 @@ const PropertyModal = ({ isOpen, onClose, onSave, property }) => {
                       </h3>
                     </div>
 
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Image URLs
-                          <span className="text-gray-500 text-xs ml-1">
-                            (Enter image URLs one at a time)
-                          </span>
-                        </label>
-
-                        {/* Display existing images */}
-                        {formData.image_urls.length > 0 && (
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                            {formData.image_urls.map((url, index) => (
-                              <div key={index} className="relative group">
-                                <img
-                                  src={url}
-                                  alt={`Property image ${index + 1}`}
-                                  className="w-full h-24 object-cover rounded-lg border border-gray-200"
-                                  onError={(e) => {
-                                    e.target.src =
-                                      "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SW1hZ2U8L3RleHQ+PC9zdmc+";
-                                  }}
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const newUrls = formData.image_urls.filter(
-                                      (_, i) => i !== index
-                                    );
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      image_urls: newUrls,
-                                    }));
-                                  }}
-                                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                                  disabled={isSubmitting}
-                                >
-                                  <TbX className="w-3 h-3" />
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Add new image URL */}
-                        <div className="flex gap-2">
-                          <input
-                            type="url"
-                            placeholder="Enter image URL (e.g., /appartment-1.png or https://...)"
-                            className="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                            disabled={isSubmitting}
-                            onKeyPress={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                const url = e.target.value.trim();
-                                if (url && !formData.image_urls.includes(url)) {
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    image_urls: [...prev.image_urls, url],
-                                  }));
-                                  e.target.value = "";
-                                }
-                              }
-                            }}
-                          />
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              const input =
-                                e.target.parentElement.querySelector("input");
-                              const url = input.value.trim();
-                              if (url && !formData.image_urls.includes(url)) {
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  image_urls: [...prev.image_urls, url],
-                                }));
-                                input.value = "";
-                              }
-                            }}
-                            className="px-4 py-3 bg-gradient-to-r from-primary-plot to-secondary-plot text-white rounded-xl hover:shadow-lg transition-all duration-200 flex items-center gap-2"
-                            disabled={isSubmitting}
-                          >
-                            <TbPlus className="w-4 h-4" />
-                            Add
-                          </button>
-                        </div>
-
-                        <p className="text-xs text-gray-500 mt-2">
-                          Add multiple images to create a slideshow for your
-                          property. Images will auto-slide every 4 seconds when
-                          viewed.
-                        </p>
-                      </div>
-                    </div>
+                    <FileUpload
+                      onFilesChange={handleImagesChange}
+                      acceptedTypes="image/*"
+                      maxFiles={8}
+                      maxFileSize={10}
+                      allowedFormats={["JPG", "JPEG", "PNG", "WEBP", "GIF"]}
+                      uploadType="images"
+                      disabled={isSubmitting}
+                    />
                   </div>
 
                   {/* Amenities */}

@@ -13,7 +13,9 @@ import {
   TbHome,
   TbTools,
   TbClock,
+  TbArrowRight,
 } from "react-icons/tb";
+import { PiCaretDownDuotone, PiChartLineUpDuotone } from "react-icons/pi";
 import {
   demoPayments,
   demoMaintenanceRequests,
@@ -477,125 +479,180 @@ const LandlordReports = () => {
 
   return (
     <LandlordLayout>
-      <div className="min-h-screen bg-gradient-to-br from-primary-plot/5 via-secondary-plot/5 to-primary-plot/5 relative">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-primary-plot/10 to-transparent rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-secondary-plot/10 to-transparent rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
-
-        <div className="relative space-y-6 p-6">
-          {/* Header */}
-          <div className="bg-white/80 backdrop-blur-xl shadow-xl rounded-2xl p-8 border border-white/20">
-            <div className="flex items-center justify-between">
+      <div className="space-y-6">
+        {/* Header - Enhanced */}
+        <div className=" relative overflow-hidden">
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 md:p-4 bg-gradient-to-br from-secondary-600/20 to-secondary-plot/20 rounded-xl backdrop-blur-sm border border-white/20">
+                <PiChartLineUpDuotone className="h-7 md:h-8 w-7 md:w-8 text-secondary-600" />
+              </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-plot to-secondary-plot bg-clip-text text-transparent">
+                <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-secondary-plot">
                   Reports & Analytics
                 </h1>
-                <p className="text-gray-600 mt-2 text-lg">
+                <p className="text-gray-600 mt-1 text-xs md:text-sm lg:text-base">
                   Comprehensive insights into your property portfolio
                 </p>
               </div>
-              <div className="flex items-center space-x-4">
+            </div>
+            <div className="flex items-center space-x-3 mt-4 lg:mt-0">
+              <div className="relative">
                 <select
                   value={selectedPeriod}
                   onChange={(e) => setSelectedPeriod(e.target.value)}
-                  className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent bg-white/50 backdrop-blur-sm"
+                  className="pl-4 pr-7 py-2.5 border border-gray-300 rounded-lg appearance-none text-[0.9rem] focus:outline-none focus:ring-1 focus:ring-primary-plot focus:border-primary-plot bg-gray-50 font-semibold whitespace-nowrap text-gray-600"
                 >
                   <option value="weekly">Weekly</option>
                   <option value="monthly">Monthly</option>
                   <option value="quarterly">Quarterly</option>
                   <option value="yearly">Yearly</option>
                 </select>
-                <button
-                  onClick={() => handleExportReport("pdf")}
-                  className="bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold flex items-center space-x-2"
-                >
-                  <TbDownload size={20} />
-                  <span>Export PDF</span>
-                </button>
-                <button
-                  onClick={() => handleExportReport("excel")}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold flex items-center space-x-2"
-                >
-                  <TbDownload size={20} />
-                  <span>Export Excel</span>
-                </button>
+                <PiCaretDownDuotone
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                  size={20}
+                />
               </div>
+              <button
+                onClick={() => handleExportReport("pdf")}
+                className="bg-white border border-gray-300 text-gray-700 text-[0.8rem] md:text-[0.9rem] px-4 py-3 md:py-2.5 rounded-lg hover:bg-gray-50 hover:shadow-md transition-all duration-200 font-medium"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <TbDownload className="h-4 w-4 md:h-5 md:w-5" />
+                  <span>Export PDF</span>
+                </div>
+              </button>
+              <button
+                onClick={() => handleExportReport("excel")}
+                className="bg-gradient-to-r from-secondary-600/90 to-secondary-700 text-white text-[0.8rem] md:text-[0.98rem] px-6 py-3 md:py-2.5 rounded-lg hover:shadow-lg transition-colors duration-200 font-medium space-x-2  shadow-md"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <TbDownload className="h-5 w-5 md:h-6 md:w-6" />
+                  <span>Export Excel</span>
+                  <TbArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                </div>
+              </button>
             </div>
           </div>
+        </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Stats Cards - Compact & Mobile Optimized */}
+        <div className="lg:py-2 relative overflow-hidden">
+          {/* Mobile: Horizontal Scroll, Desktop: Grid */}
+          <div className="lg:hidden flex gap-3 overflow-x-auto scrollbar-hide pb-2 px-1.5 md:px-3">
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                className="flex-shrink-0 bg-white rounded-xl shadow-md border border-gray-100 p-4 min-w-[140px]"
               >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-600">
-                      {stat.title}
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900 mt-2">
-                      {stat.value}
-                    </p>
-                    <div className="flex items-center mt-3">
-                      {stat.changeType === "increase" ? (
-                        <div className="flex items-center space-x-1 px-2 py-1 bg-green-50 rounded-lg">
-                          <TbTrendingUp className="h-4 w-4 text-green-600" />
-                          <span className="text-xs font-semibold text-green-600">
-                            {stat.change}
-                          </span>
-                        </div>
-                      ) : stat.changeType === "decrease" ? (
-                        <div className="flex items-center space-x-1 px-2 py-1 bg-red-50 rounded-lg">
-                          <TbTrendingDown className="h-4 w-4 text-red-600" />
-                          <span className="text-xs font-semibold text-red-600">
-                            {stat.change}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center space-x-1 px-2 py-1 bg-gray-50 rounded-lg">
-                          <TbClock className="h-4 w-4 text-gray-600" />
-                          <span className="text-xs font-semibold text-gray-600">
-                            {stat.change}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="p-2 bg-gradient-to-br from-secondary-600/20 to-secondary-plot/20 rounded-lg">
+                    <stat.icon className="h-4 w-4 text-secondary-600" />
                   </div>
-                  <div className="p-4 bg-gradient-to-br from-primary-plot/10 to-secondary-plot/10 rounded-xl">
-                    <stat.icon className="h-8 w-8 text-primary-plot" />
-                  </div>
+                  <span className="text-[0.65rem] font-bold text-secondary-600 bg-secondary-50 px-1.5 py-0.5 rounded-full">
+                    {stat.changeType === "increase"
+                      ? "+"
+                      : stat.changeType === "decrease"
+                      ? "-"
+                      : ""}
+                    {stat.change.replace(/[+\-]/g, "")}
+                  </span>
+                </div>
+                <div className="text-center">
+                  <p className="text-[0.7rem] font-semibold text-gray-600 mb-0.5">
+                    {stat.title}
+                  </p>
+                  <p className="text-xl font-bold text-gray-900">
+                    {stat.value}
+                  </p>
+                  <p className="text-[0.6rem] text-gray-500">Current</p>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Report Type Selector */}
-          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
-            <div className="flex items-center space-x-4 mb-8">
-              {reportTypes.map((type) => (
-                <button
-                  key={type.id}
-                  onClick={() => setReportType(type.id)}
-                  className={`flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-300 font-semibold ${
-                    reportType === type.id
-                      ? "bg-gradient-to-r from-primary-plot to-secondary-plot text-white shadow-lg"
-                      : "text-gray-600 hover:bg-gradient-to-r hover:from-primary-plot/10 hover:to-secondary-plot/10 hover:text-primary-plot"
-                  }`}
-                >
-                  <type.icon size={20} />
-                  <span>{type.label}</span>
-                </button>
-              ))}
-            </div>
+          {/* Desktop: Compact Grid */}
+          <div className="hidden lg:grid lg:grid-cols-4 gap-4 relative z-10">
+            {stats.map((stat, index) => (
+              <div
+                key={index}
+                className="bg-gradient-to-br from-white to-gray-50/50 rounded-[0.8rem] shadow-sm border border-gray-200/70 p-4 group hover:shadow-md transition-all duration-200"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="">
+                    <div>
+                      <p className="text-[0.8rem] font-bold text-secondary-plot mb-1">
+                        {stat.title}
+                      </p>
+                      <p className="text-2xl font-bold text-primary-plot">
+                        {stat.value}
+                      </p>
+                      <p className="text-[0.7rem] text-gray-500 mt-1">
+                        Current data
+                      </p>
+                    </div>
+                  </div>
 
-            {/* Report Content */}
-            {reportType === "financial" && renderFinancialReport()}
-            {reportType === "occupancy" && renderOccupancyReport()}
-            {reportType === "maintenance" && renderMaintenanceReport()}
-            {reportType === "property" && renderPropertyReport()}
+                  <div
+                    className={`flex items-center px-2 py-0.5 rounded-full ${
+                      stat.changeType === "increase"
+                        ? "bg-green-100 border border-green-300"
+                        : stat.changeType === "decrease"
+                        ? "bg-red-100 border border-red-300"
+                        : "bg-gray-100 border border-gray-300"
+                    }`}
+                  >
+                    {stat.changeType === "increase" && (
+                      <TbTrendingUp className="h-3 w-3 text-green-600 mr-1" />
+                    )}
+                    {stat.changeType === "decrease" && (
+                      <TbTrendingDown className="h-3 w-3 text-red-600 mr-1" />
+                    )}
+                    {stat.changeType === "neutral" && (
+                      <TbClock className="h-3 w-3 text-gray-600 mr-1" />
+                    )}
+                    <span
+                      className={`text-[0.65rem] font-bold ${
+                        stat.changeType === "increase"
+                          ? "text-green-600"
+                          : stat.changeType === "decrease"
+                          ? "text-red-600"
+                          : "text-gray-600"
+                      }`}
+                    >
+                      {stat.change}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
+
+        {/* Report Type Selector */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
+          <div className="flex items-center space-x-4 mb-8">
+            {reportTypes.map((type) => (
+              <button
+                key={type.id}
+                onClick={() => setReportType(type.id)}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-300 font-semibold ${
+                  reportType === type.id
+                    ? "bg-gradient-to-r from-primary-plot to-secondary-plot text-white shadow-lg"
+                    : "text-gray-600 hover:bg-gradient-to-r hover:from-primary-plot/10 hover:to-secondary-plot/10 hover:text-primary-plot"
+                }`}
+              >
+                <type.icon size={20} />
+                <span>{type.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Report Content */}
+          {reportType === "financial" && renderFinancialReport()}
+          {reportType === "occupancy" && renderOccupancyReport()}
+          {reportType === "maintenance" && renderMaintenanceReport()}
+          {reportType === "property" && renderPropertyReport()}
         </div>
       </div>
     </LandlordLayout>

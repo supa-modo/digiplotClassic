@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import LandlordLayout from "../../components/landlord/LandlordLayout";
 import { useAuth } from "../../contexts/AuthContext";
-import {
-  getPropertiesForLandlord,
-  getTenantsForLandlord,
-  getMaintenanceRequestsForLandlord,
-  getTenantPayments,
-} from "../../utils/demoData";
+import propertyService from "../../services/propertyService";
+import unitService from "../../services/unitService";
+import tenantService from "../../services/tenantService";
+import paymentService from "../../services/paymentService";
+import maintenanceService from "../../services/maintenanceService";
+import { formatCurrency } from "../../utils/dataHelpers";
 import {
   TbBuilding,
   TbUsers,
@@ -43,7 +43,8 @@ const LandlordDashboard = () => {
     payments: [],
     stats: {},
   });
-
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [timeOfDay, setTimeOfDay] = useState("");
 
   useEffect(() => {
@@ -55,68 +56,122 @@ const LandlordDashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (user?.id) {
-      const properties = getPropertiesForLandlord(user.id);
-      const tenants = getTenantsForLandlord(user.id);
-      const maintenanceRequests = getMaintenanceRequestsForLandlord(user.id);
+    const loadDashboardData = async () => {
+      if (!user?.id) return;
 
-      // Get all payments for tenants
-      const allPayments = tenants.flatMap((tenant) =>
-        getTenantPayments(tenant.id).map((payment) => ({
-          ...payment,
-          tenant_name: `${tenant.first_name} ${tenant.last_name}`,
-          unit_name: tenant.unit?.name,
-          property_name: tenant.property?.name,
-        }))
-      );
+      try {
+        setLoading(true);
+        setError(null);
 
-      // Calculate stats
-      const currentMonth = new Date().getMonth();
-      const currentYear = new Date().getFullYear();
+        // Load all data in parallel
+        const [
+          propertiesResponse,
+          tenantsResponse,
+          maintenanceResponse,
+          paymentsResponse,
+        ] = await Promise.all([
+          propertyService.getProperties({ limit: 100 }),
+          tenantService.getTenants({ limit: 100 }),
+          maintenanceService.getMaintenanceRequests({ limit: 100 }),
+          paymentService.getPayments({ limit: 100 }),
+        ]);
 
-      const monthlyRevenue = allPayments
-        .filter((payment) => {
-          const paymentDate = new Date(payment.payment_date);
-          return (
-            paymentDate.getMonth() === currentMonth &&
-            paymentDate.getFullYear() === currentYear &&
-            payment.status === "successful"
-          );
-        })
-        .reduce((sum, payment) => sum + payment.amount, 0);
+        const properties = propertiesResponse.properties || [];
+        const tenants = tenantsResponse.tenants || [];
+        const maintenanceRequests = maintenanceResponse.requests || [];
+        const allPayments = paymentsResponse.payments || [];
 
-      const occupiedUnits = tenants.length;
-      const totalUnits = properties.reduce(
-        (sum, prop) => sum + (prop.units?.length || 0),
-        0
-      );
-      const occupancyRate =
-        totalUnits > 0 ? (occupiedUnits / totalUnits) * 100 : 0;
+        // Log any service errors for debugging
+        if (!propertiesResponse.success) {
+          console.warn("Properties service error:", propertiesResponse.error);
+        }
+        if (!tenantsResponse.success) {
+          console.warn("Tenants service error:", tenantsResponse.error);
+        }
+        if (!maintenanceResponse.success) {
+          console.warn("Maintenance service error:", maintenanceResponse.error);
+        }
+        if (!paymentsResponse.success) {
+          console.warn("Payments service error:", paymentsResponse.error);
+        }
 
-      const pendingMaintenance = maintenanceRequests.filter(
-        (req) => req.status === "pending"
-      ).length;
-      const recentPayments = allPayments
-        .sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date))
-        .slice(0, 5);
+        // Calculate stats
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
 
-      setDashboardData({
-        properties,
-        tenants,
-        maintenanceRequests,
-        payments: allPayments,
-        stats: {
-          totalProperties: properties.length,
-          totalTenants: tenants.length,
-          monthlyRevenue,
-          pendingMaintenance,
-          occupancyRate,
-          totalUnits,
-          occupiedUnits,
-          recentPayments,
-        },
-      });
-    }
+        const monthlyRevenue = allPayments
+          .filter((payment) => {
+            const paymentDate = new Date(
+              payment.paymentDate || payment.payment_date
+            );
+            return (
+              paymentDate.getMonth() === currentMonth &&
+              paymentDate.getFullYear() === currentYear &&
+              payment.status === "successful"
+            );
+          })
+          .reduce((sum, payment) => sum + (payment.amount || 0), 0);
+
+        // Get units for calculating occupancy
+        let totalUnits = 0;
+        for (const property of properties) {
+          try {
+            const unitsResponse = await unitService.getUnitsByProperty(
+              property.id
+            );
+            const units = unitsResponse.units || [];
+            property.units = units;
+            totalUnits += units.length;
+          } catch (err) {
+            console.error(
+              `Failed to load units for property ${property.id}:`,
+              err
+            );
+            property.units = [];
+          }
+        }
+
+        const occupiedUnits = tenants.length;
+        const occupancyRate =
+          totalUnits > 0 ? (occupiedUnits / totalUnits) * 100 : 0;
+
+        const pendingMaintenance = maintenanceRequests.filter(
+          (req) => req.status === "pending"
+        ).length;
+
+        const recentPayments = allPayments
+          .sort(
+            (a, b) =>
+              new Date(b.paymentDate || b.payment_date) -
+              new Date(a.paymentDate || a.payment_date)
+          )
+          .slice(0, 5);
+
+        setDashboardData({
+          properties,
+          tenants,
+          maintenanceRequests,
+          payments: allPayments,
+          stats: {
+            totalProperties: properties.length,
+            totalTenants: tenants.length,
+            monthlyRevenue,
+            pendingMaintenance,
+            occupancyRate,
+            totalUnits,
+            occupiedUnits,
+            recentPayments,
+          },
+        });
+      } catch (err) {
+        console.error("Failed to load dashboard data:", err);
+        setError(err.message || "Failed to load dashboard data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboardData();
   }, [user]);
 
   const getTimeIcon = () => {
@@ -127,24 +182,21 @@ const LandlordDashboard = () => {
 
   const TimeIcon = getTimeIcon();
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
   const getRecentActivity = () => {
     const activities = [];
 
     // Recent payments
     dashboardData.stats.recentPayments?.slice(0, 3).forEach((payment) => {
+      // Handle different possible field names from API vs demo data
+      const tenantName = payment.tenant?.firstName
+        ? `${payment.tenant.firstName} ${payment.tenant.lastName}`
+        : payment.tenant_name || "Unknown Tenant";
+
       activities.push({
         type: "payment",
-        message: `Payment received from ${payment.tenant_name}`,
+        message: `Payment received from ${tenantName}`,
         amount: payment.amount,
-        time: payment.payment_date,
+        time: payment.paymentDate || payment.payment_date || payment.createdAt,
         color: "success",
       });
     });
@@ -157,7 +209,7 @@ const LandlordDashboard = () => {
         activities.push({
           type: "maintenance",
           message: `New maintenance request: ${request.title}`,
-          time: request.created_at,
+          time: request.createdAt || request.created_at,
           color: "warning",
         });
       });
@@ -198,6 +250,47 @@ const LandlordDashboard = () => {
     },
   ];
 
+  // Loading state
+  if (loading) {
+    return (
+      <LandlordLayout>
+        <div className="space-y-6">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary-plot mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading dashboard data...</p>
+            </div>
+          </div>
+        </div>
+      </LandlordLayout>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <LandlordLayout>
+        <div className="space-y-6">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="text-red-500 text-xl mb-4">⚠️</div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Failed to load dashboard
+              </h3>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-secondary-plot text-white rounded-lg hover:bg-secondary-plot/90 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </LandlordLayout>
+    );
+  }
+
   return (
     <LandlordLayout>
       <div className="space-y-6">
@@ -206,7 +299,7 @@ const LandlordDashboard = () => {
           <div className="px-4 flex items-baseline justify-between mb-2 lg:mb-0">
             <div className="">
               <div className="flex items-center mb-2 md:mb-3">
-                <div className="flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-amber-700/20 to-amber-500/30 text-[0.8rem] md:text-sm font-medium text-amber-600">
+                <div className="flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-amber-700/20 to-amber-500/30 text-[0.8rem] md:text-sm font-medium text-secondary-700">
                   <TimeIcon className="h-4 w-4 mr-1.5 text-amber-600" />
                   <span>Good {timeOfDay}</span>
                 </div>
@@ -215,11 +308,13 @@ const LandlordDashboard = () => {
               <h1 className="text-xl md:text-2xl font-bold text-secondary-plot">
                 Welcome back,{" "}
                 <span className="text-amber-700/90">
-                  {user?.firstName + " " + user?.lastName}
+                  {user?.firstName || user?.first_name}{" "}
+                  {user?.lastName || user?.last_name}
                 </span>
               </h1>
               <p className="text-gray-600 mt-1 text-sm lg:text-base">
-                Monitor & manage your properties, tenants, and revenue performance
+                Monitor & manage your properties, tenants, and revenue
+                performance
               </p>
             </div>
 

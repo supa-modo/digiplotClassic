@@ -29,7 +29,7 @@ class AuthService {
 
       // Add 2FA token if provided
       if (twoFactorToken) {
-        loginData.twoFactorToken = twoFactorToken;
+        loginData.twoFactorCode = twoFactorToken;
       }
 
       if (ENABLE_DEBUG_LOGGING) {
@@ -43,31 +43,50 @@ class AuthService {
       const response = await apiClient.post("/api/auth/login", loginData);
 
       if (response.data.success) {
-        const { user, token } = response.data.data;
-
-        // Verify the user role matches what was selected
-        if (user.role !== role) {
-          throw new Error(
-            `Account role mismatch. You selected ${role} but your account is registered as ${user.role}.`
-          );
+        // Check if 2FA is required
+        if (response.data.requires2FA) {
+          return {
+            success: false,
+            requires2FA: true,
+            message:
+              response.data.message || "Two-factor authentication required",
+          };
         }
 
-        // Store auth data
-        this.storeAuthData(user, token, user.role);
+        // Login successful with user data
+        if (
+          response.data.data &&
+          response.data.data.user &&
+          response.data.data.token
+        ) {
+          const { user, token } = response.data.data;
 
-        if (ENABLE_DEBUG_LOGGING) {
-          console.log("✅ Login successful:", {
-            userId: user.id,
+          // Verify the user role matches what was selected
+          if (user.role !== role) {
+            throw new Error(
+              `Account role mismatch. You selected ${role} but your account is registered as ${user.role}.`
+            );
+          }
+
+          // Store auth data
+          this.storeAuthData(user, token, user.role);
+
+          if (ENABLE_DEBUG_LOGGING) {
+            console.log("✅ Login successful:", {
+              userId: user.id,
+              role: user.role,
+            });
+          }
+
+          return {
+            success: true,
+            user,
+            token,
             role: user.role,
-          });
+          };
+        } else {
+          throw new Error("Invalid response format from server");
         }
-
-        return {
-          success: true,
-          user,
-          token,
-          role: user.role,
-        };
       } else {
         throw new Error(response.data.message || "Login failed");
       }

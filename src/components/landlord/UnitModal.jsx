@@ -16,6 +16,7 @@ import {
   TbBuilding,
   TbStar,
 } from "react-icons/tb";
+import unitService from "../../services/unitService";
 
 const UnitModal = ({ isOpen, onClose, onSave, property, unit }) => {
   const [formData, setFormData] = useState({
@@ -194,12 +195,9 @@ const UnitModal = ({ isOpen, onClose, onSave, property, unit }) => {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      onSave({
+      // Prepare unit data with proper type conversion
+      const unitData = {
         ...formData,
-        id: unit?.id || Date.now(),
         property_id: property?.id,
         rent_amount: parseFloat(formData.rent_amount),
         security_deposit: parseFloat(formData.security_deposit) || 0,
@@ -207,13 +205,37 @@ const UnitModal = ({ isOpen, onClose, onSave, property, unit }) => {
         bathrooms: parseInt(formData.bathrooms) || 0,
         size_sqft: parseInt(formData.size_sqft) || 0,
         floor_number: parseInt(formData.floor_number) || 1,
-        created_at: unit?.created_at || new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
+      };
 
-      onClose();
+      let response;
+      if (isEditing) {
+        // Update existing unit
+        response = await unitService.updateUnit(unit.id, unitData);
+      } else {
+        // Create new unit
+        response = await unitService.createUnit(unitData);
+      }
+
+      if (response.success) {
+        // Pass the unit data from the API response
+        onSave(
+          response.unit ||
+            response.data?.unit || {
+              ...unitData,
+              id: unit?.id || Date.now(),
+              created_at: unit?.created_at || new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            }
+        );
+        onClose();
+      } else {
+        setErrors({ general: response.message || "Failed to save unit" });
+      }
     } catch (error) {
       console.error("Error saving unit:", error);
+      setErrors({
+        general: error.message || "An error occurred while saving the unit",
+      });
     } finally {
       setIsSubmitting(false);
     }

@@ -22,6 +22,7 @@ import {
   TbFileText,
   TbShield,
 } from "react-icons/tb";
+import tenantService from "../../services/tenantService";
 
 const TenantModal = ({
   isOpen,
@@ -235,19 +236,51 @@ const TenantModal = ({
     setIsSubmitting(true);
 
     try {
-      onSave({
+      // Prepare tenant data with proper type conversion
+      const tenantData = {
         ...formData,
-        id: tenant?.id || Date.now(),
-        security_deposit: parseFloat(formData.security_deposit),
-        monthly_rent: parseFloat(formData.monthly_rent),
+        security_deposit: parseFloat(formData.security_deposit) || 0,
+        monthly_rent: parseFloat(formData.monthly_rent) || 0,
         monthly_income: parseFloat(formData.monthly_income) || 0,
-        created_at: tenant?.created_at || new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
+      };
 
-      onClose();
+      let response;
+      if (isEditing) {
+        // Update existing tenant
+        response = await tenantService.updateTenant(tenant.id, tenantData);
+      } else {
+        // Create new tenant
+        response = await tenantService.createTenant(tenantData);
+      }
+
+      if (response.success) {
+        // If unit assignment is needed and not editing, assign the tenant to the unit
+        if (!isEditing && formData.unit_id && formData.lease_start_date) {
+          const assignmentData = {
+            lease_start_date: formData.lease_start_date,
+            lease_end_date: formData.lease_end_date,
+            security_deposit: parseFloat(formData.security_deposit) || 0,
+            monthly_rent: parseFloat(formData.monthly_rent) || 0,
+          };
+
+          await tenantService.assignUnit(
+            response.tenant.id,
+            formData.unit_id,
+            assignmentData
+          );
+        }
+
+        // Pass the tenant data from the API response
+        onSave(response.tenant || response.data?.tenant || tenantData);
+        onClose();
+      } else {
+        setErrors({ general: response.message || "Failed to save tenant" });
+      }
     } catch (error) {
       console.error("Error saving tenant:", error);
+      setErrors({
+        general: error.message || "An error occurred while saving the tenant",
+      });
     } finally {
       setIsSubmitting(false);
     }

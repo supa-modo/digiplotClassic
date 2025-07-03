@@ -15,7 +15,10 @@ import {
   TbReceipt,
   TbTrendingUp,
   TbTrendingDown,
+  TbArrowRight,
+  TbCash,
 } from "react-icons/tb";
+import { PiCaretDownDuotone, PiReceiptDuotone } from "react-icons/pi";
 
 const LandlordPayments = () => {
   const { user } = useAuth();
@@ -208,175 +211,331 @@ const LandlordPayments = () => {
 
   return (
     <LandlordLayout>
-      <div className="min-h-screen bg-gradient-to-br from-primary-plot/5 via-secondary-plot/5 to-primary-plot/5 relative">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-primary-plot/10 to-transparent rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-secondary-plot/10 to-transparent rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
-
-        <div className="relative p-6">
-          {/* Header */}
-          <div className="bg-white/80 backdrop-blur-xl shadow-xl rounded-2xl p-8 mb-6 border border-white/20">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+      <div className="space-y-6">
+        {/* Header - Enhanced */}
+        <div className=" relative overflow-hidden">
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 md:p-4 bg-gradient-to-br from-secondary-600/20 to-secondary-plot/20 rounded-xl backdrop-blur-sm border border-white/20">
+                <PiReceiptDuotone className="h-7 md:h-8 w-7 md:w-8 text-secondary-600" />
+              </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-plot to-secondary-plot bg-clip-text text-transparent">
+                <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-secondary-plot">
                   Payment Management
                 </h1>
-                <p className="text-gray-600 mt-2 text-lg">
+                <p className="text-gray-600 mt-1 text-xs md:text-sm lg:text-base">
                   Track rental payments, revenue, and transaction history
                 </p>
               </div>
-              <div className="flex items-center space-x-4 mt-4 lg:mt-0">
-                <button className="bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 px-6 py-3 rounded-xl hover:bg-white hover:shadow-md transition-all duration-300 font-semibold flex items-center space-x-2">
-                  <TbDownload size={20} />
+            </div>
+            <div className="flex items-center space-x-3 mt-4 lg:mt-0">
+              <button className="bg-white border border-gray-300 text-gray-700 text-[0.8rem] md:text-[0.9rem] px-4 py-3 md:py-2.5 rounded-lg hover:bg-gray-50 hover:shadow-md transition-all duration-200 font-medium">
+                <div className="flex items-center justify-center space-x-2">
+                  <TbDownload className="h-4 w-4 md:h-5 md:w-5" />
                   <span>Export</span>
-                </button>
-                <button className="bg-gradient-to-r from-primary-plot to-secondary-plot text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold flex items-center space-x-2">
-                  <TbReceipt size={20} />
+                </div>
+              </button>
+              <button className="bg-gradient-to-r from-secondary-600/90 to-secondary-700 text-white text-[0.8rem] md:text-[0.98rem] px-6 py-3 md:py-2.5 rounded-lg hover:shadow-lg transition-colors duration-200 font-medium space-x-2  shadow-md">
+                <div className="flex items-center justify-center space-x-2">
+                  <TbReceipt className="h-5 w-5 md:h-6 md:w-6" />
                   <span>Generate Report</span>
-                </button>
+                  <TbArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Cards - Compact & Mobile Optimized */}
+        <div className="lg:py-2 relative overflow-hidden">
+          {/* Mobile: Horizontal Scroll, Desktop: Grid */}
+          <div className="lg:hidden flex gap-3 overflow-x-auto scrollbar-hide pb-2 px-1.5 md:px-3">
+            {/* Mobile Stats Cards */}
+            <div className="flex-shrink-0 bg-white rounded-xl shadow-md border border-gray-100 p-4 min-w-[140px]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="p-2 bg-gradient-to-br from-secondary-600/20 to-secondary-plot/20 rounded-lg">
+                  <TbCreditCard className="h-4 w-4 text-secondary-600" />
+                </div>
+                <span className="text-[0.65rem] font-bold text-secondary-600 bg-secondary-50 px-1.5 py-0.5 rounded-full">
+                  Total
+                </span>
+              </div>
+              <div className="text-center">
+                <p className="text-[0.7rem] font-semibold text-gray-600 mb-0.5">
+                  Payments
+                </p>
+                <p className="text-xl font-bold text-gray-900">
+                  {stats.totalPayments}
+                </p>
+                <p className="text-[0.6rem] text-gray-500">All transactions</p>
+              </div>
+            </div>
+
+            <div className="flex-shrink-0 bg-white rounded-xl shadow-md border border-gray-100 p-4 min-w-[140px]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="p-2 bg-gradient-to-br from-green-100 to-emerald-100 rounded-lg">
+                  <TbMoneybag className="h-4 w-4 text-green-600" />
+                </div>
+                <span className="text-[0.65rem] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">
+                  Success
+                </span>
+              </div>
+              <div className="text-center">
+                <p className="text-[0.7rem] font-semibold text-gray-600 mb-0.5">
+                  Successful
+                </p>
+                <p className="text-xl font-bold text-gray-900">
+                  {stats.successfulPayments}
+                </p>
+                <p className="text-[0.6rem] text-green-600 font-medium">
+                  Completed
+                </p>
+              </div>
+            </div>
+
+            <div className="flex-shrink-0 bg-white rounded-xl shadow-md border border-gray-100 p-4 min-w-[150px]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="p-2 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg">
+                  <TbTrendingUp className="h-4 w-4 text-purple-600" />
+                </div>
+                <span className="text-[0.65rem] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">
+                  Total
+                </span>
+              </div>
+              <div className="text-center">
+                <p className="text-[0.7rem] font-semibold text-gray-600 mb-0.5">
+                  Revenue
+                </p>
+                <p className="text-lg font-bold text-gray-900">
+                  {formatCurrency(stats.totalRevenue).replace("KES ", "KSh ")}
+                </p>
+                <p className="text-[0.6rem] text-gray-500">All time</p>
+              </div>
+            </div>
+
+            <div className="flex-shrink-0 bg-white rounded-xl shadow-md border border-gray-100 p-4 min-w-[150px]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="p-2 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-lg">
+                  <TbCalendar className="h-4 w-4 text-yellow-600" />
+                </div>
+                <span className="text-[0.65rem] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">
+                  {Math.abs(stats.growthPercentage).toFixed(1)}%
+                </span>
+              </div>
+              <div className="text-center">
+                <p className="text-[0.7rem] font-semibold text-gray-600 mb-0.5">
+                  This Month
+                </p>
+                <p className="text-lg font-bold text-gray-900">
+                  {formatCurrency(stats.monthlyRevenue).replace("KES ", "KSh ")}
+                </p>
+                <p className="text-[0.6rem] text-gray-500">Monthly</p>
+              </div>
+            </div>
+
+            <div className="flex-shrink-0 bg-white rounded-xl shadow-md border border-gray-100 p-4 min-w-[140px]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="p-2 bg-gradient-to-br from-orange-100 to-red-100 rounded-lg">
+                  <TbReceipt className="h-4 w-4 text-orange-600" />
+                </div>
+                <span className="text-[0.65rem] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-full">
+                  Pending
+                </span>
+              </div>
+              <div className="text-center">
+                <p className="text-[0.7rem] font-semibold text-gray-600 mb-0.5">
+                  Pending
+                </p>
+                <p className="text-xl font-bold text-gray-900">
+                  {stats.pendingPayments}
+                </p>
+                <p className="text-[0.6rem] text-red-600 font-medium">
+                  {stats.failedPayments} failed
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-gray-600">
-                    Total Payments
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">
-                    {stats.totalPayments}
-                  </p>
-                </div>
-                <div className="p-3 bg-blue-100 rounded-xl">
-                  <TbCreditCard className="h-8 w-8 text-blue-600" />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-gray-600">
-                    Successful
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">
-                    {stats.successfulPayments}
-                  </p>
-                </div>
-                <div className="p-3 bg-green-100 rounded-xl">
-                  <TbMoneybag className="h-8 w-8 text-green-600" />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-gray-600">
-                    Total Revenue
-                  </p>
-                  <p className="text-xl font-bold bg-gradient-to-r from-primary-plot to-secondary-plot bg-clip-text text-transparent mt-2">
-                    {formatCurrency(stats.totalRevenue)}
-                  </p>
-                </div>
-                <div className="p-3 bg-purple-100 rounded-xl">
-                  <TbTrendingUp className="h-8 w-8 text-purple-600" />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-gray-600">
-                    This Month
-                  </p>
-                  <p className="text-xl font-bold text-gray-900 mt-2">
-                    {formatCurrency(stats.monthlyRevenue)}
-                  </p>
-                  <div className="flex items-center mt-2">
-                    {stats.growthPercentage >= 0 ? (
-                      <div className="flex items-center space-x-1 px-2 py-1 bg-green-50 rounded-lg">
-                        <TbTrendingUp className="h-3 w-3 text-green-600" />
-                        <span className="text-xs font-semibold text-green-600">
-                          {Math.abs(stats.growthPercentage).toFixed(1)}%
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center space-x-1 px-2 py-1 bg-red-50 rounded-lg">
-                        <TbTrendingDown className="h-3 w-3 text-red-600" />
-                        <span className="text-xs font-semibold text-red-600">
-                          {Math.abs(stats.growthPercentage).toFixed(1)}%
-                        </span>
-                      </div>
-                    )}
+          {/* Desktop: Compact Grid */}
+          <div className="hidden lg:grid lg:grid-cols-5 gap-4 relative z-10">
+            <div className="bg-gradient-to-br from-white to-gray-50/50 rounded-[0.8rem] shadow-sm border border-gray-200/70 p-4 group hover:shadow-md transition-all duration-200">
+              <div className="flex items-center justify-between mb-3">
+                <div className="">
+                  <div>
+                    <p className="text-[0.8rem] font-bold text-secondary-plot mb-1">
+                      Total Payments
+                    </p>
+                    <p className="text-2xl font-bold text-primary-plot">
+                      {stats.totalPayments}
+                    </p>
+                    <p className="text-[0.7rem] text-gray-500 mt-1">
+                      All transactions
+                    </p>
                   </div>
                 </div>
-                <div className="p-3 bg-yellow-100 rounded-xl">
-                  <TbCalendar className="h-8 w-8 text-yellow-600" />
+
+                <div className="flex items-center px-2 py-1 bg-secondary-50 rounded-full">
+                  <TbTrendingUp className="h-3 w-3 text-secondary-600 mr-1" />
+                  <span className="text-[0.65rem] font-bold text-secondary-600">
+                    Total
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
-              <div className="flex items-center justify-between">
+            <div className="bg-gradient-to-br from-white to-gray-50/50 rounded-[0.8rem] shadow-sm border border-gray-200/70 p-4 group hover:shadow-md transition-all duration-200">
+              <div className="flex items-center justify-between mb-3">
                 <div>
-                  <p className="text-sm font-semibold text-gray-600">Pending</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">
+                  <p className="text-[0.8rem] font-bold text-secondary-plot mb-1">
+                    Successful
+                  </p>
+                  <p className="text-2xl font-bold text-primary-plot">
+                    {stats.successfulPayments}
+                  </p>
+                  <p className="text-[0.7rem] text-green-600 mt-1 font-medium">
+                    Completed payments
+                  </p>
+                </div>
+                <div className="flex items-center px-2 py-0.5 bg-green-100 border border-green-300 rounded-full">
+                  <span className="text-[0.65rem] font-bold text-green-600">
+                    Success
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-white to-gray-50/50 rounded-[0.8rem] shadow-sm border border-gray-200/70 p-4 group hover:shadow-md transition-all duration-200">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="text-[0.8rem] font-bold text-secondary-plot mb-1">
+                    Total Revenue
+                  </p>
+                  <p className="text-xl font-bold text-secondary-700">
+                    {formatCurrency(stats.totalRevenue).replace("KES ", "KSh ")}
+                  </p>
+                  <p className="text-[0.7rem] text-gray-500 mt-1">
+                    All time earnings
+                  </p>
+                </div>
+                <div className="flex items-center px-2 py-0.5 bg-purple-100 border border-purple-300 rounded-full">
+                  <span className="text-[0.65rem] font-bold text-purple-600">
+                    Revenue
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-white to-gray-50/50 rounded-[0.8rem] shadow-sm border border-gray-200/70 p-4 group hover:shadow-md transition-all duration-200">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="text-[0.8rem] font-bold text-secondary-plot mb-1">
+                    This Month
+                  </p>
+                  <p className="text-xl font-bold text-secondary-700">
+                    {formatCurrency(stats.monthlyRevenue).replace(
+                      "KES ",
+                      "KSh "
+                    )}
+                  </p>
+                  <p className="text-[0.7rem] text-gray-500 mt-1">
+                    Monthly earnings
+                  </p>
+                </div>
+                <div className="flex items-center px-2 py-0.5 bg-green-100 border border-green-300 rounded-full">
+                  <TbTrendingUp className="h-3 w-3 text-green-600 mr-1" />
+                  <span className="text-[0.65rem] font-bold text-green-600">
+                    {Math.abs(stats.growthPercentage).toFixed(1)}%
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-white to-gray-50/50 rounded-[0.8rem] shadow-sm border border-gray-200/70 p-4 group hover:shadow-md transition-all duration-200">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="text-[0.8rem] font-bold text-secondary-plot mb-1">
+                    Pending
+                  </p>
+                  <p className="text-2xl font-bold text-primary-plot">
                     {stats.pendingPayments}
                   </p>
-                  <p className="text-xs text-red-600 mt-1 font-semibold">
+                  <p className="text-[0.7rem] text-red-600 mt-1 font-medium">
                     {stats.failedPayments} failed
                   </p>
                 </div>
-                <div className="p-3 bg-orange-100 rounded-xl">
-                  <TbReceipt className="h-8 w-8 text-orange-600" />
+                <div className="flex items-center px-2 py-0.5 bg-orange-100 border border-orange-300 rounded-full">
+                  <span className="text-[0.65rem] font-bold text-orange-600">
+                    Pending
+                  </span>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Filters and Search */}
-          <div className="bg-white/80 backdrop-blur-xl shadow-xl rounded-2xl p-6 mb-6 border border-white/20">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-              <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 flex-1">
-                <div className="relative flex-1 max-w-md">
-                  <TbSearch
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                    size={20}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Search payments..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent transition-all bg-white/50 backdrop-blur-sm"
-                  />
-                </div>
+        {/* Filters and Search - Enhanced */}
+        <div className="lg:bg-white pt-6 lg:rounded-[0.8rem] lg:shadow-lg lg:border lg:border-gray-200/70 px-1.5 md:px-3 lg:p-6 relative overflow-hidden">
+          <div className="hidden lg:block absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
 
-                <div className="flex items-center space-x-2">
-                  <TbFilter className="text-gray-400" size={20} />
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center relative z-10 space-y-4 lg:space-y-0">
+            {/* Left side - Icon, Title, Description */}
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-gradient-to-br from-secondary-600/20 to-secondary-plot/20 rounded-[0.6rem]">
+                <TbSearch className="h-6 md:h-7 w-6 md:w-7 text-secondary-600" />
+              </div>
+              <div>
+                <h3 className="text-base md:text-lg font-bold text-secondary-plot">
+                  Search & Filter
+                </h3>
+                <p className="text-[0.8rem] md:text-sm text-gray-500">
+                  Find and organize payments
+                </p>
+              </div>
+            </div>
+
+            {/* Right side - Search and Filters */}
+            <div className="flex flex-col lg:flex-row lg:items-center space-y-3 lg:space-y-0 lg:space-x-3 lg:min-w-[65%]">
+              {/* Search Input */}
+              <div className="relative flex-1 lg:min-w-[300px]">
+                <TbSearch
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
+                <input
+                  type="text"
+                  placeholder="Search payments..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-[0.6rem] text-[0.9rem] focus:outline-none focus:ring-1 focus:ring-primary-plot/50 focus:border-primary-plot bg-gray-50 font-medium text-gray-500 placeholder-gray-400"
+                />
+              </div>
+
+              {/* Filter Controls */}
+              <div className="flex items-center space-x-3">
+                {/* Status Filter */}
+                <div className="relative">
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent transition-all bg-white/50 backdrop-blur-sm"
+                    className="pl-4 pr-7 py-2.5 border border-gray-300 rounded-lg appearance-none text-[0.9rem] focus:outline-none focus:ring-1 focus:ring-primary-plot focus:border-primary-plot bg-gray-50 font-semibold whitespace-nowrap text-gray-600"
                   >
                     <option value="all">All Status</option>
                     <option value="successful">Successful</option>
                     <option value="pending">Pending</option>
                     <option value="failed">Failed</option>
                   </select>
+                  <PiCaretDownDuotone
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                    size={20}
+                  />
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <TbCalendar className="text-gray-400" size={20} />
+                {/* Date Range Filter */}
+                <div className="relative">
                   <select
                     value={dateRange}
                     onChange={(e) => setDateRange(e.target.value)}
-                    className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-plot focus:border-transparent transition-all bg-white/50 backdrop-blur-sm"
+                    className="pl-4 pr-7 py-2.5 border border-gray-300 rounded-lg appearance-none text-[0.9rem] focus:outline-none focus:ring-1 focus:ring-primary-plot focus:border-primary-plot bg-gray-50 font-semibold whitespace-nowrap text-gray-600"
                   >
                     <option value="all">All Time</option>
                     <option value="today">Today</option>
@@ -384,156 +543,158 @@ const LandlordPayments = () => {
                     <option value="month">Last Month</option>
                     <option value="quarter">Last 3 Months</option>
                   </select>
+                  <PiCaretDownDuotone
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                    size={20}
+                  />
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Payments Table */}
-          {filteredPayments.length === 0 ? (
-            <div className="bg-white/80 backdrop-blur-xl shadow-xl rounded-2xl p-12 text-center border border-white/20">
-              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6">
-                <TbCreditCard className="h-12 w-12 text-gray-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                No payments found
-              </h3>
-              <p className="text-gray-600">
-                {payments.length === 0
-                  ? "No payment history available"
-                  : "Try adjusting your search or filter criteria"}
-              </p>
+        {/* Payments Table */}
+        {filteredPayments.length === 0 ? (
+          <div className="bg-white/80 backdrop-blur-xl shadow-xl rounded-2xl p-12 text-center border border-white/20">
+            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6">
+              <TbCreditCard className="h-12 w-12 text-gray-400" />
             </div>
-          ) : (
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 overflow-hidden shadow-xl">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gradient-to-r from-primary-plot/10 to-secondary-plot/10">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                        Transaction
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                        Tenant
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                        Unit
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                        Amount
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                        Method
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                        Date
-                      </th>
-                      <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white/50 divide-y divide-gray-200">
-                    {filteredPayments.map((payment) => (
-                      <tr
-                        key={payment.id}
-                        className="hover:bg-gradient-to-r hover:from-primary-plot/5 hover:to-secondary-plot/5 transition-all"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-semibold text-gray-900">
-                            {payment.transaction_id}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            ID: {payment.id}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 bg-gradient-to-br from-primary-plot to-secondary-plot rounded-full flex items-center justify-center shadow-md">
-                              <span className="text-white font-bold text-sm">
-                                {payment.tenant_name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </span>
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-semibold text-gray-900">
-                                {payment.tenant_name}
-                              </div>
-                              <div className="text-sm text-gray-600">
-                                {payment.tenant_email}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-semibold text-gray-900">
-                            {payment.unit_number}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            {payment.property_name}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-bold bg-gradient-to-r from-primary-plot to-secondary-plot bg-clip-text text-transparent">
-                            {formatCurrency(payment.amount)}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            {payment.payment_type}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            {getPaymentMethodIcon(payment.payment_method)}
-                            <span className="ml-2 text-sm font-medium text-gray-900">
-                              {payment.payment_method}
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              No payments found
+            </h3>
+            <p className="text-gray-600">
+              {payments.length === 0
+                ? "No payment history available"
+                : "Try adjusting your search or filter criteria"}
+            </p>
+          </div>
+        ) : (
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 overflow-hidden shadow-xl">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gradient-to-r from-primary-plot/10 to-secondary-plot/10">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Transaction
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Tenant
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Unit
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Amount
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Method
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white/50 divide-y divide-gray-200">
+                  {filteredPayments.map((payment) => (
+                    <tr
+                      key={payment.id}
+                      className="hover:bg-gradient-to-r hover:from-primary-plot/5 hover:to-secondary-plot/5 transition-all"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-semibold text-gray-900">
+                          {payment.transaction_id}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          ID: {payment.id}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="w-10 h-10 bg-gradient-to-br from-primary-plot to-secondary-plot rounded-full flex items-center justify-center shadow-md">
+                            <span className="text-white font-bold text-sm">
+                              {payment.tenant_name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
                             </span>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {getStatusBadge(payment.status)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-semibold text-gray-900">
-                            {new Date(
-                              payment.payment_date
-                            ).toLocaleDateString()}
+                          <div className="ml-4">
+                            <div className="text-sm font-semibold text-gray-900">
+                              {payment.tenant_name}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              {payment.tenant_email}
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-600">
-                            {new Date(payment.payment_date).toLocaleTimeString(
-                              [],
-                              { hour: "2-digit", minute: "2-digit" }
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div className="flex items-center justify-end space-x-2">
-                            <button
-                              className="text-primary-plot hover:text-primary-plot/80 p-2 rounded-lg hover:bg-primary-plot/10 transition-all"
-                              title="View Details"
-                            >
-                              <TbEye size={16} />
-                            </button>
-                            <button
-                              className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all"
-                              title="Download Receipt"
-                            >
-                              <TbDownload size={16} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-semibold text-gray-900">
+                          {payment.unit_number}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {payment.property_name}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-bold bg-gradient-to-r from-primary-plot to-secondary-plot bg-clip-text text-transparent">
+                          {formatCurrency(payment.amount)}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {payment.payment_type}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          {getPaymentMethodIcon(payment.payment_method)}
+                          <span className="ml-2 text-sm font-medium text-gray-900">
+                            {payment.payment_method}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getStatusBadge(payment.status)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-semibold text-gray-900">
+                          {new Date(payment.payment_date).toLocaleDateString()}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {new Date(payment.payment_date).toLocaleTimeString(
+                            [],
+                            { hour: "2-digit", minute: "2-digit" }
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex items-center justify-end space-x-2">
+                          <button
+                            className="text-primary-plot hover:text-primary-plot/80 p-2 rounded-lg hover:bg-primary-plot/10 transition-all"
+                            title="View Details"
+                          >
+                            <TbEye size={16} />
+                          </button>
+                          <button
+                            className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all"
+                            title="Download Receipt"
+                          >
+                            <TbDownload size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </LandlordLayout>
   );

@@ -26,6 +26,10 @@ import LandlordReports from "./pages/landlord/LandlordReports";
 import LandlordSettings from "./pages/landlord/LandlordSettings";
 import "./index.css";
 import Register from "./components/auth/Register";
+import SuperAdminLogin from "./components/auth/SuperAdminLogin";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 function App() {
   return (
@@ -36,6 +40,7 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/login" element={<Login />} />
+              <Route path="/super-admin" element={<SuperAdminLogin />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route
                 path="/reset-password/:token"
@@ -159,7 +164,9 @@ function App() {
 
               {/* <Route path="/register" element={<Register />} /> */}
 
-              {/* <Route
+              {/* Admin Routes */}
+              <Route path="/admin/login" element={<SuperAdminLogin />} />
+              <Route
                 path="/admin"
                 element={
                   <ProtectedRoute requiredRole="admin">
@@ -167,7 +174,14 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/admin/users"
                 element={
@@ -176,15 +190,14 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
-                path="/admin/properties"
+                path="/admin/settings"
                 element={
                   <ProtectedRoute requiredRole="admin">
-                    <AdminProperties />
+                    <AdminSettings />
                   </ProtectedRoute>
                 }
-              /> */}
+              />
 
               {/* Default redirect */}
               <Route path="/" element={<Navigate to="/login" replace />} />

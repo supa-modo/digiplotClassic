@@ -17,7 +17,9 @@ import {
   TbEdit,
   TbShield,
   TbApi,
+  TbArrowRight,
 } from "react-icons/tb";
+import { PiCaretDownDuotone, PiGearDuotone } from "react-icons/pi";
 import { FaSave } from "react-icons/fa";
 
 const LandlordSettings = () => {
@@ -845,87 +847,102 @@ const LandlordSettings = () => {
 
   return (
     <LandlordLayout>
-      <div className="min-h-screen bg-gradient-to-br from-primary-plot/5 via-secondary-plot/5 to-primary-plot/5 relative">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-primary-plot/10 to-transparent rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-secondary-plot/10 to-transparent rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+      <div className="space-y-6">
+        {/* Header - Enhanced */}
+        <div className=" relative overflow-hidden">
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 md:p-4 bg-gradient-to-br from-secondary-600/20 to-secondary-plot/20 rounded-xl backdrop-blur-sm border border-white/20">
+                <PiGearDuotone className="h-7 md:h-8 w-7 md:w-8 text-secondary-600" />
+              </div>
+              <div>
+                <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-secondary-plot">
+                  Settings
+                </h1>
+                <p className="text-gray-600 mt-1 text-xs md:text-sm lg:text-base">
+                  Manage your account settings, preferences, and integrations
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3 mt-4 lg:mt-0">
+              <button className="bg-white border border-gray-300 text-gray-700 text-[0.8rem] md:text-[0.9rem] px-4 py-3 md:py-2.5 rounded-lg hover:bg-gray-50 hover:shadow-md transition-all duration-200 font-medium">
+                <div className="flex items-center justify-center space-x-2">
+                  <TbApi className="h-4 w-4 md:h-5 md:w-5" />
+                  <span>API Keys</span>
+                </div>
+              </button>
+              <button className="bg-gradient-to-r from-secondary-600/90 to-secondary-700 text-white text-[0.8rem] md:text-[0.98rem] px-6 py-3 md:py-2.5 rounded-lg hover:shadow-lg transition-colors duration-200 font-medium space-x-2  shadow-md">
+                <div className="flex items-center justify-center space-x-2">
+                  <TbShield className="h-5 w-5 md:h-6 md:w-6" />
+                  <span>Security Settings</span>
+                  <TbArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
 
-        <div className="relative p-6">
-          {/* Header */}
-          <div className="bg-white/80 backdrop-blur-xl shadow-xl rounded-2xl p-8 mb-6 border border-white/20">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-plot to-secondary-plot bg-clip-text text-transparent">
-              Settings
-            </h1>
-            <p className="text-gray-600 mt-2 text-lg">
-              Manage your account settings, preferences, and integrations
-            </p>
+        {/* Status Messages */}
+        {saveStatus && (
+          <div
+            className={`mb-6 p-6 rounded-2xl flex items-center space-x-3 shadow-lg ${
+              saveStatus === "saved"
+                ? "bg-gradient-to-r from-green-50 to-emerald-50 text-green-800 border border-green-200"
+                : saveStatus === "saving"
+                ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-800 border border-blue-200"
+                : "bg-gradient-to-r from-red-50 to-rose-50 text-red-800 border border-red-200"
+            }`}
+          >
+            {saveStatus === "saved" && <TbCheck className="h-6 w-6" />}
+            {saveStatus === "saving" && (
+              <div className="animate-spin h-6 w-6 border-2 border-current border-t-transparent rounded-full"></div>
+            )}
+            {saveStatus === "error" && <TbX className="h-6 w-6" />}
+            {saveStatus === "password-mismatch" && <TbX className="h-6 w-6" />}
+            <span className="font-semibold">
+              {saveStatus === "saved" && "Settings saved successfully!"}
+              {saveStatus === "saving" && "Saving changes..."}
+              {saveStatus === "error" &&
+                "Error saving settings. Please try again."}
+              {saveStatus === "password-mismatch" && "Passwords do not match."}
+            </span>
+          </div>
+        )}
+
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar Navigation */}
+          <div className="lg:w-80">
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl">
+              <nav className="space-y-2">
+                {tabs.map((tab) => {
+                  const IconComponent = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`w-full flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-300 ${
+                        activeTab === tab.id
+                          ? "bg-gradient-to-r from-primary-plot to-secondary-plot text-white shadow-lg"
+                          : "text-gray-700 hover:bg-gradient-to-r hover:from-primary-plot/10 hover:to-secondary-plot/10 hover:text-primary-plot"
+                      }`}
+                    >
+                      <IconComponent className="mr-3 h-5 w-5" />
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
           </div>
 
-          {/* Status Messages */}
-          {saveStatus && (
-            <div
-              className={`mb-6 p-6 rounded-2xl flex items-center space-x-3 shadow-lg ${
-                saveStatus === "saved"
-                  ? "bg-gradient-to-r from-green-50 to-emerald-50 text-green-800 border border-green-200"
-                  : saveStatus === "saving"
-                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-800 border border-blue-200"
-                  : "bg-gradient-to-r from-red-50 to-rose-50 text-red-800 border border-red-200"
-              }`}
-            >
-              {saveStatus === "saved" && <TbCheck className="h-6 w-6" />}
-              {saveStatus === "saving" && (
-                <div className="animate-spin h-6 w-6 border-2 border-current border-t-transparent rounded-full"></div>
-              )}
-              {saveStatus === "error" && <TbX className="h-6 w-6" />}
-              {saveStatus === "password-mismatch" && (
-                <TbX className="h-6 w-6" />
-              )}
-              <span className="font-semibold">
-                {saveStatus === "saved" && "Settings saved successfully!"}
-                {saveStatus === "saving" && "Saving changes..."}
-                {saveStatus === "error" &&
-                  "Error saving settings. Please try again."}
-                {saveStatus === "password-mismatch" &&
-                  "Passwords do not match."}
-              </span>
-            </div>
-          )}
-
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar Navigation */}
-            <div className="lg:w-80">
-              <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl">
-                <nav className="space-y-2">
-                  {tabs.map((tab) => {
-                    const IconComponent = tab.icon;
-                    return (
-                      <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`w-full flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-300 ${
-                          activeTab === tab.id
-                            ? "bg-gradient-to-r from-primary-plot to-secondary-plot text-white shadow-lg"
-                            : "text-gray-700 hover:bg-gradient-to-r hover:from-primary-plot/10 hover:to-secondary-plot/10 hover:text-primary-plot"
-                        }`}
-                      >
-                        <IconComponent className="mr-3 h-5 w-5" />
-                        {tab.label}
-                      </button>
-                    );
-                  })}
-                </nav>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-1">
-              <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
-                {activeTab === "profile" && renderProfile()}
-                {activeTab === "security" && renderSecurity()}
-                {activeTab === "mpesa" && renderMpesaSettings()}
-                {activeTab === "notifications" && renderNotifications()}
-                {activeTab === "api" && renderApiKeys()}
-              </div>
+          {/* Main Content */}
+          <div className="flex-1">
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 p-8 shadow-xl">
+              {activeTab === "profile" && renderProfile()}
+              {activeTab === "security" && renderSecurity()}
+              {activeTab === "mpesa" && renderMpesaSettings()}
+              {activeTab === "notifications" && renderNotifications()}
+              {activeTab === "api" && renderApiKeys()}
             </div>
           </div>
         </div>

@@ -15,6 +15,8 @@ import {
   TbSparkles,
   TbHomeDot,
 } from "react-icons/tb";
+import maintenanceService from "../../services/maintenanceService";
+import FileUpload from "../common/FileUpload";
 
 const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
   const { user } = useAuth();
@@ -191,22 +193,47 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
     setSubmitStatus(null);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Prepare maintenance request data
+      const requestData = {
+        ...formData,
+        tenant_id: user?.id,
+        unit_id: user?.unit_id,
+        property_id: unit?.property_id,
+        status: "pending",
+      };
 
-      // Simulate success (95% success rate)
-      const success = Math.random() > 0.05;
+      // Create maintenance request
+      const response = await maintenanceService.createMaintenanceRequest(
+        requestData
+      );
 
-      if (success) {
-        const requestId = `MR${Date.now()}${Math.random()
-          .toString(36)
-          .substring(2, 6)
-          .toUpperCase()}`;
+      if (response.success) {
+        const requestId = response.request?.id || response.data?.request?.id;
+
+        // Handle image uploads if there are any
+        if (uploadedImages.length > 0 && requestId) {
+          try {
+            const imageFormData = new FormData();
+            uploadedImages.forEach((imageFile) => {
+              imageFormData.append("images", imageFile.file);
+            });
+
+            await maintenanceService.uploadMaintenanceImages(
+              requestId,
+              imageFormData
+            );
+          } catch (uploadError) {
+            console.warn(
+              "Request created but image upload failed:",
+              uploadError
+            );
+          }
+        }
 
         setSubmitStatus({
           success: true,
           message: "Maintenance request submitted successfully!",
-          requestId,
+          requestId: requestId || `MR${Date.now()}`,
         });
 
         // Call success callback
@@ -224,13 +251,15 @@ const MaintenanceModal = ({ isOpen, onClose, onRequestSuccess }) => {
       } else {
         setSubmitStatus({
           success: false,
-          message: "Failed to submit request. Please try again.",
+          message:
+            response.message || "Failed to submit request. Please try again.",
         });
       }
     } catch (error) {
+      console.error("Error submitting maintenance request:", error);
       setSubmitStatus({
         success: false,
-        message: "An error occurred. Please try again.",
+        message: error.message || "An error occurred. Please try again.",
       });
     } finally {
       setLoading(false);

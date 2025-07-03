@@ -1,9 +1,8 @@
 import { useAuth } from "../../contexts/AuthContext";
 import { useState, useEffect } from "react";
-import {
-  getPaymentsForTenant,
-  getMaintenanceRequestsForTenant,
-} from "../../utils/demoData";
+import paymentService from "../../services/paymentService";
+import maintenanceService from "../../services/maintenanceService";
+import { formatCurrency, formatDate } from "../../utils/dataHelpers";
 import { Link } from "react-router-dom";
 import {
   TbHome,
@@ -38,6 +37,13 @@ import { RiUserSharedLine } from "react-icons/ri";
 const Dashboard = () => {
   const { user } = useAuth();
   const [timeOfDay, setTimeOfDay] = useState("");
+  const [dashboardData, setDashboardData] = useState({
+    payments: [],
+    maintenanceRequests: [],
+    stats: {},
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Set time of day greeting
@@ -47,9 +53,62 @@ const Dashboard = () => {
     else setTimeOfDay("evening");
   }, []);
 
-  // Get tenant data from demo data
-  const payments = getPaymentsForTenant(user?.id);
-  const maintenanceRequests = getMaintenanceRequestsForTenant(user?.id);
+  useEffect(() => {
+    const loadTenantData = async () => {
+      if (!user?.id) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Load tenant's payments and maintenance requests
+        const [paymentsResponse, maintenanceResponse] = await Promise.all([
+          paymentService.getPayments({ tenantId: user.id, limit: 100 }),
+          maintenanceService.getMaintenanceRequests({
+            tenantId: user.id,
+            limit: 100,
+          }),
+        ]);
+
+        const payments = paymentsResponse.payments || [];
+        const maintenanceRequests = maintenanceResponse.requests || [];
+
+        // Log any service errors for debugging
+        if (!paymentsResponse.success) {
+          console.warn("Payments service error:", paymentsResponse.error);
+        }
+        if (!maintenanceResponse.success) {
+          console.warn("Maintenance service error:", maintenanceResponse.error);
+        }
+
+        setDashboardData({
+          payments,
+          maintenanceRequests,
+          stats: {
+            totalPayments: payments.length,
+            totalMaintenanceRequests: maintenanceRequests.length,
+            pendingRequests: maintenanceRequests.filter(
+              (req) => req.status === "pending"
+            ).length,
+            inProgressRequests: maintenanceRequests.filter(
+              (req) => req.status === "in_progress"
+            ).length,
+          },
+        });
+      } catch (err) {
+        console.error("Failed to load tenant dashboard data:", err);
+        setError(err.message || "Failed to load dashboard data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTenantData();
+  }, [user]);
+
+  // Calculate derived data
+  const payments = dashboardData.payments;
+  const maintenanceRequests = dashboardData.maintenanceRequests;
   const pendingRequests = maintenanceRequests.filter(
     (req) => req.status === "pending"
   );
@@ -58,22 +117,11 @@ const Dashboard = () => {
   );
   const lastPayment = payments
     .filter((p) => p.status === "successful")
-    .sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date))[0];
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-    }).format(amount);
-  };
-
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+    .sort(
+      (a, b) =>
+        new Date(b.paymentDate || b.payment_date) -
+        new Date(a.paymentDate || a.payment_date)
+    )[0];
 
   const getTimeIcon = () => {
     if (timeOfDay === "morning") return TbSun;
@@ -85,6 +133,43 @@ const Dashboard = () => {
 
   const recentPayments = payments.slice(0, 3);
   const recentMaintenance = maintenanceRequests.slice(0, 3);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-plot mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading your dashboard...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="text-red-500 text-xl mb-4">⚠️</div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Failed to load dashboard
+            </h3>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-primary-plot text-white rounded-lg hover:bg-primary-plot/90 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
