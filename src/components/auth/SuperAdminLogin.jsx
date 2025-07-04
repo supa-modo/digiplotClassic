@@ -11,9 +11,10 @@ import {
   TbArrowLeft,
   TbKey,
   TbDatabase,
+  TbArrowRight,
 } from "react-icons/tb";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { PiSecurityCamera } from "react-icons/pi";
+import { PiBuildingsBold, PiSecurityCamera } from "react-icons/pi";
 
 const SuperAdminLogin = () => {
   const { login } = useAuth();
@@ -31,7 +32,7 @@ const SuperAdminLogin = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [requires2FA, setRequires2FA] = useState(false);
-  const [step, setStep] = useState(1); // 1 = login, 2 = 2FA
+  const [step, setStep] = useState(2); // 1 = login, 2 = 2FA
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -167,34 +168,34 @@ const SuperAdminLogin = () => {
         }}
       ></div>
 
-      <div className="w-full max-w-md relative">
+      <div className="w-full max-w-xl relative">
         {/* Security badge */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center space-x-2 bg-red-600/20 backdrop-blur-sm border border-red-500/50 rounded-full px-4 py-2 mb-4">
-            <TbShield className="h-5 w-5 text-red-400" />
+            {/* <TbShield className="h-5 w-5 text-red-400" /> */}
             <span className="text-red-300 text-sm font-medium">
               RESTRICTED ACCESS
             </span>
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">
-            System Administrator
+            Digiplot System Administrator
           </h1>
           <p className="text-gray-300 text-sm">Authorized personnel only</p>
         </div>
 
         {/* Main login card */}
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-8">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-4 lg:px-12 lg:py-6">
           {/* Logo section */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-600 rounded-xl mb-4">
-              <TbShieldCheck className="h-8 w-8 text-white" />
+            <div className="w-20 h-20 justify-center items-center  bg-gradient-to-br from-red-500 to-red-900 rounded-[0.35rem] flex mx-auto">
+              <PiBuildingsBold size={50} className="text-white" />
             </div>
-            <h2 className="text-xl font-bold text-white mb-1">
-              DigiPlot Admin Console
+            <h2 className="text-xl font-bold text-white mb-1 mt-4">
+              Admin Console
             </h2>
             <p className="text-gray-300 text-sm">
               {step === 1
-                ? "Enter your administrator credentials"
+                ? "Enter your administrator credentials to continue"
                 : "Two-factor authentication required"}
             </p>
           </div>
@@ -208,16 +209,16 @@ const SuperAdminLogin = () => {
           )}
 
           {/* Login form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {step === 1 ? (
               // Step 1: Email and Password
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
                   <label
                     htmlFor="email"
                     className="block text-sm font-medium text-gray-200 mb-2"
                   >
-                    Administrator Email
+                    Admin Email
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -242,7 +243,7 @@ const SuperAdminLogin = () => {
                     htmlFor="password"
                     className="block text-sm font-medium text-gray-200 mb-2"
                   >
-                    Administrator Password
+                    Admin Password
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -277,19 +278,12 @@ const SuperAdminLogin = () => {
               // Step 2: Two-Factor Authentication
               <div className="space-y-6">
                 <div className="text-center">
-                  <TbKey className="h-12 w-12 text-red-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-white mb-2">
-                    Enhanced Security Required
-                  </h3>
                   <p className="text-sm text-gray-300 mb-6">
-                    Enter the 6-digit code from your authenticator app
+                    Enter the 6-digit code shown on your authenticator app
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-3 text-center">
-                    Authentication Code
-                  </label>
                   <div className="flex justify-center space-x-3">
                     {twoFactorCode.map((digit, index) => (
                       <input
@@ -304,7 +298,7 @@ const SuperAdminLogin = () => {
                         }
                         onKeyDown={(e) => handle2FAKeyDown(index, e)}
                         onPaste={index === 0 ? handle2FAPaste : undefined}
-                        className={`w-12 h-14 text-center text-xl font-semibold border-2 rounded-lg focus:outline-none transition-all duration-200 ${
+                        className={`w-[3.4rem] h-[3.6rem] text-center text-xl font-semibold border-2 rounded-lg focus:outline-none transition-all duration-200 ${
                           digit
                             ? "border-red-500 bg-red-500/20 text-white"
                             : "border-white/20 bg-white/10 text-gray-300"
@@ -313,9 +307,6 @@ const SuperAdminLogin = () => {
                       />
                     ))}
                   </div>
-                  <p className="mt-3 text-xs text-gray-400 text-center">
-                    Check your authenticator app for the security code
-                  </p>
                 </div>
 
                 {/* Back button */}
@@ -349,29 +340,15 @@ const SuperAdminLogin = () => {
                   </>
                 ) : (
                   <>
-                    <TbShieldCheck className="h-5 w-5 mr-2" />
                     <span>
-                      {step === 1 ? "Secure Access" : "Verify & Enter"}
+                      {step === 1 ? "Secure Access" : "Verify & Proceed"}
                     </span>
+                    <TbArrowRight className="h-5 w-5 ml-2" />
                   </>
                 )}
               </span>
             </button>
           </form>
-
-          {/* Security features */}
-          <div className="mt-8 pt-6 border-t border-white/10">
-            <div className="grid grid-cols-2 gap-4 text-xs text-gray-400">
-              <div className="flex items-center space-x-2">
-                <PiSecurityCamera className="h-4 w-4 text-red-400" />
-                <span>End-to-end encrypted</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <TbDatabase className="h-4 w-4 text-red-400" />
-                <span>Audit logged</span>
-              </div>
-            </div>
-          </div>
 
           {/* Back to public site */}
           <div className="mt-6 text-center">

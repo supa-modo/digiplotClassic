@@ -177,7 +177,7 @@ const ForgotPassword = () => {
           {/* logo */}
 
           <div className="hidden lg:flex text-center justify-center items-center space-x-3 mb-6 md:mb-8">
-            <div className="w-20 h-20 bg-secondary-plot rounded-md flex items-center justify-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-secondary-plot to-primary-700 rounded-[0.35rem] flex items-center justify-center">
               <PiBuildingsBold size={50} className="text-white" />
             </div>
           </div>

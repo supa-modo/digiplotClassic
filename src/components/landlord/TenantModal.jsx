@@ -23,6 +23,7 @@ import {
   TbShield,
 } from "react-icons/tb";
 import tenantService from "../../services/tenantService";
+import leaseService from "../../services/leaseService";
 
 const TenantModal = ({
   isOpen,
@@ -236,50 +237,79 @@ const TenantModal = ({
     setIsSubmitting(true);
 
     try {
-      // Prepare tenant data with proper type conversion
-      const tenantData = {
-        ...formData,
-        security_deposit: parseFloat(formData.security_deposit) || 0,
-        monthly_rent: parseFloat(formData.monthly_rent) || 0,
-        monthly_income: parseFloat(formData.monthly_income) || 0,
-      };
-
-      let response;
       if (isEditing) {
         // Update existing tenant
-        response = await tenantService.updateTenant(tenant.id, tenantData);
-      } else {
-        // Create new tenant
-        response = await tenantService.createTenant(tenantData);
-      }
+        const tenantData = {
+          firstName: formData.first_name,
+          lastName: formData.last_name,
+          email: formData.email,
+          phone: formData.phone,
+          emergencyContactName: formData.emergency_contact_name,
+          emergencyContactPhone: formData.emergency_contact_phone,
+          status: formData.status,
+        };
 
-      if (response.success) {
-        // If unit assignment is needed and not editing, assign the tenant to the unit
-        if (!isEditing && formData.unit_id && formData.lease_start_date) {
-          const assignmentData = {
-            lease_start_date: formData.lease_start_date,
-            lease_end_date: formData.lease_end_date,
-            security_deposit: parseFloat(formData.security_deposit) || 0,
-            monthly_rent: parseFloat(formData.monthly_rent) || 0,
+        const response = await tenantService.updateTenant(tenant.id, tenantData);
+        if (response.success) {
+          onSave(response.data?.tenant || response.tenant);
+          onClose();
+        } else {
+          setErrors({ general: response.message || "Failed to update tenant" });
+        }
+      } else {
+        // Create new tenant and lease
+        
+        // Step 1: Create the tenant user
+        const tenantData = {
+          firstName: formData.first_name,
+          lastName: formData.last_name,
+          email: formData.email,
+          phone: formData.phone,
+          emergencyContactName: formData.emergency_contact_name,
+          emergencyContactPhone: formData.emergency_contact_phone,
+          password: "TempPass123!", // Temporary password that tenant will change
+          role: "tenant",
+        };
+
+        const tenantResponse = await tenantService.createTenant(tenantData);
+        
+        if (!tenantResponse.success) {
+          setErrors({ general: tenantResponse.message || "Failed to create tenant" });
+          return;
+        }
+
+        const newTenant = tenantResponse.data?.tenant || tenantResponse.tenant;
+
+        // Step 2: Create the lease to assign tenant to unit
+        if (formData.unit_id && formData.lease_start_date) {
+          const leaseData = {
+            tenantId: newTenant.id,
+            unitId: formData.unit_id,
+            startDate: formData.lease_start_date,
+            endDate: formData.lease_end_date || new Date(new Date(formData.lease_start_date).getFullYear() + 1, new Date(formData.lease_start_date).getMonth(), new Date(formData.lease_start_date).getDate()).toISOString().split('T')[0],
+            monthlyRent: parseFloat(formData.monthly_rent) || 0,
+            securityDeposit: parseFloat(formData.security_deposit) || 0,
+            moveInDate: formData.lease_start_date,
+            notes: formData.notes,
           };
 
-          await tenantService.assignUnit(
-            response.tenant.id,
-            formData.unit_id,
-            assignmentData
-          );
+          const leaseResponse = await leaseService.createLease(leaseData);
+          
+          if (!leaseResponse.success) {
+            // If lease creation fails, we might want to delete the tenant or leave it for manual cleanup
+            setErrors({ general: leaseResponse.message || "Failed to create lease" });
+            return;
+          }
         }
 
         // Pass the tenant data from the API response
-        onSave(response.tenant || response.data?.tenant || tenantData);
+        onSave(newTenant);
         onClose();
-      } else {
-        setErrors({ general: response.message || "Failed to save tenant" });
       }
     } catch (error) {
       console.error("Error saving tenant:", error);
       setErrors({
-        general: error.message || "An error occurred while saving the tenant",
+        general: error.response?.data?.message || error.message || "An error occurred while saving the tenant",
       });
     } finally {
       setIsSubmitting(false);

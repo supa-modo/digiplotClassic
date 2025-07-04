@@ -253,7 +253,7 @@ const ResetPassword = () => {
           {/* logo */}
 
           <div className="hidden lg:flex text-center justify-center items-center space-x-3 mb-6 md:mb-8">
-            <div className="w-20 h-20 bg-secondary-plot rounded-md flex items-center justify-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-secondary-plot to-primary-700 rounded-[0.35rem] flex items-center justify-center">
               <PiBuildingsBold size={50} className="text-white" />
             </div>
           </div>
@@ -275,7 +275,7 @@ const ResetPassword = () => {
               </span>
             </div>
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-secondary-plot mb-4 md:mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-secondary-plot mb-2">
             Reset Your Password
           </h2>
           {!success ? (
@@ -283,7 +283,7 @@ const ResetPassword = () => {
               {/* Welcome section with time of day greeting */}
               <div className="mb-6 md:mb-8">
                 <p className="text-gray-500 text-[0.9rem] md:text-base">
-                  Enter your new password below to reset your account password.
+                  Enter your new password below to finish and proceed.
                 </p>
               </div>
 
@@ -296,7 +296,7 @@ const ResetPassword = () => {
               )}
 
               {/* Reset password form */}
-              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
                 {/* New Password field */}
                 <div>
                   <label

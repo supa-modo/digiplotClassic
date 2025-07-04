@@ -7,6 +7,7 @@ import {
   getTenantsForLandlord,
   getPropertiesForLandlord,
 } from "../../utils/demoData";
+import leaseService from "../../services/leaseService";
 import {
   TbPlus,
   TbSearch,
@@ -25,7 +26,10 @@ import {
   TbCash,
   TbUserCheck,
   TbArrowRight,
+  TbMailFilled,
+  TbPhoneCall,
 } from "react-icons/tb";
+import { RiUserAddLine } from "react-icons/ri";
 import { PiCaretDownDuotone, PiUsersDuotone } from "react-icons/pi";
 
 const LandlordTenants = () => {
@@ -140,22 +144,22 @@ const LandlordTenants = () => {
       active: {
         label: "Active",
         class:
-          "bg-gradient-to-br from-green-50 to-emerald-50 text-green-700 border border-green-200",
+          "bg-gradient-to-br from-green-100 to-emerald-100 text-green-700 border border-green-300",
       },
       inactive: {
         label: "Inactive",
         class:
-          "bg-gradient-to-br from-gray-50 to-slate-50 text-gray-700 border border-gray-200",
+          "bg-gradient-to-br from-red-100 to-red-100 text-red-700 border border-red-300",
       },
       suspended: {
         label: "Suspended",
         class:
-          "bg-gradient-to-br from-red-50 to-pink-50 text-red-700 border border-red-200",
+          "bg-gradient-to-br from-red-100 to-pink-100 text-red-700 border border-red-300",
       },
       pending: {
         label: "Pending",
         class:
-          "bg-gradient-to-br from-yellow-50 to-orange-50 text-yellow-700 border border-yellow-200",
+          "bg-gradient-to-br from-yellow-100 to-orange-100 text-yellow-700 border border-yellow-300",
       },
     };
 
@@ -173,11 +177,11 @@ const LandlordTenants = () => {
     const totalTenants = tenants.length;
     const activeTenants = tenants.filter((t) => t.status === "active").length;
     const inactiveTenants = tenants.filter(
-      (t) => t.status === "inactive"
+      (t) => t.status === "inactive" || t.status === "terminated"
     ).length;
     const pendingTenants = tenants.filter((t) => t.status === "pending").length;
     const totalRevenue = tenants.reduce(
-      (sum, tenant) => sum + (tenant.unit?.rent_amount || 0),
+      (sum, tenant) => sum + (tenant.lease?.monthlyRent || 0),
       0
     );
 
@@ -216,7 +220,7 @@ const LandlordTenants = () => {
               className="mt-4 lg:mt-0 bg-gradient-to-r from-secondary-600/90 to-secondary-700 text-white text-[0.8rem] md:text-[0.98rem] px-6 py-3 md:py-2.5 rounded-lg hover:shadow-lg transition-colors duration-200 font-medium space-x-2  shadow-md"
             >
               <div className="flex items-center justify-center space-x-2">
-                <TbUserPlus className="h-5 w-5 md:h-6 md:w-6" />
+                <RiUserAddLine className="h-5 w-5 md:h-6 md:w-6" />
                 <span>Add New Tenant</span>
                 <TbArrowRight className="h-4 w-4 md:h-5 md:w-5" />
               </div>
@@ -469,7 +473,7 @@ const LandlordTenants = () => {
             {/* Right side - Search and Filters */}
             <div className="flex flex-col lg:flex-row lg:items-center space-y-3 lg:space-y-0 lg:space-x-3 lg:min-w-[55%]">
               {/* Search Input */}
-              <div className="relative flex-1 lg:min-w-[300px]">
+              <div className="w-full relative flex-1 lg:min-w-[300px]">
                 <TbSearch
                   className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
                   size={20}
@@ -484,7 +488,7 @@ const LandlordTenants = () => {
               </div>
 
               {/* Filter Dropdown */}
-              <div className="w-full relative">
+              <div className="w-full lg:w-[20%] relative">
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
@@ -527,7 +531,7 @@ const LandlordTenants = () => {
                   onClick={handleAddTenant}
                   className="bg-gradient-to-r from-secondary-plot to-secondary-plot/80 hover:from-secondary-700 hover:to-secondary-700/90 text-white px-6 py-2.5 md:py-3 rounded-lg hover:shadow-lg transition-all duration-200 font-semibold flex items-center space-x-2 mx-auto shadow-lg"
                 >
-                  <TbUserPlus size={21} />
+                  <RiUserAddLine size={21} />
                   <span className="text-[0.8rem] md:text-sm">
                     Add Your First Tenant
                   </span>
@@ -540,7 +544,7 @@ const LandlordTenants = () => {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gradient-to-r from-gray-50 to-blue-50/30">
+                <thead className="bg-gradient-to-r to-gray-200 from-secondary-600/20">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                       Tenant
@@ -567,41 +571,45 @@ const LandlordTenants = () => {
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-4">
-                          <div className="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-primary-plot/20 to-secondary-plot/20 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-bold text-primary-plot">
+                          <div className="flex-shrink-0 h-12 w-12 border border-secondary-500/20 bg-gradient-to-br from-secondary-600/20 to-secondary-plot/20 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-bold text-secondary-plot">
                               {tenant.first_name?.[0]}
                               {tenant.last_name?.[0]}
                             </span>
                           </div>
                           <div>
-                            <div className="text-sm font-bold text-gray-900">
+                            <div className="text-sm font-bold text-gray-600">
                               {tenant.first_name} {tenant.last_name}
                             </div>
                             <div className="flex items-center space-x-3 mt-1">
-                              <div className="flex items-center text-xs text-gray-500">
-                                <TbMail className="h-3 w-3 mr-1" />
-                                <span>{tenant.email}</span>
+                              <div className="flex items-center text-[0.7rem] md:text-xs lg:text-[0.8rem] text-gray-500">
+                                <TbMailFilled className="h-4 w-4 mr-1 text-gray-400" />
+                                <a href={`mailto:${tenant.email}`}>
+                                  {tenant.email}
+                                </a>
                               </div>
-                              <div className="flex items-center text-xs text-gray-500">
-                                <TbPhone className="h-3 w-3 mr-1" />
-                                <span>{tenant.phone}</span>
+                              <div className="flex items-center text-[0.7rem] md:text-xs lg:text-[0.8rem] text-gray-500">
+                                <TbPhoneCall className="h-4 w-4 mr-1 text-secondary-700" />
+                                <a href={`tel:${tenant.phone}`}>
+                                  {tenant.phone}
+                                </a>
                               </div>
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-bold text-gray-900">
+                        <div className="text-sm font-bold text-secondary-700">
                           {tenant.unit?.name || "No unit assigned"}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-secondary-plot">
                           {tenant.property?.name}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-bold text-gray-900">
+                        <div className="text-sm font-bold text-secondary-700">
                           KSh{" "}
-                          {tenant.unit?.rent_amount?.toLocaleString() || "0"}
+                          {tenant.lease?.monthlyRent?.toLocaleString() || "0"}
                         </div>
                         <div className="text-xs text-gray-500">per month</div>
                       </td>
@@ -610,14 +618,17 @@ const LandlordTenants = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex items-center space-x-3">
-                          <button className="text-primary-plot hover:text-primary-plot/80 p-2 hover:bg-primary-plot/5 rounded-lg transition-all duration-200">
+                          <button className="text-primary-plot hover:text-primary-plot/80 px-4 py-2 hover:bg-primary-plot/10 rounded-[0.3rem] transition-all duration-200">
                             <TbEye className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleEditTenant(tenant)}
-                            className="text-blue-600 hover:text-blue-800 p-2 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                            className="text-blue-600 hover:text-blue-800 px-4 py-1.5 hover:bg-blue-100 rounded-[0.4rem] transition-all duration-200"
                           >
-                            <TbEdit className="h-4 w-4" />
+                            <div className="flex items-center space-x-2">
+                              <TbEdit className="h-4 w-4" />
+                              <span>Edit</span>
+                            </div>
                           </button>
                         </div>
                       </td>
