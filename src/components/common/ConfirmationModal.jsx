@@ -67,7 +67,7 @@ const ConfirmationModal = ({
         iconBg: "bg-gradient-to-br from-red-100 to-pink-100",
         headerColor: "text-red-600",
         primaryButtonColor:
-          "bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700",
+          "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800",
         defaultTitle: "Confirm Deletion",
         defaultConfirmText: "Delete",
         decorativeColor: "bg-red-500/5",
@@ -191,7 +191,7 @@ const ConfirmationModal = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/70 backdrop-blur-[2px] flex items-center justify-center z-50 p-4"
           onClick={handleBackdropClick}
         >
           <motion.div
@@ -262,7 +262,7 @@ const ConfirmationModal = ({
 
             {/* Actions */}
             <div className="relative z-10 px-2.5 py-2.5 md:px-5 md:py-5 bg-gray-50/50 border-t border-gray-100">
-              <div className="flex flex-col-reverse sm:flex-row sm:justify-end space-y-2 space-y-reverse sm:space-y-0 sm:space-x-3">
+              <div className="flex space-x-3">
                 {shouldShowCancel && (
                   <button
                     onClick={onClose}

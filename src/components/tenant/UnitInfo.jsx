@@ -23,8 +23,10 @@ import {
   TbSun,
   TbSunset,
   TbMoon,
+  TbCoins,
 } from "react-icons/tb";
 import { useEffect, useState } from "react";
+import { PiMapPinAreaDuotone } from "react-icons/pi";
 
 const UnitInfo = () => {
   const [timeOfDay, setTimeOfDay] = useState("");
@@ -85,30 +87,21 @@ const UnitInfo = () => {
     <div className="space-y-6">
       {/* Enhanced Welcome Section */}
       <div className="mb-4 md:mb-6">
-        <div className="px-4 flex items-baseline justify-between mb-2 lg:mb-0">
-          <div className="">
-            <div className="flex items-center mb-2 md:mb-3">
-              <div className="flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-secondary-plot/20 to-primary-plot/20 text-[0.8rem] md:text-sm font-medium text-secondary-plot">
-                <TimeIcon className="h-4 w-4 mr-1.5 text-primary-plot" />
-                <span>Good {timeOfDay}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="hidden md:flex items-center mt-1.5 text-[0.8rem] md:text-sm font-medium text-gray-600">
-            <TbCalendarEvent className="h-4 w-4 mr-1.5 text-secondary-plot" />
-            <span>
-              {new Date().toLocaleDateString("en-US", {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-              })}
+        <div className="px-4 flex items-baseline justify-between mb-2 lg:mb-0"></div>
+      </div>
+      {/* Unit Header - Enhanced with premium styling */}
+      <div className="bg-gradient-to-br from-primary-plot via-primary-plot to-secondary-plot rounded-2xl p-4 md:p-8 text-white relative overflow-hidden shadow-xl">
+        {/* Status badge - mobile screens */}
+        <div className="absolute  right-3 top-3 lg:hidden items-center space-x-2">
+          <div className="flex items-center px-3 py-0.5 rounded-full bg-green-500/30 border border-green-400/50 backdrop-blur-sm">
+            <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse mr-2"></div>
+            <span className="text-[0.7rem] font-medium text-green-100">
+              {unit.status?.charAt(0).toUpperCase() + unit.status?.slice(1) ||
+                "Occupied"}
             </span>
           </div>
         </div>
-      </div>
-      {/* Unit Header - Enhanced with premium styling */}
-      <div className="bg-gradient-to-br from-primary-plot via-primary-plot to-secondary-plot rounded-2xl p-8 text-white relative overflow-hidden shadow-xl">
+
         {/* Decorative elements */}
         <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-white/10 blur-xl pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 h-32 w-32 rounded-full bg-white/5 blur-xl pointer-events-none"></div>
@@ -123,24 +116,26 @@ const UnitInfo = () => {
 
         <div className="relative z-10">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="mb-6 md:mb-0">
+            <div className="mb-1 md:mb-0">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm border border-white/30">
                   <TbBuildingSkyscraper className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-bold">
+                  <h1 className="text-xl md:text-2xl lg:text-3xl font-bold">
                     {unit.name}
                   </h1>
                   <div className="flex items-center mt-1 text-white/90">
-                    <TbMapPin className="h-4 w-4 mr-1" />
-                    <span className="text-sm">{property.address}</span>
+                    <PiMapPinAreaDuotone className="h-4 w-4 mr-1" />
+                    <span className="text-xs md:text-sm">
+                      {property.address}
+                    </span>
                   </div>
                 </div>
               </div>
 
               {/* Status badge */}
-              <div className="flex items-center space-x-2">
+              <div className="hidden lg:flex items-center space-x-2">
                 <div className="flex items-center px-3 py-1.5 rounded-full bg-green-500/30 border border-green-400/50 backdrop-blur-sm">
                   <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse mr-2"></div>
                   <span className="text-xs font-medium text-green-100">
@@ -152,14 +147,13 @@ const UnitInfo = () => {
             </div>
 
             <div className="text-center md:text-right">
-              <p className="text-white/70 text-sm mb-1">Monthly Rent</p>
               <div className="flex items-center justify-center md:justify-end space-x-2">
-                <TbCurrencyDollar className="h-6 w-6 text-white/80" />
-                <p className="text-3xl md:text-4xl font-bold">
-                  {unit.rent_amount?.toLocaleString() || "0"}
+                <TbCoins className="h-6 lg:h-10 w-6 lg:w-10 text-secondary-200" />
+                <p className="text-3xl md:text-4xl font-bold text-secondary-200">
+                  Kshs. {unit.rent_amount?.toLocaleString() || "0"}
                 </p>
               </div>
-              <p className="text-white/60 text-xs mt-1">KES per month</p>
+              <p className="text-white/60 text-xs mt-1">per month</p>
             </div>
           </div>
         </div>

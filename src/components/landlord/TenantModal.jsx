@@ -39,14 +39,10 @@ const TenantModal = ({
     email: "",
     phone: "",
     id_number: "",
-    date_of_birth: "",
-    address: "",
-    city: "",
+
     emergency_contact_name: "",
     emergency_contact_phone: "",
-    occupation: "",
-    employer: "",
-    monthly_income: "",
+
     unit_id: selectedUnit?.id || "",
     property_id: selectedUnit?.property_id || "",
     lease_start_date: "",
@@ -78,14 +74,10 @@ const TenantModal = ({
         email: tenant.email || "",
         phone: tenant.phone || "",
         id_number: tenant.id_number || "",
-        date_of_birth: tenant.date_of_birth || "",
-        address: tenant.address || "",
-        city: tenant.city || "",
+
         emergency_contact_name: tenant.emergency_contact_name || "",
         emergency_contact_phone: tenant.emergency_contact_phone || "",
-        occupation: tenant.occupation || "",
-        employer: tenant.employer || "",
-        monthly_income: tenant.monthly_income || "",
+
         unit_id: tenant.unit_id || "",
         property_id: tenant.property_id || "",
         lease_start_date: tenant.lease_start_date || "",
@@ -103,14 +95,10 @@ const TenantModal = ({
         email: "",
         phone: "",
         id_number: "",
-        date_of_birth: "",
-        address: "",
-        city: "",
+
         emergency_contact_name: "",
         emergency_contact_phone: "",
-        occupation: "",
-        employer: "",
-        monthly_income: "",
+
         unit_id: selectedUnit?.id || "",
         property_id: selectedUnit?.property_id || "",
         lease_start_date: "",
@@ -249,7 +237,10 @@ const TenantModal = ({
           status: formData.status,
         };
 
-        const response = await tenantService.updateTenant(tenant.id, tenantData);
+        const response = await tenantService.updateTenant(
+          tenant.id,
+          tenantData
+        );
         if (response.success) {
           onSave(response.data?.tenant || response.tenant);
           onClose();
@@ -258,7 +249,7 @@ const TenantModal = ({
         }
       } else {
         // Create new tenant and lease
-        
+
         // Step 1: Create the tenant user
         const tenantData = {
           firstName: formData.first_name,
@@ -272,9 +263,11 @@ const TenantModal = ({
         };
 
         const tenantResponse = await tenantService.createTenant(tenantData);
-        
+
         if (!tenantResponse.success) {
-          setErrors({ general: tenantResponse.message || "Failed to create tenant" });
+          setErrors({
+            general: tenantResponse.message || "Failed to create tenant",
+          });
           return;
         }
 
@@ -286,7 +279,15 @@ const TenantModal = ({
             tenantId: newTenant.id,
             unitId: formData.unit_id,
             startDate: formData.lease_start_date,
-            endDate: formData.lease_end_date || new Date(new Date(formData.lease_start_date).getFullYear() + 1, new Date(formData.lease_start_date).getMonth(), new Date(formData.lease_start_date).getDate()).toISOString().split('T')[0],
+            endDate:
+              formData.lease_end_date ||
+              new Date(
+                new Date(formData.lease_start_date).getFullYear() + 1,
+                new Date(formData.lease_start_date).getMonth(),
+                new Date(formData.lease_start_date).getDate()
+              )
+                .toISOString()
+                .split("T")[0],
             monthlyRent: parseFloat(formData.monthly_rent) || 0,
             securityDeposit: parseFloat(formData.security_deposit) || 0,
             moveInDate: formData.lease_start_date,
@@ -294,10 +295,12 @@ const TenantModal = ({
           };
 
           const leaseResponse = await leaseService.createLease(leaseData);
-          
+
           if (!leaseResponse.success) {
             // If lease creation fails, we might want to delete the tenant or leave it for manual cleanup
-            setErrors({ general: leaseResponse.message || "Failed to create lease" });
+            setErrors({
+              general: leaseResponse.message || "Failed to create lease",
+            });
             return;
           }
         }
@@ -309,7 +312,10 @@ const TenantModal = ({
     } catch (error) {
       console.error("Error saving tenant:", error);
       setErrors({
-        general: error.response?.data?.message || error.message || "An error occurred while saving the tenant",
+        general:
+          error.response?.data?.message ||
+          error.message ||
+          "An error occurred while saving the tenant",
       });
     } finally {
       setIsSubmitting(false);
@@ -323,14 +329,10 @@ const TenantModal = ({
       email: "",
       phone: "",
       id_number: "",
-      date_of_birth: "",
-      address: "",
-      city: "",
+
       emergency_contact_name: "",
       emergency_contact_phone: "",
-      occupation: "",
-      employer: "",
-      monthly_income: "",
+
       unit_id: "",
       property_id: "",
       lease_start_date: "",
@@ -545,52 +547,6 @@ const TenantModal = ({
                           </div>
                         )}
                       </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Date of Birth
-                        </label>
-                        <input
-                          type="date"
-                          name="date_of_birth"
-                          value={formData.date_of_birth}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Address
-                        </label>
-                        <input
-                          type="text"
-                          name="address"
-                          value={formData.address}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          placeholder="Enter address"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          City
-                        </label>
-                        <input
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          placeholder="Enter city"
-                          disabled={isSubmitting}
-                        />
-                      </div>
                     </div>
                   </div>
 
@@ -632,67 +588,6 @@ const TenantModal = ({
                           onChange={handleInputChange}
                           className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
                           placeholder="Enter emergency contact phone"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Employment Information */}
-                  <div className="bg-gradient-to-br from-purple-50/50 to-pink-50/30 rounded-2xl p-6 border border-gray-100">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="p-3 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl">
-                        <TbBuilding className="h-6 w-6 text-purple-600" />
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900">
-                        Employment Information
-                      </h3>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Occupation
-                        </label>
-                        <input
-                          type="text"
-                          name="occupation"
-                          value={formData.occupation}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          placeholder="Enter occupation"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Employer
-                        </label>
-                        <input
-                          type="text"
-                          name="employer"
-                          value={formData.employer}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          placeholder="Enter employer"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Monthly Income
-                        </label>
-                        <input
-                          type="number"
-                          name="monthly_income"
-                          value={formData.monthly_income}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          placeholder="Enter monthly income"
-                          min="0"
-                          step="0.01"
                           disabled={isSubmitting}
                         />
                       </div>

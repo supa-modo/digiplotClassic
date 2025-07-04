@@ -17,6 +17,9 @@ import {
   TbTrendingDown,
   TbArrowRight,
   TbCash,
+  TbCheck,
+  TbClock,
+  TbX,
 } from "react-icons/tb";
 import { PiCaretDownDuotone, PiReceiptDuotone } from "react-icons/pi";
 
@@ -108,21 +111,19 @@ const LandlordPayments = () => {
   const getStatusBadge = (status) => {
     const statusConfig = {
       successful: {
-        label: "Successful",
-        class:
-          "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-md",
-        icon: "✓",
+        label: "Completed",
+        class: "bg-green-100 border border-green-300 text-green-600 ",
+        icon: <TbCheck className="h-4 w-4" />,
       },
       pending: {
         label: "Pending",
-        class:
-          "bg-gradient-to-r from-yellow-500 to-amber-600 text-white shadow-md",
-        icon: "⏳",
+        class: "bg-yellow-100 border border-yellow-300 text-yellow-600 ",
+        icon: <TbClock className="h-4 w-4" />,
       },
       failed: {
         label: "Failed",
-        class: "bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-md",
-        icon: "✗",
+        class: "bg-red-100 border border-red-300 text-red-600 ",
+        icon: <TbX className="h-4 w-4" />,
       },
     };
 
@@ -572,7 +573,7 @@ const LandlordPayments = () => {
           <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 overflow-hidden shadow-xl">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gradient-to-r from-primary-plot/10 to-secondary-plot/10">
+                <thead className="bg-gradient-to-r to-gray-200 from-secondary-600/20">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                       Transaction
@@ -585,9 +586,6 @@ const LandlordPayments = () => {
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                       Amount
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                      Method
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                       Status
@@ -604,7 +602,7 @@ const LandlordPayments = () => {
                   {filteredPayments.map((payment) => (
                     <tr
                       key={payment.id}
-                      className="hover:bg-gradient-to-r hover:from-primary-plot/5 hover:to-secondary-plot/5 transition-all"
+                      className="hover:bg-gradient-to-r hover:to-secondary-plot/5 hover:from-primary-600/5 transition-colors duration-300"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-gray-900">
@@ -636,7 +634,7 @@ const LandlordPayments = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-gray-900">
-                          {payment.unit_number}
+                          {payment.unit_number || "Unit-21A"}
                         </div>
                         <div className="text-sm text-gray-600">
                           {payment.property_name}
@@ -650,23 +648,16 @@ const LandlordPayments = () => {
                           {payment.payment_type}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          {getPaymentMethodIcon(payment.payment_method)}
-                          <span className="ml-2 text-sm font-medium text-gray-900">
-                            {payment.payment_method}
-                          </span>
-                        </div>
-                      </td>
+
                       <td className="px-6 py-4 whitespace-nowrap">
                         {getStatusBadge(payment.status)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-semibold text-gray-900">
-                          {new Date(payment.payment_date).toLocaleDateString()}
+                        <div className="text-sm font-semibold text-secondary-plot">
+                          {new Date(payment.paymentDate).toLocaleDateString()}
                         </div>
-                        <div className="text-sm text-gray-600">
-                          {new Date(payment.payment_date).toLocaleTimeString(
+                        <div className="text-[0.78rem] font-medium text-gray-500">
+                          {new Date(payment.paymentDate).toLocaleTimeString(
                             [],
                             { hour: "2-digit", minute: "2-digit" }
                           )}

@@ -402,7 +402,7 @@ const PropertyCard = ({
       <PropertyImageCarousel
         images={property.image_urls}
         altText={property.name}
-        className="h-56 rounded-t-2xl"
+        className="h-64 *: rounded-t-2xl"
       />
 
       <div className="p-4 md:p-6">
@@ -420,7 +420,7 @@ const PropertyCard = ({
               </span>
             </div>
 
-            <div className="flex items-center text-gray-600 mb-4">
+            <div className="flex items-center text-gray-600 mb-2">
               <PiMapPinAreaDuotone className="h-4 w-4 mr-2 text-gray-400" />
               <span className="text-xs md:text-[0.8rem]">
                 {property.address}

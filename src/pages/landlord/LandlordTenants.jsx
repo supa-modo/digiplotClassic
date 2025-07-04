@@ -139,6 +139,16 @@ const LandlordTenants = () => {
     }
   };
 
+  const handleToggleTenantStatus = (tenantId) => {
+    setTenants((prev) =>
+      prev.map((t) =>
+        t.id === tenantId
+          ? { ...t, status: t.status === "active" ? "inactive" : "active" }
+          : t
+      )
+    );
+  };
+
   const getStatusBadge = (status) => {
     const statusConfig = {
       active: {
@@ -567,7 +577,7 @@ const LandlordTenants = () => {
                   {filteredTenants.map((tenant) => (
                     <tr
                       key={tenant.id}
-                      className="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/20 transition-all duration-200"
+                      className="hover:bg-gradient-to-r hover:to-secondary-plot/5 hover:from-primary-600/5 transition-colors duration-300"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-4">
@@ -618,9 +628,18 @@ const LandlordTenants = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex items-center space-x-3">
-                          <button className="text-primary-plot hover:text-primary-plot/80 px-4 py-2 hover:bg-primary-plot/10 rounded-[0.3rem] transition-all duration-200">
-                            <TbEye className="h-4 w-4" />
-                          </button>
+                          {/* Toggle switch for activate/disable */}
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              className="sr-only peer"
+                              checked={tenant.status === "active"}
+                              onChange={() =>
+                                handleToggleTenantStatus(tenant.id)
+                              }
+                            />
+                            <div className="w-9 h-5 bg-gray-300 rounded-full peer peer-checked:bg-green-500 peer-focus:ring-2 peer-focus:ring-primary-plot transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+                          </label>
                           <button
                             onClick={() => handleEditTenant(tenant)}
                             className="text-blue-600 hover:text-blue-800 px-4 py-1.5 hover:bg-blue-100 rounded-[0.4rem] transition-all duration-200"

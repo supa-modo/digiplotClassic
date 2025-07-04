@@ -245,12 +245,23 @@ export const demoUnits = [
     rent_amount: 23000,
     amenities: "WiFi, Parking, Security, Swimming Pool",
     status: "vacant",
-    image_urls: [
-      "/appartment-1.png",
-      "/appartment-2.png",
-      "/appartment-3.png",
-      "/appartment-4.png",
-    ],
+    image_urls: ["/appartment-3.png", "/appartment-2.png", "/appartment-4.png"],
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
+  {
+    id: "unit-21",
+    property_id: "property-1",
+    name: "Unit 21B",
+    description: " 2 bedroom apartment with a balcony and a garden view.",
+    type: "apartment",
+    bedrooms: 2,
+    bathrooms: 2,
+    area: 1000,
+    rent_amount: 30000,
+    amenities: "WiFi, Parking, Security, Swimming Pool, Gym, Balcony, Garden",
+    status: "maintenance",
+    image_urls: [],
     created_at: "2024-01-01T00:00:00Z",
     updated_at: "2024-01-01T00:00:00Z",
   },
@@ -343,7 +354,7 @@ export const demoPayments = [
     amount: 25000,
     paymentDate: "2024-02-15T09:15:00Z",
     mpesaTransactionId: "DEF456GHI789",
-    status: "successful",
+    status: "failed",
     receiptUrl: "/receipts/payment-2.pdf",
     notes: "Monthly rent payment for February 2024",
   },
@@ -380,7 +391,7 @@ export const demoPayments = [
     amount: 23000,
     paymentDate: "2023-07-15T10:30:00Z",
     mpesaTransactionId: "OLD456DEF789",
-    status: "successful",
+    status: "pending",
     receiptUrl: "/receipts/payment-5.pdf",
     notes: "Monthly rent payment for July 2023",
   },
@@ -722,8 +733,8 @@ export const getUnitStatistics = (unitId) => {
   };
 };
 
-export const getMaintenanceRequestsForTenant = (tenantId) => {
-  return demoMaintenanceRequests.filter((m) => m.tenant_id === tenantId);
+export const getMaintenanceRequestsForTenant = (unitId) => {
+  return demoMaintenanceRequests.filter((m) => m.unit_id === unitId);
 };
 
 export const getMaintenanceRequestsForLandlord = (landlordId) => {

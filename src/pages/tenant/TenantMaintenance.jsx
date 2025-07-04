@@ -23,6 +23,7 @@ import {
   TbMessageCircle,
   TbExclamationCircle,
 } from "react-icons/tb";
+import { PiCaretDownDuotone } from "react-icons/pi";
 
 const TenantMaintenance = () => {
   const { user } = useAuth();
@@ -45,8 +46,10 @@ const TenantMaintenance = () => {
   });
 
   // Get maintenance requests and related data
-  const requests = getMaintenanceRequestsForTenant(user?.id) || [];
-  const unit = user?.unit_id ? getUnitById(user.unit_id) : null;
+  // const requests = getMaintenanceRequestsForTenant(user?.id) || [];
+  const requests = getMaintenanceRequestsForTenant("unit-1") || [];
+  // const unit = user?.unit_id ? getUnitById(user.unit_id) : null;
+  const unit = getUnitById("unit-1");
   const property = unit ? getPropertyById(unit.property_id) : null;
 
   const handleRequestSuccess = async (requestData) => {
@@ -212,8 +215,8 @@ const TenantMaintenance = () => {
         <div className="relative overflow-hidden">
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center space-x-4">
-              <div className="p-3 md:p-4 bg-gradient-to-br from-secondary-600/20 to-secondary-plot/20 rounded-xl backdrop-blur-sm border border-white/20">
-                <TbSettings className="h-7 md:h-8 w-7 md:w-8 text-secondary-600" />
+              <div className="p-3 md:p-4 bg-gradient-to-br from-primary-600/20 to-secondary-plot/20 rounded-xl backdrop-blur-sm border border-white/20">
+                <TbSettings className="h-7 md:h-8 w-7 md:w-8 text-primary-600" />
               </div>
               <div>
                 <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-secondary-plot">
@@ -227,7 +230,7 @@ const TenantMaintenance = () => {
             <div className="mt-4 lg:mt-0">
               <button
                 onClick={() => setShowModal(true)}
-                className="bg-gradient-to-r from-secondary-600/90 to-secondary-700 text-white text-[0.8rem] md:text-[0.98rem] px-6 py-3 md:py-2.5 rounded-lg hover:shadow-lg transition-colors duration-200 font-medium space-x-2 shadow-md"
+                className="bg-gradient-to-r from-primary-600/90 to-primary-700 text-white text-[0.8rem] md:text-[0.98rem] px-6 py-3 md:py-2.5 rounded-lg hover:shadow-lg transition-colors duration-200 font-medium space-x-2 shadow-md"
               >
                 <div className="flex items-center justify-center space-x-2">
                   <TbPlus className="h-5 w-5 md:h-6 md:w-6" />
@@ -423,8 +426,8 @@ const TenantMaintenance = () => {
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center relative z-10 space-y-4 lg:space-y-0">
             {/* Left side - Icon, Title, Description */}
             <div className="flex items-center space-x-3">
-              <div className="p-3 bg-gradient-to-br from-secondary-600/20 to-secondary-plot/20 rounded-[0.6rem]">
-                <TbSearch className="h-6 md:h-7 w-6 md:w-7 text-secondary-600" />
+              <div className="p-3 bg-gradient-to-br from-primary-600/20 to-secondary-plot/20 rounded-[0.6rem]">
+                <TbSearch className="h-6 md:h-7 w-6 md:w-7 text-primary-600" />
               </div>
               <div>
                 <h3 className="text-base md:text-lg font-bold text-secondary-plot">
@@ -468,6 +471,11 @@ const TenantMaintenance = () => {
                     <option value="resolved">Resolved</option>
                     <option value="cancelled">Cancelled</option>
                   </select>
+
+                  <PiCaretDownDuotone
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                    size={20}
+                  />
                 </div>
 
                 {/* Category Filter */}
@@ -484,6 +492,11 @@ const TenantMaintenance = () => {
                       </option>
                     ))}
                   </select>
+
+                  <PiCaretDownDuotone
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                    size={20}
+                  />
                 </div>
               </div>
             </div>
@@ -492,12 +505,12 @@ const TenantMaintenance = () => {
 
         {/* Enhanced Requests Table */}
         <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 overflow-hidden shadow-xl">
-          <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-primary-plot/10 to-secondary-plot/10">
-            <h3 className="text-lg font-bold text-secondary-plot">
+          <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-primary-plot/30 to-secondary-plot/50">
+            <h3 className="text-lg font-bold text-secondary-700">
               Maintenance Requests
             </h3>
-            <p className="text-sm text-gray-500 mt-1">
-              Track the status of all your maintenance requests
+            <p className="text-sm text-gray-600 mt-1">
+              Track the status of all maintenance requests from your tenants.
             </p>
           </div>
 
