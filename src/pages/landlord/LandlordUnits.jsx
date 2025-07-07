@@ -741,7 +741,7 @@ const LandlordUnits = () => {
                           </button>
                           <button
                             onClick={() => handleDeleteUnit(unit)}
-                            className="inline-flex items-center px-3 py-2.5 border border-red-300 text-red-700 bg-red-100 hover:bg-red-200 font-medium rounded-[0.65rem] transition-all duration-300 hover:shadow-lg"
+                            className="inline-flex items-center px-3 py-2.5 border border-red-400 text-red-700 bg-red-200 hover:bg-red-500 hover:text-white hover:border-red-600 font-medium rounded-[0.65rem] transition-all duration-300 hover:shadow-lg"
                             title="Delete Unit"
                           >
                             <TbTrash className="h-4 w-4" />

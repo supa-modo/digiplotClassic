@@ -485,7 +485,7 @@ const PropertyCard = ({
         <div className="flex flex-col md:flex-row items-center gap-2">
           <button
             onClick={handleViewUnits}
-            className="w-full border-2 border-secondary-plot/50  bg-gradient-to-r from-secondary-plot to-secondary-plot/80 text-white px-4 py-2.5 md:py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all"
+            className="w-full border-2 border-secondary-800/20  bg-gradient-to-r from-secondary-700 via-secondary-700/80 to-secondary-800/80 text-white px-4 py-2.5 md:py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all"
           >
             <div className="flex items-center justify-center gap-2">
               <TbHomeDot className="h-4 md:h-5 w-4 md:w-5" />
@@ -497,7 +497,7 @@ const PropertyCard = ({
 
           <button
             onClick={onAddUnit}
-            className="w-full border-2 border-secondary-700 text-secondary-700 px-4 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-secondary-600 hover:border-secondary-600 hover:text-white transition-all"
+            className="w-full border-2 border-secondary-700 text-secondary-700 px-4 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-secondary-plot/70 hover:border-secondary-plot/90 hover:text-white transition-all"
           >
             <div className="flex items-center justify-center gap-2">
               <TbHomePlus className="h-4 md:h-5 w-4 md:w-5" />

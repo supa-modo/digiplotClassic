@@ -626,7 +626,7 @@ const LandlordPayments = () => {
                             <div className="text-sm font-semibold text-gray-900">
                               {payment.tenant_name}
                             </div>
-                            <div className="text-sm text-gray-600">
+                            <div className="text-[0.78rem] text-gray-600">
                               {payment.tenant_email}
                             </div>
                           </div>
@@ -636,7 +636,7 @@ const LandlordPayments = () => {
                         <div className="text-sm font-semibold text-gray-900">
                           {payment.unit_number || "Unit-21A"}
                         </div>
-                        <div className="text-sm text-gray-600">
+                        <div className="text-[0.78rem] text-gray-600">
                           {payment.property_name}
                         </div>
                       </td>

@@ -32,6 +32,7 @@ import {
   TbHomeInfinity,
   TbLayoutGrid,
   TbListDetails,
+  TbRefresh,
 } from "react-icons/tb";
 import { PiBuildingsDuotone, PiCaretDownDuotone } from "react-icons/pi";
 import { BiChevronDown } from "react-icons/bi";
@@ -130,6 +131,19 @@ const LandlordProperties = () => {
   const handleAddProperty = () => {
     setSelectedProperty(null);
     setShowPropertyModal(true);
+  };
+
+  const handleRefresh = () => {
+    if (user?.id) {
+      // TODO: Replace with actual user id
+      const landlordProperties = getPropertiesForLandlord("landlord-1");
+      const propertiesWithUnits = landlordProperties.map((property) => ({
+        ...property,
+        units: getUnitsForProperty(property.id),
+      }));
+      setProperties(propertiesWithUnits);
+      setFilteredProperties(propertiesWithUnits);
+    }
   };
 
   const handleEditProperty = (property) => {
@@ -323,17 +337,26 @@ const LandlordProperties = () => {
                 </p>
               </div>
             </div>
-            <button
-              onClick={handleAddProperty}
-              className="mt-4 lg:mt-0 bg-gradient-to-r from-secondary-600/90 to-secondary-700 text-white text-[0.8rem] md:text-[0.98rem] px-6 py-3 md:py-2.5 rounded-lg hover:shadow-lg transition-colors duration-200 font-medium space-x-2  shadow-md"
-            >
-              <div className="flex items-center justify-center space-x-2">
-                <TbBuildingPlus className="h-5 w-5 md:h-6 md:w-6" />
-                <span>Add New Property</span>
+            <div className="mt-4 lg:mt-0 flex items-center space-x-3">
+              <button
+                onClick={handleRefresh}
+                className="bg-white border-2 border-secondary-600/20 text-secondary-600 text-[0.8rem] md:text-[0.98rem] px-4 py-3 md:py-2.5 rounded-lg hover:shadow-lg hover:bg-secondary-50 transition-all duration-200 font-medium shadow-md"
+                title="Refresh Properties"
+              >
+                <TbRefresh className="h-5 w-5 md:h-6 md:w-6" />
+              </button>
 
-                <TbArrowRight className="h-4 w-4 md:h-5 md:w-5" />
-              </div>
-            </button>
+              <button
+                onClick={handleAddProperty}
+                className="bg-gradient-to-r from-secondary-600/90 to-secondary-700 text-white text-[0.8rem] md:text-[0.98rem] px-6 py-3 md:py-2.5 rounded-lg hover:shadow-lg transition-colors duration-200 font-medium space-x-2 shadow-md"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <TbBuildingPlus className="h-5 w-5 md:h-6 md:w-6" />
+                  <span>Add New Property</span>
+                  <TbArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                </div>
+              </button>
+            </div>
           </div>
         </div>
 
