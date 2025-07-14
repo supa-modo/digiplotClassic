@@ -30,11 +30,10 @@ import SuperAdminLogin from "./components/auth/SuperAdminLogin";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminSettings from "./pages/admin/AdminSettings";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 
 function App() {
   return (
-   <Analytics/>
     <ErrorBoundary fallbackMessage="Failed to initialize application. Please refresh the page.">
       <AuthProvider>
         <Router>
@@ -206,6 +205,7 @@ function App() {
               <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </div>
+          <Analytics />
         </Router>
       </AuthProvider>
     </ErrorBoundary>
