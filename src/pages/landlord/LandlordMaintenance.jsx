@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import LandlordLayout from "../../components/landlord/LandlordLayout";
+import MaintenanceRequestModal from "../../components/landlord/MaintenanceRequestModal";
 import { useAuth } from "../../contexts/AuthContext";
 import {
   demoMaintenanceRequests,
   demoTenants,
   demoUnits,
   demoProperties,
+  getPropertiesForLandlord,
 } from "../../utils/demoData";
 import {
   TbTools,
@@ -37,39 +39,51 @@ const LandlordMaintenance = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
+  const [landlordProperties, setLandlordProperties] = useState([]);
 
   useEffect(() => {
-    // Filter maintenance requests for the logged-in landlord's properties
-    const landlordRequests = demoMaintenanceRequests
-      .map((request) => {
-        const tenant = demoTenants.find((t) => t.id === request.tenant_id);
-        const unit = tenant
-          ? demoUnits.find((u) => u.id === tenant.unit_id)
-          : null;
-        const property = unit
-          ? demoProperties.find((p) => p.id === unit.property_id)
-          : null;
+    if (user?.id) {
+      // Get properties for this landlord
+      const properties = getPropertiesForLandlord("landlord-1"); // TODO: Use actual user id
+      const propertiesWithUnits = properties.map((property) => ({
+        ...property,
+        units: demoUnits.filter((unit) => unit.property_id === property.id),
+      }));
+      setLandlordProperties(propertiesWithUnits);
 
-        // Only include requests for properties owned by this landlord
-        if (property && property.landlord_id === user?.id) {
-          return {
-            ...request,
-            tenant_name: tenant
-              ? `${tenant.first_name} ${tenant.last_name}`
-              : "Unknown",
-            tenant_email: tenant?.email,
-            tenant_phone: tenant?.phone,
-            unit_number: unit?.unit_number,
-            property_name: property?.name,
-          };
-        }
-        return null;
-      })
-      .filter(Boolean)
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      // Filter maintenance requests for the logged-in landlord's properties
+      const landlordRequests = demoMaintenanceRequests
+        .map((request) => {
+          const tenant = demoTenants.find((t) => t.id === request.tenant_id);
+          const unit = tenant
+            ? demoUnits.find((u) => u.id === tenant.unit_id)
+            : null;
+          const property = unit
+            ? demoProperties.find((p) => p.id === unit.property_id)
+            : null;
 
-    setRequests(landlordRequests);
-    setFilteredRequests(landlordRequests);
+          // Only include requests for properties owned by this landlord
+          if (property && property.landlord_id === user?.id) {
+            return {
+              ...request,
+              tenant_name: tenant
+                ? `${tenant.first_name} ${tenant.last_name}`
+                : "Unknown",
+              tenant_email: tenant?.email,
+              tenant_phone: tenant?.phone,
+              unit_number: unit?.unit_number,
+              property_name: property?.name,
+            };
+          }
+          return null;
+        })
+        .filter(Boolean)
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      setRequests(landlordRequests);
+      setFilteredRequests(landlordRequests);
+    }
   }, [user]);
 
   useEffect(() => {
@@ -218,6 +232,24 @@ const LandlordMaintenance = () => {
 
   const stats = getMaintenanceStats();
 
+  const handleAddRequest = () => {
+    setShowMaintenanceModal(true);
+  };
+
+  const handleMaintenanceRequestSave = (newRequest) => {
+    // Add the new request to the list
+    const requestWithId = {
+      ...newRequest,
+      id: Date.now().toString(),
+      status: "pending",
+      created_at: new Date().toISOString(),
+    };
+
+    setRequests((prev) => [requestWithId, ...prev]);
+    setFilteredRequests((prev) => [requestWithId, ...prev]);
+    setShowMaintenanceModal(false);
+  };
+
   return (
     <LandlordLayout>
       <div className="space-y-6">
@@ -244,7 +276,10 @@ const LandlordMaintenance = () => {
                   <span>Schedule</span>
                 </div>
               </button>
-              <button className="bg-gradient-to-r from-secondary-600/90 to-secondary-700 text-white text-[0.8rem] md:text-[0.98rem] px-6 py-3 md:py-2.5 rounded-lg hover:shadow-lg transition-colors duration-200 font-medium space-x-2  shadow-md">
+              <button
+                onClick={handleAddRequest}
+                className="bg-gradient-to-r from-secondary-600/90 to-secondary-700 text-white text-[0.8rem] md:text-[0.98rem] px-6 py-3 md:py-2.5 rounded-lg hover:shadow-lg transition-colors duration-200 font-medium space-x-2  shadow-md"
+              >
                 <div className="flex items-center justify-center space-x-2">
                   <TbPlus className="h-5 w-5 md:h-6 md:w-6" />
                   <span>Add Request</span>
@@ -743,6 +778,14 @@ const LandlordMaintenance = () => {
           </div>
         )}
       </div>
+
+      {/* Maintenance Request Modal */}
+      <MaintenanceRequestModal
+        isOpen={showMaintenanceModal}
+        onClose={() => setShowMaintenanceModal(false)}
+        onSave={handleMaintenanceRequestSave}
+        properties={landlordProperties}
+      />
     </LandlordLayout>
   );
 };

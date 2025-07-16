@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   TbX,
   TbUser,
@@ -10,8 +10,7 @@ import {
   TbCurrencyDollar,
   TbEdit,
   TbPlus,
-  TbSparkles,
-  TbAlertTriangle,
+  TbAlertCircle,
   TbCheck,
   TbLoader2,
   TbBuilding,
@@ -21,6 +20,7 @@ import {
   TbCalendarEvent,
   TbFileText,
   TbShield,
+  TbUserPlus,
 } from "react-icons/tb";
 import tenantService from "../../services/tenantService";
 import leaseService from "../../services/leaseService";
@@ -39,10 +39,8 @@ const TenantModal = ({
     email: "",
     phone: "",
     id_number: "",
-
     emergency_contact_name: "",
     emergency_contact_phone: "",
-
     unit_id: selectedUnit?.id || "",
     property_id: selectedUnit?.property_id || "",
     lease_start_date: "",
@@ -60,10 +58,26 @@ const TenantModal = ({
   const isEditing = !!tenant;
 
   const tenantStatuses = [
-    { value: "active", label: "Active", color: "text-green-600" },
-    { value: "inactive", label: "Inactive", color: "text-gray-600" },
-    { value: "suspended", label: "Suspended", color: "text-red-600" },
-    { value: "pending", label: "Pending", color: "text-yellow-600" },
+    {
+      value: "active",
+      label: "Active",
+      color: "text-green-600 bg-green-50 border-green-200",
+    },
+    {
+      value: "inactive",
+      label: "Inactive",
+      color: "text-gray-600 bg-gray-50 border-gray-200",
+    },
+    {
+      value: "suspended",
+      label: "Suspended",
+      color: "text-red-600 bg-red-50 border-red-200",
+    },
+    {
+      value: "pending",
+      label: "Pending",
+      color: "text-yellow-600 bg-yellow-50 border-yellow-200",
+    },
   ];
 
   useEffect(() => {
@@ -74,10 +88,8 @@ const TenantModal = ({
         email: tenant.email || "",
         phone: tenant.phone || "",
         id_number: tenant.id_number || "",
-
         emergency_contact_name: tenant.emergency_contact_name || "",
         emergency_contact_phone: tenant.emergency_contact_phone || "",
-
         unit_id: tenant.unit_id || "",
         property_id: tenant.property_id || "",
         lease_start_date: tenant.lease_start_date || "",
@@ -95,10 +107,8 @@ const TenantModal = ({
         email: "",
         phone: "",
         id_number: "",
-
         emergency_contact_name: "",
         emergency_contact_phone: "",
-
         unit_id: selectedUnit?.id || "",
         property_id: selectedUnit?.property_id || "",
         lease_start_date: "",
@@ -166,6 +176,20 @@ const TenantModal = ({
       setErrors((prev) => ({
         ...prev,
         [name]: "",
+      }));
+    }
+  };
+
+  const handleStatusSelect = (status) => {
+    setFormData((prev) => ({
+      ...prev,
+      status: status,
+    }));
+
+    if (errors.status) {
+      setErrors((prev) => ({
+        ...prev,
+        status: "",
       }));
     }
   };
@@ -249,8 +273,6 @@ const TenantModal = ({
         }
       } else {
         // Create new tenant and lease
-
-        // Step 1: Create the tenant user
         const tenantData = {
           firstName: formData.first_name,
           lastName: formData.last_name,
@@ -297,7 +319,6 @@ const TenantModal = ({
           const leaseResponse = await leaseService.createLease(leaseData);
 
           if (!leaseResponse.success) {
-            // If lease creation fails, we might want to delete the tenant or leave it for manual cleanup
             setErrors({
               general: leaseResponse.message || "Failed to create lease",
             });
@@ -305,7 +326,6 @@ const TenantModal = ({
           }
         }
 
-        // Pass the tenant data from the API response
         onSave(newTenant);
         onClose();
       }
@@ -322,407 +342,382 @@ const TenantModal = ({
     }
   };
 
-  const handleClose = () => {
-    setFormData({
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      id_number: "",
-
-      emergency_contact_name: "",
-      emergency_contact_phone: "",
-
-      unit_id: "",
-      property_id: "",
-      lease_start_date: "",
-      lease_end_date: "",
-      security_deposit: "",
-      monthly_rent: "",
-      status: "active",
-      notes: "",
-    });
-    setErrors({});
-    onClose();
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={handleClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
-          />
+    <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.4, ease: "easeInOut" }}
+    className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
+    onClick={handleBackdropClick}
+  >
+    <motion.div
+      initial={{ x: "100%" }}
+      animate={{ x: 0 }}
+      exit={{ x: "100%" }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
+      className="w-[780px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-3xl border border-gray-200"
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-secondary-plot to-secondary-700 px-6 py-4 relative">
+          <div className="relative flex justify-between items-center z-10">
+            <div className="flex items-center">
+              <TbUserPlus size={40} className="text-white mr-3" />
+              <div>
+                <h2 className="text-white font-semibold text-lg">
+                  {isEditing ? "Edit Tenant" : "Add New Tenant"}
+                </h2>
+                <p className="text-white/80 text-sm">
+                  {isEditing
+                    ? "Update tenant information and lease details"
+                    : "Add a new tenant to your property portfolio"}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-white/80 hover:text-white transition-colors rounded-full p-1 hover:bg-white/10"
+            >
+              <TbX className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
 
-          {/* Modal */}
-          <motion.div
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full max-w-4xl bg-gradient-to-br from-primary-plot/5 via-secondary-plot/5 to-primary-plot/5 backdrop-blur-xl border-l border-white/20 shadow-2xl z-50 overflow-hidden"
-          >
-            {/* Decorative Elements */}
-            <div className="absolute top-20 -right-20 w-40 h-40 bg-primary-plot/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-20 -right-16 w-32 h-32 bg-secondary-plot/10 rounded-full blur-2xl" />
-            <div className="absolute top-1/2 -right-24 w-48 h-48 bg-gradient-to-r from-primary-plot/5 to-secondary-plot/5 rounded-full blur-3xl" />
+        {/* Form Content */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col h-[calc(100vh-120px)] md:h-[calc(100vh-100px)]"
+        >
+          <div className="overflow-y-auto flex-1 px-3 md:px-6 py-5">
+            <div className="space-y-6">
+              {/* Personal Information */}
+              <div>
+                <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                  <TbUser size={20} className="mr-2 text-secondary-plot" />
+                  Personal Information
+                </h3>
 
-            {/* Content Container */}
-            <div className="relative h-full flex flex-col bg-white/95 backdrop-blur-xl">
-              {/* Header */}
-              <div className="flex-shrink-0 relative px-8 py-6 bg-gradient-to-r from-primary-plot via-secondary-plot to-primary-plot border-b border-white/20">
-                <div className="absolute inset-0 bg-white/10 backdrop-blur-xl" />
-                <div className="relative flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/20">
-                      {isEditing ? (
-                        <TbEdit className="w-6 h-6 text-white" />
-                      ) : (
-                        <TbUserCheck className="w-6 h-6 text-white" />
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        First Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="first_name"
+                        value={formData.first_name}
+                        onChange={handleInputChange}
+                        className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border ${
+                          errors.first_name
+                            ? "border-red-300 bg-red-50"
+                            : "border-gray-300"
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
+                        placeholder="Enter first name"
+                        disabled={isSubmitting}
+                      />
+                      {errors.first_name && (
+                        <div className="text-red-500 text-xs mt-1 flex items-center">
+                          <TbAlertCircle className="mr-1" /> {errors.first_name}
+                        </div>
                       )}
                     </div>
+
                     <div>
-                      <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                        {isEditing ? "Edit Tenant" : "Add New Tenant"}
-                        <TbSparkles className="w-5 h-5 text-yellow-300" />
-                      </h2>
-                      <p className="text-white/80 text-sm mt-1">
-                        {isEditing
-                          ? "Update tenant information and lease details"
-                          : "Add a new tenant to your property portfolio"}
-                      </p>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Last Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="last_name"
+                        value={formData.last_name}
+                        onChange={handleInputChange}
+                        className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border ${
+                          errors.last_name
+                            ? "border-red-300 bg-red-50"
+                            : "border-gray-300"
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
+                        placeholder="Enter last name"
+                        disabled={isSubmitting}
+                      />
+                      {errors.last_name && (
+                        <div className="text-red-500 text-xs mt-1 flex items-center">
+                          <TbAlertCircle className="mr-1" /> {errors.last_name}
+                        </div>
+                      )}
                     </div>
                   </div>
-                  <button
-                    onClick={handleClose}
-                    disabled={isSubmitting}
-                    className="w-10 h-10 bg-white/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20 text-white hover:bg-white/30 transition-all duration-200 hover:scale-105"
-                  >
-                    <TbX className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
 
-              {/* Form Content */}
-              <div className="flex-1 overflow-y-auto">
-                <form onSubmit={handleSubmit} className="p-8 space-y-8">
-                  {/* Personal Information */}
-                  <div className="bg-gradient-to-br from-blue-50/50 to-indigo-50/30 rounded-2xl p-6 border border-gray-100">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
-                        <TbUser className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900">
-                        Personal Information
-                      </h3>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          First Name *
-                        </label>
-                        <input
-                          type="text"
-                          name="first_name"
-                          value={formData.first_name}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm ${
-                            errors.first_name
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                          }`}
-                          placeholder="Enter first name"
-                          disabled={isSubmitting}
-                        />
-                        {errors.first_name && (
-                          <div className="flex items-center mt-2 text-sm text-red-600">
-                            <TbAlertTriangle className="w-4 h-4 mr-1" />
-                            {errors.first_name}
-                          </div>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Last Name *
-                        </label>
-                        <input
-                          type="text"
-                          name="last_name"
-                          value={formData.last_name}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm ${
-                            errors.last_name
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                          }`}
-                          placeholder="Enter last name"
-                          disabled={isSubmitting}
-                        />
-                        {errors.last_name && (
-                          <div className="flex items-center mt-2 text-sm text-red-600">
-                            <TbAlertTriangle className="w-4 h-4 mr-1" />
-                            {errors.last_name}
-                          </div>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Email Address *
-                        </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email Address <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <TbMail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <input
                           type="email"
                           name="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                          className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border ${
                             errors.email
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                          }`}
+                              ? "border-red-300 bg-red-50"
+                              : "border-gray-300"
+                          } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
                           placeholder="Enter email address"
                           disabled={isSubmitting}
                         />
-                        {errors.email && (
-                          <div className="flex items-center mt-2 text-sm text-red-600">
-                            <TbAlertTriangle className="w-4 h-4 mr-1" />
-                            {errors.email}
-                          </div>
-                        )}
                       </div>
+                      {errors.email && (
+                        <div className="text-red-500 text-xs mt-1 flex items-center">
+                          <TbAlertCircle className="mr-1" /> {errors.email}
+                        </div>
+                      )}
+                    </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Phone Number *
-                        </label>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Phone Number <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <TbPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <input
                           type="tel"
                           name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                          className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border ${
                             errors.phone
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                          }`}
+                              ? "border-red-300 bg-red-50"
+                              : "border-gray-300"
+                          } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
                           placeholder="Enter phone number"
                           disabled={isSubmitting}
                         />
-                        {errors.phone && (
-                          <div className="flex items-center mt-2 text-sm text-red-600">
-                            <TbAlertTriangle className="w-4 h-4 mr-1" />
-                            {errors.phone}
-                          </div>
-                        )}
                       </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          ID Number *
-                        </label>
-                        <input
-                          type="text"
-                          name="id_number"
-                          value={formData.id_number}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm ${
-                            errors.id_number
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                          }`}
-                          placeholder="Enter ID number"
-                          disabled={isSubmitting}
-                        />
-                        {errors.id_number && (
-                          <div className="flex items-center mt-2 text-sm text-red-600">
-                            <TbAlertTriangle className="w-4 h-4 mr-1" />
-                            {errors.id_number}
-                          </div>
-                        )}
-                      </div>
+                      {errors.phone && (
+                        <div className="text-red-500 text-xs mt-1 flex items-center">
+                          <TbAlertCircle className="mr-1" /> {errors.phone}
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* Emergency Contact */}
-                  <div className="bg-gradient-to-br from-green-50/50 to-emerald-50/30 rounded-2xl p-6 border border-gray-100">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="p-3 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl">
-                        <TbShield className="h-6 w-6 text-green-600" />
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900">
-                        Emergency Contact
-                      </h3>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      ID Number <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <TbId className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="text"
+                        name="id_number"
+                        value={formData.id_number}
+                        onChange={handleInputChange}
+                        className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border ${
+                          errors.id_number
+                            ? "border-red-300 bg-red-50"
+                            : "border-gray-300"
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
+                        placeholder="Enter ID number"
+                        disabled={isSubmitting}
+                      />
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Contact Name
-                        </label>
-                        <input
-                          type="text"
-                          name="emergency_contact_name"
-                          value={formData.emergency_contact_name}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          placeholder="Enter emergency contact name"
-                          disabled={isSubmitting}
-                        />
+                    {errors.id_number && (
+                      <div className="text-red-500 text-xs mt-1 flex items-center">
+                        <TbAlertCircle className="mr-1" /> {errors.id_number}
                       </div>
+                    )}
+                  </div>
+                </div>
+              </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Contact Phone
-                        </label>
-                        <input
-                          type="tel"
-                          name="emergency_contact_phone"
-                          value={formData.emergency_contact_phone}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          placeholder="Enter emergency contact phone"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-                    </div>
+              {/* Emergency Contact */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                  <TbShield size={20} className="mr-2 text-secondary-plot" />
+                  Emergency Contact
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Contact Name
+                    </label>
+                    <input
+                      type="text"
+                      name="emergency_contact_name"
+                      value={formData.emergency_contact_name}
+                      onChange={handleInputChange}
+                      className="w-full text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors"
+                      placeholder="Enter emergency contact name"
+                      disabled={isSubmitting}
+                    />
                   </div>
 
-                  {/* Property & Unit Selection */}
-                  <div className="bg-gradient-to-br from-yellow-50/50 to-orange-50/30 rounded-2xl p-6 border border-gray-100">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="p-3 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-xl">
-                        <TbHome className="h-6 w-6 text-yellow-600" />
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900">
-                        Property & Unit Assignment
-                      </h3>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Property
-                        </label>
-                        <select
-                          name="property_id"
-                          value={formData.property_id}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          disabled={isSubmitting || selectedUnit}
-                        >
-                          <option value="">Select a property</option>
-                          {properties.map((property) => (
-                            <option key={property.id} value={property.id}>
-                              {property.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Unit *
-                        </label>
-                        <select
-                          name="unit_id"
-                          value={formData.unit_id}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm ${
-                            errors.unit_id
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                          }`}
-                          disabled={
-                            isSubmitting ||
-                            !formData.property_id ||
-                            selectedUnit
-                          }
-                        >
-                          <option value="">Select a unit</option>
-                          {availableUnits.map((unit) => (
-                            <option key={unit.id} value={unit.id}>
-                              {unit.name} - KSh{" "}
-                              {unit.rent_amount?.toLocaleString()}/month
-                            </option>
-                          ))}
-                        </select>
-                        {errors.unit_id && (
-                          <div className="flex items-center mt-2 text-sm text-red-600">
-                            <TbAlertTriangle className="w-4 h-4 mr-1" />
-                            {errors.unit_id}
-                          </div>
-                        )}
-                      </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Contact Phone
+                    </label>
+                    <div className="relative">
+                      <TbPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="tel"
+                        name="emergency_contact_phone"
+                        value={formData.emergency_contact_phone}
+                        onChange={handleInputChange}
+                        className="w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors"
+                        placeholder="Enter emergency contact phone"
+                        disabled={isSubmitting}
+                      />
                     </div>
                   </div>
+                </div>
+              </div>
 
-                  {/* Lease Information */}
-                  <div className="bg-gradient-to-br from-gray-50/50 to-blue-50/30 rounded-2xl p-6 border border-gray-100">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="p-3 bg-gradient-to-br from-gray-100 to-blue-100 rounded-xl">
-                        <TbCalendarEvent className="h-6 w-6 text-gray-600" />
+              {/* Property & Unit Selection */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                  <TbHome size={20} className="mr-2 text-secondary-plot" />
+                  Property & Unit Assignment
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Property
+                    </label>
+                    <select
+                      name="property_id"
+                      value={formData.property_id}
+                      onChange={handleInputChange}
+                      className="w-full text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors"
+                      disabled={isSubmitting || selectedUnit}
+                    >
+                      <option value="">Select a property</option>
+                      {properties.map((property) => (
+                        <option key={property.id} value={property.id}>
+                          {property.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Unit <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="unit_id"
+                      value={formData.unit_id}
+                      onChange={handleInputChange}
+                      className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border ${
+                        errors.unit_id
+                          ? "border-red-300 bg-red-50"
+                          : "border-gray-300"
+                      } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
+                      disabled={
+                        isSubmitting || !formData.property_id || selectedUnit
+                      }
+                    >
+                      <option value="">Select a unit</option>
+                      {availableUnits.map((unit) => (
+                        <option key={unit.id} value={unit.id}>
+                          {unit.name} - KSh {unit.rent_amount?.toLocaleString()}
+                          /month
+                        </option>
+                      ))}
+                    </select>
+                    {errors.unit_id && (
+                      <div className="text-red-500 text-xs mt-1 flex items-center">
+                        <TbAlertCircle className="mr-1" /> {errors.unit_id}
                       </div>
-                      <h3 className="text-lg font-bold text-gray-900">
-                        Lease Information
-                      </h3>
-                    </div>
+                    )}
+                  </div>
+                </div>
+              </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Lease Start Date *
-                        </label>
+              {/* Lease Information */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                  <TbCalendarEvent
+                    size={20}
+                    className="mr-2 text-secondary-plot"
+                  />
+                  Lease Information
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Lease Start Date <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <TbCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <input
                           type="date"
                           name="lease_start_date"
                           value={formData.lease_start_date}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                          className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border ${
                             errors.lease_start_date
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                          }`}
+                              ? "border-red-300 bg-red-50"
+                              : "border-gray-300"
+                          } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
                           disabled={isSubmitting}
                         />
-                        {errors.lease_start_date && (
-                          <div className="flex items-center mt-2 text-sm text-red-600">
-                            <TbAlertTriangle className="w-4 h-4 mr-1" />
-                            {errors.lease_start_date}
-                          </div>
-                        )}
                       </div>
+                      {errors.lease_start_date && (
+                        <div className="text-red-500 text-xs mt-1 flex items-center">
+                          <TbAlertCircle className="mr-1" />{" "}
+                          {errors.lease_start_date}
+                        </div>
+                      )}
+                    </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Lease End Date
-                        </label>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Lease End Date
+                      </label>
+                      <div className="relative">
+                        <TbCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <input
                           type="date"
                           name="lease_end_date"
                           value={formData.lease_end_date}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                          className="w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors"
                           disabled={isSubmitting}
                         />
                       </div>
+                    </div>
+                  </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Monthly Rent
-                        </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Monthly Rent
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
+                          KSh
+                        </span>
                         <input
                           type="number"
                           name="monthly_rent"
                           value={formData.monthly_rent}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                          className="w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-12 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors"
                           placeholder="Monthly rent amount"
                           min="0"
                           step="0.01"
@@ -730,105 +725,148 @@ const TenantModal = ({
                           readOnly
                         />
                       </div>
+                    </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Security Deposit *
-                        </label>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Security Deposit <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
+                          KSh
+                        </span>
                         <input
                           type="number"
                           name="security_deposit"
                           value={formData.security_deposit}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm ${
+                          className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-12 pr-4 py-2.5 rounded-lg border ${
                             errors.security_deposit
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                          }`}
+                              ? "border-red-300 bg-red-50"
+                              : "border-gray-300"
+                          } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
                           placeholder="Security deposit amount"
                           min="0"
                           step="0.01"
                           disabled={isSubmitting}
                         />
-                        {errors.security_deposit && (
-                          <div className="flex items-center mt-2 text-sm text-red-600">
-                            <TbAlertTriangle className="w-4 h-4 mr-1" />
-                            {errors.security_deposit}
-                          </div>
-                        )}
                       </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Status
-                        </label>
-                        <select
-                          name="status"
-                          value={formData.status}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          disabled={isSubmitting}
-                        >
-                          {tenantStatuses.map((status) => (
-                            <option key={status.value} value={status.value}>
-                              {status.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                      {errors.security_deposit && (
+                        <div className="text-red-500 text-xs mt-1 flex items-center">
+                          <TbAlertCircle className="mr-1" />{" "}
+                          {errors.security_deposit}
+                        </div>
+                      )}
                     </div>
+                  </div>
 
-                    <div className="mt-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Notes
-                      </label>
+                  {/* Status */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tenant Status
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {tenantStatuses.map((status) => (
+                        <label
+                          key={status.value}
+                          className={`relative flex items-center p-3 border rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
+                            formData.status === status.value
+                              ? status.color
+                              : "border-gray-200 bg-white"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="status"
+                            value={status.value}
+                            checked={formData.status === status.value}
+                            onChange={() => handleStatusSelect(status.value)}
+                            className="sr-only"
+                          />
+                          <div
+                            className={`flex items-center justify-center w-4 h-4 border-2 rounded-full mr-3 ${
+                              formData.status === status.value
+                                ? "border-current bg-current"
+                                : "border-gray-300"
+                            }`}
+                          >
+                            {formData.status === status.value && (
+                              <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                            )}
+                          </div>
+                          <span className="font-medium">{status.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Notes
+                    </label>
+                    <div className="relative">
+                      <TbFileText className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                       <textarea
                         name="notes"
                         value={formData.notes}
                         onChange={handleInputChange}
-                        rows={3}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                        rows="3"
+                        className="w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors"
                         placeholder="Additional notes about the tenant..."
                         disabled={isSubmitting}
                       />
                     </div>
                   </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-4 pt-6">
-                    <button
-                      type="button"
-                      onClick={handleClose}
-                      disabled={isSubmitting}
-                      className="flex-1 px-6 py-3 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all duration-200 font-medium bg-white/70 backdrop-blur-sm hover:scale-105"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-primary-plot to-secondary-plot text-white hover:from-primary-plot/90 hover:to-secondary-plot/90 transition-all duration-200 font-medium flex items-center justify-center gap-2 hover:scale-105 shadow-lg"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <TbLoader2 className="w-5 h-5 animate-spin" />
-                          {isEditing ? "Updating..." : "Creating..."}
-                        </>
-                      ) : (
-                        <>
-                          <TbCheck className="w-5 h-5" />
-                          {isEditing ? "Update Tenant" : "Add Tenant"}
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
+                </div>
               </div>
+
+              {/* Submit Error */}
+              {errors.general && (
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center">
+                      <TbAlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                      <p className="text-sm text-red-800">{errors.general}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+          </div>
+
+          {/* Sticky Footer */}
+          <div className="border-t border-gray-200 bg-white px-6 py-4">
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isSubmitting}
+                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-6 py-2 bg-secondary-plot text-white rounded-lg hover:bg-secondary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    {isEditing ? "Updating..." : "Creating..."}
+                  </>
+                ) : (
+                  <>
+                    <TbCheck className="mr-2 h-4 w-4" />
+                    {isEditing ? "Update Tenant" : "Add Tenant"}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      </motion.div>
+    </motion.div>
   );
 };
 

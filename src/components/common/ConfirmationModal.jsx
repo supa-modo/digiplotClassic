@@ -249,19 +249,17 @@ const ConfirmationModal = ({
                 </p>
 
                 {type === "delete" && (
-                  <div className="mt-4 max-w-[28rem] mx-auto p-2 bg-red-50 border border-red-200 rounded-lg">
-                    <div className="flex items-center justify-center  text-red-700">
-                      <span className="text-[0.8rem] md:text-sm font-semibold">
-                        This action cannot be undone
-                      </span>
-                    </div>
+                  <div className="flex items-center justify-center mt-2 md:mt-3 lg:mt-4 text-red-700">
+                    <span className="text-[0.8rem] md:text-sm font-semibold">
+                      This action cannot be undone !!
+                    </span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Actions */}
-            <div className="relative z-10 px-2.5 py-2.5 md:px-5 md:py-5 bg-gray-50/50 border-t border-gray-100">
+            <div className="relative z-10 px-2.5 py-2.5 md:px-5 md:py-5 bg-gray-50/50 ">
               <div className="flex space-x-3">
                 {shouldShowCancel && (
                   <button

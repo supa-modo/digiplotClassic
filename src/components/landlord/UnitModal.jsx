@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   TbX,
   TbHome,
@@ -9,12 +9,13 @@ import {
   TbCurrencyDollar,
   TbEdit,
   TbPlus,
-  TbSparkles,
-  TbAlertTriangle,
+  TbAlertCircle,
   TbCheck,
   TbLoader2,
   TbBuilding,
   TbStar,
+  TbHomePlus,
+  TbFileDescription,
 } from "react-icons/tb";
 import unitService from "../../services/unitService";
 
@@ -54,14 +55,26 @@ const UnitModal = ({ isOpen, onClose, onSave, property, unit }) => {
   ];
 
   const unitStatuses = [
-    { value: "available", label: "Available", color: "text-green-600" },
-    { value: "occupied", label: "Occupied", color: "text-blue-600" },
+    {
+      value: "available",
+      label: "Available",
+      color: "text-green-600 bg-green-50 border-green-200",
+    },
+    {
+      value: "occupied",
+      label: "Occupied",
+      color: "text-blue-600 bg-blue-50 border-blue-200",
+    },
     {
       value: "maintenance",
       label: "Under Maintenance",
-      color: "text-orange-600",
+      color: "text-orange-600 bg-orange-50 border-orange-200",
     },
-    { value: "unavailable", label: "Unavailable", color: "text-red-600" },
+    {
+      value: "unavailable",
+      label: "Unavailable",
+      color: "text-red-600 bg-red-50 border-red-200",
+    },
   ];
 
   const amenitiesList = [
@@ -154,6 +167,20 @@ const UnitModal = ({ isOpen, onClose, onSave, property, unit }) => {
     }));
   };
 
+  const handleStatusSelect = (status) => {
+    setFormData((prev) => ({
+      ...prev,
+      status: status,
+    }));
+
+    if (errors.status) {
+      setErrors((prev) => ({
+        ...prev,
+        status: "",
+      }));
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -241,485 +268,486 @@ const UnitModal = ({ isOpen, onClose, onSave, property, unit }) => {
     }
   };
 
-  const handleClose = () => {
-    setFormData({
-      unit_number: "",
-      unit_type: "apartment",
-      bedrooms: "",
-      bathrooms: "",
-      size_sqft: "",
-      rent_amount: "",
-      security_deposit: "",
-      status: "available",
-      floor_number: "",
-      description: "",
-      amenities: [],
-      utilities_included: [],
-    });
-    setErrors({});
-    onClose();
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={handleClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
-          />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
+      onClick={handleBackdropClick}
+    >
+      <motion.div
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="w-[780px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-3xl border border-gray-200"
+        >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-secondary-plot to-secondary-700 px-6 py-4 relative">
+          <div className="relative flex justify-between items-center z-10">
+            <div className="flex items-center">
+              <TbHomePlus size={40} className="text-white mr-3" />
+              <div>
+                <h2 className="text-white font-semibold text-lg">
+                  {isEditing ? "Edit Unit" : "Add New Unit"}
+                </h2>
+                <p className="text-white/80 text-sm">
+                  {property?.name && `Property: ${property.name}`}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-white/80 hover:text-white transition-colors rounded-full p-1 hover:bg-white/10"
+            >
+              <TbX className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
 
-          {/* Modal */}
-          <motion.div
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full max-w-4xl bg-gradient-to-br from-primary-plot/5 via-secondary-plot/5 to-primary-plot/5 backdrop-blur-xl border-l border-white/20 shadow-2xl z-50 overflow-hidden"
-          >
-            {/* Decorative Elements */}
-            <div className="absolute top-20 -right-20 w-40 h-40 bg-primary-plot/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-20 -right-16 w-32 h-32 bg-secondary-plot/10 rounded-full blur-2xl" />
-            <div className="absolute top-1/2 -right-24 w-48 h-48 bg-gradient-to-r from-primary-plot/5 to-secondary-plot/5 rounded-full blur-3xl" />
+        {/* Form Content */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col h-[calc(100vh-120px)] md:h-[calc(100vh-100px)]"
+        >
+          <div className="overflow-y-auto flex-1 px-3 md:px-6 py-5">
+            <div className="space-y-6">
+              {/* Basic Information */}
+              <div>
+                <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                  <TbBuilding size={20} className="mr-2 text-secondary-plot" />
+                  Basic Information
+                </h3>
 
-            {/* Content Container */}
-            <div className="relative h-full flex flex-col bg-white/95 backdrop-blur-xl">
-              {/* Header */}
-              <div className="flex-shrink-0 relative px-8 py-6 bg-gradient-to-r from-primary-plot via-secondary-plot to-primary-plot border-b border-white/20">
-                <div className="absolute inset-0 bg-white/10 backdrop-blur-xl" />
-                <div className="relative flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/20">
-                      {isEditing ? (
-                        <TbEdit className="w-6 h-6 text-white" />
-                      ) : (
-                        <TbHome className="w-6 h-6 text-white" />
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Unit Number <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="unit_number"
+                        value={formData.unit_number}
+                        onChange={handleInputChange}
+                        className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border ${
+                          errors.unit_number
+                            ? "border-red-300 bg-red-50"
+                            : "border-gray-300"
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
+                        placeholder="e.g., A101"
+                        disabled={isSubmitting}
+                      />
+                      {errors.unit_number && (
+                        <div className="text-red-500 text-xs mt-1 flex items-center">
+                          <TbAlertCircle className="mr-1" />{" "}
+                          {errors.unit_number}
+                        </div>
                       )}
                     </div>
+
                     <div>
-                      <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                        {isEditing ? "Edit Unit" : "Add New Unit"}
-                        <TbSparkles className="w-5 h-5 text-yellow-300" />
-                      </h2>
-                      <p className="text-white/80 text-sm mt-1">
-                        {property?.name && `Property: ${property.name}`}
-                      </p>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Unit Type
+                      </label>
+                      <select
+                        name="unit_type"
+                        value={formData.unit_type}
+                        onChange={handleInputChange}
+                        className="w-full text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors"
+                        disabled={isSubmitting}
+                      >
+                        {unitTypes.map((type) => (
+                          <option key={type.value} value={type.value}>
+                            {type.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Floor Number
+                      </label>
+                      <input
+                        type="number"
+                        name="floor_number"
+                        value={formData.floor_number}
+                        onChange={handleInputChange}
+                        min="1"
+                        className="w-full text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors"
+                        placeholder="1"
+                        disabled={isSubmitting}
+                      />
                     </div>
                   </div>
-                  <button
-                    onClick={handleClose}
-                    disabled={isSubmitting}
-                    className="w-10 h-10 bg-white/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20 text-white hover:bg-white/30 transition-all duration-200 hover:scale-105"
-                  >
-                    <TbX className="w-5 h-5" />
-                  </button>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Unit Description
+                    </label>
+                    <div className="relative">
+                      <TbFileDescription className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                      <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        rows="3"
+                        className="w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors"
+                        placeholder="Describe the unit's features, location within the property, and any special characteristics..."
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Form Content */}
-              <div className="flex-1 overflow-y-auto">
-                <form onSubmit={handleSubmit} className="p-8 space-y-8">
-                  {/* Basic Information */}
-                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
-                        <TbBuilding className="w-4 h-4 text-white" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-800">
-                        Basic Information
-                      </h3>
+              {/* Unit Details */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                  <TbRuler size={20} className="mr-2 text-secondary-plot" />
+                  Unit Details
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Bedrooms
+                    </label>
+                    <div className="relative">
+                      <TbBed className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="number"
+                        name="bedrooms"
+                        value={formData.bedrooms}
+                        onChange={handleInputChange}
+                        min="0"
+                        className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border ${
+                          errors.bedrooms
+                            ? "border-red-300 bg-red-50"
+                            : "border-gray-300"
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
+                        placeholder="0"
+                        disabled={isSubmitting}
+                      />
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Unit Number *
-                        </label>
-                        <input
-                          type="text"
-                          name="unit_number"
-                          value={formData.unit_number}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
-                            errors.unit_number
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                          } focus:ring-4 focus:outline-none`}
-                          placeholder="e.g., A101"
-                          disabled={isSubmitting}
-                        />
-                        {errors.unit_number && (
-                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                            <TbAlertTriangle className="w-4 h-4" />
-                            {errors.unit_number}
-                          </p>
-                        )}
+                    {errors.bedrooms && (
+                      <div className="text-red-500 text-xs mt-1 flex items-center">
+                        <TbAlertCircle className="mr-1" /> {errors.bedrooms}
                       </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Unit Type
-                        </label>
-                        <select
-                          name="unit_type"
-                          value={formData.unit_type}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          disabled={isSubmitting}
-                        >
-                          {unitTypes.map((type) => (
-                            <option key={type.value} value={type.value}>
-                              {type.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Status
-                        </label>
-                        <select
-                          name="status"
-                          value={formData.status}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          disabled={isSubmitting}
-                        >
-                          {unitStatuses.map((status) => (
-                            <option key={status.value} value={status.value}>
-                              {status.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
+                    )}
                   </div>
 
-                  {/* Unit Details */}
-                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
-                        <TbRuler className="w-4 h-4 text-white" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-800">
-                        Unit Details
-                      </h3>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Bathrooms
+                    </label>
+                    <div className="relative">
+                      <TbBath className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="number"
+                        name="bathrooms"
+                        value={formData.bathrooms}
+                        onChange={handleInputChange}
+                        min="0"
+                        step="0.5"
+                        className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border ${
+                          errors.bathrooms
+                            ? "border-red-300 bg-red-50"
+                            : "border-gray-300"
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
+                        placeholder="0"
+                        disabled={isSubmitting}
+                      />
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Bedrooms
-                        </label>
-                        <div className="relative">
-                          <TbBed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                          <input
-                            type="number"
-                            name="bedrooms"
-                            value={formData.bedrooms}
-                            onChange={handleInputChange}
-                            min="0"
-                            className={`w-full pl-10 pr-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
-                              errors.bedrooms
-                                ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                                : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                            } focus:ring-4 focus:outline-none`}
-                            placeholder="0"
-                            disabled={isSubmitting}
-                          />
-                        </div>
-                        {errors.bedrooms && (
-                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                            <TbAlertTriangle className="w-4 h-4" />
-                            {errors.bedrooms}
-                          </p>
-                        )}
+                    {errors.bathrooms && (
+                      <div className="text-red-500 text-xs mt-1 flex items-center">
+                        <TbAlertCircle className="mr-1" /> {errors.bathrooms}
                       </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Bathrooms
-                        </label>
-                        <div className="relative">
-                          <TbBath className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                          <input
-                            type="number"
-                            name="bathrooms"
-                            value={formData.bathrooms}
-                            onChange={handleInputChange}
-                            min="0"
-                            step="0.5"
-                            className={`w-full pl-10 pr-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
-                              errors.bathrooms
-                                ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                                : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                            } focus:ring-4 focus:outline-none`}
-                            placeholder="0"
-                            disabled={isSubmitting}
-                          />
-                        </div>
-                        {errors.bathrooms && (
-                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                            <TbAlertTriangle className="w-4 h-4" />
-                            {errors.bathrooms}
-                          </p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Size (sq ft)
-                        </label>
-                        <input
-                          type="number"
-                          name="size_sqft"
-                          value={formData.size_sqft}
-                          onChange={handleInputChange}
-                          min="0"
-                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
-                            errors.size_sqft
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                              : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                          } focus:ring-4 focus:outline-none`}
-                          placeholder="1000"
-                          disabled={isSubmitting}
-                        />
-                        {errors.size_sqft && (
-                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                            <TbAlertTriangle className="w-4 h-4" />
-                            {errors.size_sqft}
-                          </p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Floor Number
-                        </label>
-                        <input
-                          type="number"
-                          name="floor_number"
-                          value={formData.floor_number}
-                          onChange={handleInputChange}
-                          min="1"
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
-                          placeholder="1"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-                    </div>
+                    )}
                   </div>
 
-                  {/* Pricing */}
-                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
-                        <TbCurrencyDollar className="w-4 h-4 text-white" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-800">
-                        Pricing
-                      </h3>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Size (sq ft)
+                    </label>
+                    <div className="relative">
+                      <TbRuler className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="number"
+                        name="size_sqft"
+                        value={formData.size_sqft}
+                        onChange={handleInputChange}
+                        min="0"
+                        className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border ${
+                          errors.size_sqft
+                            ? "border-red-300 bg-red-50"
+                            : "border-gray-300"
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
+                        placeholder="1000"
+                        disabled={isSubmitting}
+                      />
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Monthly Rent *
-                        </label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
-                            KSh
-                          </span>
-                          <input
-                            type="number"
-                            name="rent_amount"
-                            value={formData.rent_amount}
-                            onChange={handleInputChange}
-                            min="0"
-                            step="0.01"
-                            className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
-                              errors.rent_amount
-                                ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                                : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                            } focus:ring-4 focus:outline-none`}
-                            placeholder="25000"
-                            disabled={isSubmitting}
-                          />
-                        </div>
-                        {errors.rent_amount && (
-                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                            <TbAlertTriangle className="w-4 h-4" />
-                            {errors.rent_amount}
-                          </p>
-                        )}
+                    {errors.size_sqft && (
+                      <div className="text-red-500 text-xs mt-1 flex items-center">
+                        <TbAlertCircle className="mr-1" /> {errors.size_sqft}
                       </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Security Deposit
-                        </label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
-                            KSh
-                          </span>
-                          <input
-                            type="number"
-                            name="security_deposit"
-                            value={formData.security_deposit}
-                            onChange={handleInputChange}
-                            min="0"
-                            step="0.01"
-                            className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 bg-white/70 backdrop-blur-sm ${
-                              errors.security_deposit
-                                ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                                : "border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20"
-                            } focus:ring-4 focus:outline-none`}
-                            placeholder="50000"
-                            disabled={isSubmitting}
-                          />
-                        </div>
-                        {errors.security_deposit && (
-                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                            <TbAlertTriangle className="w-4 h-4" />
-                            {errors.security_deposit}
-                          </p>
-                        )}
-                      </div>
-                    </div>
+                    )}
                   </div>
-
-                  {/* Description */}
-                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
-                        <TbStar className="w-4 h-4 text-white" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-800">
-                        Description
-                      </h3>
-                    </div>
-
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      rows={4}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-plot focus:ring-primary-plot/20 focus:ring-4 focus:outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm resize-none"
-                      placeholder="Describe the unit's features, location within the property, and any special characteristics..."
-                      disabled={isSubmitting}
-                    />
-                  </div>
-
-                  {/* Amenities */}
-                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
-                        <TbStar className="w-4 h-4 text-white" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-800">
-                        Amenities
-                      </h3>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                      {amenitiesList.map((amenity) => (
-                        <label
-                          key={amenity}
-                          className="flex items-center space-x-3 cursor-pointer"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={formData.amenities.includes(amenity)}
-                            onChange={() =>
-                              handleArrayToggle("amenities", amenity)
-                            }
-                            className="w-4 h-4 text-primary-plot bg-white/70 border-gray-300 rounded focus:ring-primary-plot focus:ring-2"
-                            disabled={isSubmitting}
-                          />
-                          <span className="text-sm text-gray-700">
-                            {amenity}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Utilities Included */}
-                  <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-lg">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-gradient-to-r from-primary-plot to-secondary-plot rounded-lg flex items-center justify-center">
-                        <TbHome className="w-4 h-4 text-white" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-800">
-                        Utilities Included
-                      </h3>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                      {utilitiesList.map((utility) => (
-                        <label
-                          key={utility}
-                          className="flex items-center space-x-3 cursor-pointer"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={formData.utilities_included.includes(
-                              utility
-                            )}
-                            onChange={() =>
-                              handleArrayToggle("utilities_included", utility)
-                            }
-                            className="w-4 h-4 text-primary-plot bg-white/70 border-gray-300 rounded focus:ring-primary-plot focus:ring-2"
-                            disabled={isSubmitting}
-                          />
-                          <span className="text-sm text-gray-700">
-                            {utility}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-4 pt-6">
-                    <button
-                      type="button"
-                      onClick={handleClose}
-                      disabled={isSubmitting}
-                      className="flex-1 px-6 py-3 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all duration-200 font-medium bg-white/70 backdrop-blur-sm hover:scale-105"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-primary-plot to-secondary-plot text-white hover:from-primary-plot/90 hover:to-secondary-plot/90 transition-all duration-200 font-medium flex items-center justify-center gap-2 hover:scale-105 shadow-lg"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <TbLoader2 className="w-5 h-5 animate-spin" />
-                          {isEditing ? "Updating..." : "Creating..."}
-                        </>
-                      ) : (
-                        <>
-                          <TbCheck className="w-5 h-5" />
-                          {isEditing ? "Update Unit" : "Create Unit"}
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
+                </div>
               </div>
+
+              {/* Pricing */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                  <TbCurrencyDollar
+                    size={20}
+                    className="mr-2 text-secondary-plot"
+                  />
+                  Pricing
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Monthly Rent <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
+                        KSh
+                      </span>
+                      <input
+                        type="number"
+                        name="rent_amount"
+                        value={formData.rent_amount}
+                        onChange={handleInputChange}
+                        min="0"
+                        step="0.01"
+                        className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-12 pr-4 py-2.5 rounded-lg border ${
+                          errors.rent_amount
+                            ? "border-red-300 bg-red-50"
+                            : "border-gray-300"
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
+                        placeholder="25000"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    {errors.rent_amount && (
+                      <div className="text-red-500 text-xs mt-1 flex items-center">
+                        <TbAlertCircle className="mr-1" /> {errors.rent_amount}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Security Deposit
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
+                        KSh
+                      </span>
+                      <input
+                        type="number"
+                        name="security_deposit"
+                        value={formData.security_deposit}
+                        onChange={handleInputChange}
+                        min="0"
+                        step="0.01"
+                        className={`w-full text-[0.93rem] bg-neutral-100 text-neutral-900 pl-12 pr-4 py-2.5 rounded-lg border ${
+                          errors.security_deposit
+                            ? "border-red-300 bg-red-50"
+                            : "border-gray-300"
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-plot focus:border-secondary-plot transition-colors`}
+                        placeholder="50000"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    {errors.security_deposit && (
+                      <div className="text-red-500 text-xs mt-1 flex items-center">
+                        <TbAlertCircle className="mr-1" />{" "}
+                        {errors.security_deposit}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Unit Status */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                  <TbStar size={20} className="mr-2 text-secondary-plot" />
+                  Unit Status
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {unitStatuses.map((status) => (
+                    <label
+                      key={status.value}
+                      className={`relative flex items-center p-3 border rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
+                        formData.status === status.value
+                          ? status.color
+                          : "border-gray-200 bg-white"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="status"
+                        value={status.value}
+                        checked={formData.status === status.value}
+                        onChange={() => handleStatusSelect(status.value)}
+                        className="sr-only"
+                      />
+                      <div
+                        className={`flex items-center justify-center w-4 h-4 border-2 rounded-full mr-3 ${
+                          formData.status === status.value
+                            ? "border-current bg-current"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        {formData.status === status.value && (
+                          <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                        )}
+                      </div>
+                      <span className="font-medium">{status.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Amenities */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                  <TbStar size={20} className="mr-2 text-secondary-plot" />
+                  Unit Amenities
+                </h3>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {amenitiesList.map((amenity) => (
+                    <label
+                      key={amenity}
+                      className="relative flex items-center p-3 border rounded-lg cursor-pointer transition-all hover:bg-gray-50 border-gray-200 bg-white"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formData.amenities.includes(amenity)}
+                        onChange={() => handleArrayToggle("amenities", amenity)}
+                        className="sr-only"
+                        disabled={isSubmitting}
+                      />
+                      <div
+                        className={`flex items-center justify-center w-4 h-4 border-2 rounded-full mr-3 ${
+                          formData.amenities.includes(amenity)
+                            ? "border-secondary-plot bg-secondary-plot"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        {formData.amenities.includes(amenity) && (
+                          <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                        )}
+                      </div>
+                      <span className="text-sm text-gray-700">{amenity}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Utilities Included */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                  <TbHome size={20} className="mr-2 text-secondary-plot" />
+                  Utilities Included
+                </h3>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {utilitiesList.map((utility) => (
+                    <label
+                      key={utility}
+                      className="relative flex items-center p-3 border rounded-lg cursor-pointer transition-all hover:bg-gray-50 border-gray-200 bg-white"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formData.utilities_included.includes(utility)}
+                        onChange={() =>
+                          handleArrayToggle("utilities_included", utility)
+                        }
+                        className="sr-only"
+                        disabled={isSubmitting}
+                      />
+                      <div
+                        className={`flex items-center justify-center w-4 h-4 border-2 rounded-full mr-3 ${
+                          formData.utilities_included.includes(utility)
+                            ? "border-secondary-plot bg-secondary-plot"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        {formData.utilities_included.includes(utility) && (
+                          <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                        )}
+                      </div>
+                      <span className="text-sm text-gray-700">{utility}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Submit Error */}
+              {errors.general && (
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center">
+                      <TbAlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                      <p className="text-sm text-red-800">{errors.general}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+          </div>
+
+          {/* Sticky Footer */}
+          <div className="border-t border-gray-200 bg-white px-6 py-4">
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isSubmitting}
+                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-6 py-2 bg-secondary-plot text-white rounded-lg hover:bg-secondary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    {isEditing ? "Updating..." : "Creating..."}
+                  </>
+                ) : (
+                  <>
+                    <TbCheck className="mr-2 h-4 w-4" />
+                    {isEditing ? "Update Unit" : "Create Unit"}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      </motion.div>
+    </motion.div>
   );
 };
 
